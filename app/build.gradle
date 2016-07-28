@@ -1,0 +1,49 @@
+apply plugin: 'com.android.application'
+buildscript {
+    repositories {
+        mavenCentral()
+        maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
+        maven { url "https://oss.sonatype.org/content/repositories/releases/" }
+        flatDir {
+            dirs 'jniLibs'
+        }
+    }
+
+}
+android {
+    compileSdkVersion 19
+    buildToolsVersion "23.0.2"
+
+    defaultConfig {
+        applicationId "com.vte.libgdx.ortho.test"
+        minSdkVersion 8
+        targetSdkVersion 8
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
+        }
+    }
+}
+
+dependencies {
+    compile 'com.android.support:support-v4:19.1.0'
+    compile "com.badlogicgames.gdx:gdx:$gdxVersion"
+    compile "com.badlogicgames.gdx:gdx-backend-android:$gdxVersion"
+    compile "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-armeabi"
+    compile "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-armeabi-v7a"
+    compile "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-arm64-v8a"
+    compile "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-x86"
+    compile "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-x86_64"
+    compile "com.badlogicgames.gdx:gdx-box2d:$gdxVersion"
+    compile "com.badlogicgames.gdx:gdx-box2d-platform:$gdxVersion:natives-armeabi"
+    compile "com.badlogicgames.gdx:gdx-box2d-platform:$gdxVersion:natives-armeabi-v7a"
+    compile "com.badlogicgames.gdx:gdx-box2d-platform:$gdxVersion:natives-arm64-v8a"
+    compile "com.badlogicgames.gdx:gdx-box2d-platform:$gdxVersion:natives-x86"
+    compile "com.badlogicgames.gdx:gdx-box2d-platform:$gdxVersion:natives-x86_64"
+    compile "com.badlogicgames.ashley:ashley:1.7.0"
+    compile "net.dermetfan.libgdx-utils:libgdx-utils:$gdxUtilsVersion"
+    compile "net.dermetfan.libgdx-utils:libgdx-utils-box2d:$gdxUtilsVersion" // Box2D module (optional)
+}
