@@ -34,8 +34,8 @@ public class Path {
         EntityEngine.getInstance().addEntity(entity);
     }
 
-    public void AddPoint(Vector2 pos, float time) {
-        positions.add(pos);
+    public void AddPoint(float x, float y, float time) {
+        positions.add(new Vector2(x, y));
 
         times.add(time);
     }

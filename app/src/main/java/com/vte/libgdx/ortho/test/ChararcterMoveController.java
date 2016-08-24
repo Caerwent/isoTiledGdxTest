@@ -1,6 +1,5 @@
 package com.vte.libgdx.ortho.test;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.math.Circle;
@@ -18,12 +17,13 @@ import com.vte.libgdx.ortho.test.box2d.Path;
 
 public class ChararcterMoveController extends InputAdapter {
     final OrthographicCamera camera;
-    final Vector3 curr = new Vector3();
+    final Vector3 mCursorPoint = new Vector3();
     final Vector3 last = new Vector3(-1, -1, -1);
     final Vector3 delta = new Vector3();
     Circle touchSpot = new Circle(0, 0, 2);
 
     Vector2 mLastPoint = new Vector2();
+    Vector2 mCurrentPoint = new Vector2();
 
     Bob mBob;
     Path path;
@@ -39,14 +39,17 @@ public class ChararcterMoveController extends InputAdapter {
     public boolean touchDragged(int x, int y, int pointer) {
         if (!isActive)
             return false;
-        camera.unproject(curr.set(x, y, 0));
+        camera.unproject(mCursorPoint.set(x, y, 0));
 
         if (!(last.x == -1 && last.y == -1 && last.z == -1)) {
             camera.unproject(delta.set(last.x, last.y, 0));
-            delta.sub(curr);
+            delta.sub(mCursorPoint);
+
+
             Vector2 nextPoint = null;
-            Vector2 cursorPoint = new Vector2(curr.x, curr.y);
+            mCurrentPoint.set(mCurrentPoint.x - delta.x, mCurrentPoint.y - delta.y);
             Vector2 intersection = new Vector2();
+            Vector2 nearestIntersection = new Vector2();
             float[] nearestVertice = new float[4];
             int nearestVerticeOffset = 0;
             boolean hasCollision = false;
@@ -57,40 +60,48 @@ public class ChararcterMoveController extends InputAdapter {
                     vertices = poly.getTransformedVertices();
 
                     // search for the nearest polygon segment on last point and touch point segment
-                    if (!Intersector.intersectSegmentPolygon(mLastPoint, cursorPoint, poly) && !Intersector.isPointInPolygon(vertices, 0, vertices.length, curr.x, curr.y)) {
-                        nextPoint = cursorPoint;
+                    if (!Intersector.intersectSegmentPolygon(mLastPoint, mCurrentPoint, poly)) {
+                        nextPoint = mCurrentPoint;
                     } else {
-                        float nearestDist = Float.MAX_VALUE;
-                        hasCollision = true;
-                        int i = -2;
-                        boolean endLoop = false;
-                        int idx1, idx2, idx3, idx4;
-                        while (!endLoop) {
-                            i += 2;
-                            idx1 = i;
-                            idx2 = i + 1;
-                            if (i >= vertices.length - 2) {
-                                idx3 = 0;
-                                idx4 = 1;
-                                endLoop = true;
-                            } else {
-                                idx3 = i + 2;
-                                idx4 = i + 3;
-                            }
-                            float dist = Intersector.distanceSegmentPoint(vertices[idx1], vertices[idx2], vertices[idx3], vertices[idx4],
-                                    mLastPoint.x, mLastPoint.y);
-                            if (dist < nearestDist) {
-                                nearestDist = dist;
-                                nearestVerticeOffset = idx1;
-                                nearestVertice[0] = vertices[idx1];
-                                nearestVertice[1] = vertices[idx2];
-                                nearestVertice[2] = vertices[idx3];
-                                nearestVertice[3] = vertices[idx4];
+                        if (!Intersector.isPointInPolygon(vertices, 0, vertices.length, mCurrentPoint.x, mCurrentPoint.y)) {
+                            nextPoint = mCurrentPoint;
+                        } else {
+                            float nearestDist = Float.MAX_VALUE;
+                            hasCollision = true;
+                            int i = -2;
+                            boolean endLoop = false;
+                            int idx1, idx2, idx3, idx4;
+                            while (!endLoop) {
+                                i += 2;
+                                idx1 = i;
+                                idx2 = i + 1;
+                                if (i >= vertices.length - 2) {
+                                    idx3 = 0;
+                                    idx4 = 1;
+                                    endLoop = true;
+                                } else {
+                                    idx3 = i + 2;
+                                    idx4 = i + 3;
+                                }
+
+                                Intersector.nearestSegmentPoint(vertices[idx1], vertices[idx2], vertices[idx3], vertices[idx4],
+                                        mCurrentPoint.x, mCurrentPoint.y, intersection);
+                                float dist = intersection.dst(mCurrentPoint.x, mCurrentPoint.y);
+                                if (dist < nearestDist) {
+                                    nearestDist = dist;
+                                    nearestVerticeOffset = idx1;
+                                    nearestVertice[0] = vertices[idx1];
+                                    nearestVertice[1] = vertices[idx2];
+                                    nearestVertice[2] = vertices[idx3];
+                                    nearestVertice[3] = vertices[idx4];
+                                    nearestIntersection.set(intersection.x, intersection.y);
+                                }
                             }
                         }
+
+
                     }
                 }
-
                 if (hasCollision && vertices != null) {
                     float[] nextPrevVertice = new float[4];
 
@@ -98,17 +109,17 @@ public class ChararcterMoveController extends InputAdapter {
                     nextPrevVertice[1] = nearestVertice[1];
                     nextPrevVertice[2] = nearestVertice[2];
                     nextPrevVertice[3] = nearestVertice[3];
-                    Gdx.app.debug("DEBUG", "collision with vertice [" + nextPrevVertice[0] + "," + nextPrevVertice[1] + " - " + nextPrevVertice[2] + "," + nextPrevVertice[3] + "]");
+                    //Gdx.app.debug("DEBUG", "collision with vertice [" + nextPrevVertice[0] + "," + nextPrevVertice[1] + " - " + nextPrevVertice[2] + "," + nextPrevVertice[3] + "]");
 
                     int vertIdx = nearestVerticeOffset;
                     int nextIter = 2;
                     while (nextIter > 0) {
-                        int projDir = isProjectedPointOnLineSegment(nextPrevVertice[0], nextPrevVertice[1], nextPrevVertice[2], nextPrevVertice[3], curr.x, curr.y);
+                        int projDir = isProjectedPointOnLineSegment(nextPrevVertice[0], nextPrevVertice[1], nextPrevVertice[2], nextPrevVertice[3], mCurrentPoint.x, mCurrentPoint.y);
                         if (projDir <= 0) {
                             if (mLastPoint.x == nextPrevVertice[0] && mLastPoint.y == nextPrevVertice[1]) {
                                 // proj on previous vertices
                                 vertIdx = getPreviousVertice(vertices, vertIdx, nextPrevVertice);
-                                Gdx.app.debug("DEBUG", "projDir=" + projDir + " prev vertice [" + nextPrevVertice[0] + "," + nextPrevVertice[1] + " - " + nextPrevVertice[2] + "," + nextPrevVertice[3] + "]");
+                                //Gdx.app.debug("DEBUG", "projDir=" + projDir + " prev vertice [" + nextPrevVertice[0] + "," + nextPrevVertice[1] + " - " + nextPrevVertice[2] + "," + nextPrevVertice[3] + "]");
                                 nextIter--;
                             } else {
                                 nextIter = 0;
@@ -120,7 +131,7 @@ public class ChararcterMoveController extends InputAdapter {
                             if (mLastPoint.x == nextPrevVertice[2] && mLastPoint.y == nextPrevVertice[3]) {
                                 // proj on next vertices
                                 vertIdx = getNextVertice(vertices, vertIdx, nextPrevVertice);
-                                Gdx.app.debug("DEBUG", "projDir=" + projDir + " next vertice [" + nextPrevVertice[0] + "," + nextPrevVertice[1] + " - " + nextPrevVertice[2] + "," + nextPrevVertice[3] + "]");
+                                //Gdx.app.debug("DEBUG", "projDir=" + projDir + " next vertice [" + nextPrevVertice[0] + "," + nextPrevVertice[1] + " - " + nextPrevVertice[2] + "," + nextPrevVertice[3] + "]");
                                 nextIter--;
                             } else {
                                 nextIter = 0;
@@ -128,28 +139,29 @@ public class ChararcterMoveController extends InputAdapter {
                                 nextPoint = intersection;
                             }
                         } else {
-                            nextPoint = getProjectedPointOnLineFast(nextPrevVertice[0], nextPrevVertice[1], nextPrevVertice[2], nextPrevVertice[3], curr.x, curr.y);
+                            nextPoint = getProjectedPointOnLineFast(nextPrevVertice[0], nextPrevVertice[1], nextPrevVertice[2], nextPrevVertice[3], mCurrentPoint.x, mCurrentPoint.y);
                             nextIter = 0;
                         }
                     }
-                    if (nextPoint == null)
+                  /*  if (nextPoint == null)
                         Gdx.app.debug("DEBUG", "NO NEXT POINT AFTER COLLISION");
 
                     else
                         Gdx.app.debug("DEBUG", "next point after collision [" + nextPoint.x + "," + nextPoint.y + "]");
-
+*/
                 }
-
             } else {
-                nextPoint = cursorPoint;
+                nextPoint = mCurrentPoint;
             }
 
             if (nextPoint != null) {
 
                 float distance = (float) Math.sqrt((nextPoint.x - mLastPoint.x) * (nextPoint.x - mLastPoint.x) + (nextPoint.y - mLastPoint.y) * (nextPoint.y - mLastPoint.y));
                 if (distance > 0.1) {
-                    path.AddPoint(nextPoint, 0.1f);
+                    path.AddPoint(nextPoint.x, nextPoint.y, 0.1f);
                     mLastPoint.set(nextPoint);
+                    mCurrentPoint.set(mLastPoint.x, mLastPoint.y);
+                   // Gdx.app.debug("DEBUG", "add pointX=" + mLastPoint.x + " pointY=" + mLastPoint.y);
                 }
 
 
@@ -166,17 +178,16 @@ public class ChararcterMoveController extends InputAdapter {
     @Override
     public boolean touchDown(int x, int y, int pointer, int button) {
 
-        final Vector3 curr = new Vector3();
-        camera.unproject(curr.set(x, y, 0));
+        camera.unproject(mCursorPoint.set(x, y, 0));
 
-        if (mBob.getBound().contains(curr.x, curr.y)) {
+        if (mBob.getBound().contains(mCursorPoint.x, mCursorPoint.y)) {
             if (path != null)
                 path.destroy();
             path = new Path();
 
-            Vector2 point2d = new Vector2(curr.x, curr.y);
-            path.AddPoint(point2d, 0.01f);
-            mLastPoint.set(point2d);
+            path.AddPoint(mCursorPoint.x, mCursorPoint.y, 0.01f);
+            mLastPoint.set(mCursorPoint.x, mCursorPoint.y);
+            mCurrentPoint.set(mCursorPoint.x, mCursorPoint.y);
             isActive = true;
         }
         return false;
@@ -219,7 +230,7 @@ public class ChararcterMoveController extends InputAdapter {
      * 3 if p' is after v2
      */
     public int isProjectedPointOnLineSegment(float vx1, float vy1, float vx2, float vy2, float px, float py) {
-        //e1 = (v2, v1) and e2 = (p, v1)
+        //e1 = (v1, v2) and e2 = (p, v1)
         //If p' matches with v1 (this means both have the same location), then
         //DP(e1, e2) = 0. e1 is then perpendicular to e2.
         //On the other side, if p' matches with v2 (thus p' is the same as v2), then
@@ -227,7 +238,7 @@ public class ChararcterMoveController extends InputAdapter {
         //If p' lies somewhere between v1 and v2, then for the dot-product of e1 and e2 applies:
         //0 <= DP(e1,e2) <= e1.x^2 + e1.y^2.
 
-        Vector2 e1 = new Vector2(vx2 - vx1, vy2 - vy1);
+        Vector2 e1 = new Vector2(vx1 - vx2, vy1 - vy2);
         Vector2 e2 = new Vector2(px - vx1, py - vy1);
         double recArea = dotProduct(e1, e1);
         double val = dotProduct(e1, e2);
@@ -289,18 +300,38 @@ public class ChararcterMoveController extends InputAdapter {
         return currIdx;
     }
 
-    public boolean overlaps(Polygon polygon, Circle circle) {
+    public boolean overlaps(Polygon polygon, Circle circle, Vector2 displacement) {
         float[] vertices = polygon.getTransformedVertices();
         Vector2 center = new Vector2(circle.x, circle.y);
         float squareRadius = circle.radius * circle.radius;
+        Vector2 minDisplacement = new Vector2(Float.MAX_VALUE, Float.MAX_VALUE);
+        double minDist = minDisplacement.x * minDisplacement.x + minDisplacement.y * minDisplacement.y;
+        double dist;
+        boolean ovelaps = false;
         for (int i = 0; i < vertices.length; i += 2) {
             if (i == 0) {
-                if (Intersector.intersectSegmentCircle(new Vector2(vertices[vertices.length - 2], vertices[vertices.length - 1]), new Vector2(vertices[i], vertices[i + 1]), center, squareRadius))
-                    return true;
+                if (Intersector.intersectSegmentCircleDisplace(new Vector2(vertices[vertices.length - 2], vertices[vertices.length - 1]), new Vector2(vertices[i], vertices[i + 1]), center, squareRadius, displacement) != Float.POSITIVE_INFINITY) {
+                    ovelaps = true;
+                    dist = displacement.x * displacement.x + displacement.y * displacement.y;
+                    if (dist < minDist) {
+                        minDisplacement.set(displacement.x, displacement.y);
+                        minDist = dist;
+                    }
+                }
             } else {
-                if (Intersector.intersectSegmentCircle(new Vector2(vertices[i - 2], vertices[i - 1]), new Vector2(vertices[i], vertices[i + 1]), center, squareRadius))
-                    return true;
+                if (Intersector.intersectSegmentCircleDisplace(new Vector2(vertices[i - 2], vertices[i - 1]), new Vector2(vertices[i], vertices[i + 1]), center, squareRadius, displacement) != Float.POSITIVE_INFINITY) {
+                    ovelaps = true;
+                    dist = displacement.x * displacement.x + displacement.y * displacement.y;
+                    if (dist < minDist) {
+                        minDisplacement.set(displacement.x, displacement.y);
+                        minDist = dist;
+                    }
+                }
             }
+        }
+        if (ovelaps) {
+            displacement.set(minDisplacement.x, minDisplacement.y);
+            return true;
         }
         return false;
     }
