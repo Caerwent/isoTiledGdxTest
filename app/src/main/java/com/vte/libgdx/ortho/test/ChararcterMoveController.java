@@ -1,10 +1,12 @@
 package com.vte.libgdx.ortho.test;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.math.Circle;
 import com.badlogic.gdx.math.Intersector;
 import com.badlogic.gdx.math.Polygon;
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
@@ -24,14 +26,27 @@ public class ChararcterMoveController extends InputAdapter {
 
     Vector2 mLastPoint = new Vector2();
     Vector2 mCurrentPoint = new Vector2();
+    Vector2 mBoundedCurrentPoint = new Vector2();
 
     Bob mBob;
     Path path;
+    Polygon mPosPoly;
     public boolean isActive = false;
 
     public ChararcterMoveController(OrthographicCamera camera, Bob aBob) {
         this.camera = camera;
         mBob = aBob;
+        mPosPoly = new Polygon();
+        float[] vertices = new float[8];
+        vertices[0] = 0;
+        vertices[1] = 0;
+        vertices[2] = mBob.getBound().getWidth();
+        vertices[3] = 0;
+        vertices[4] = mBob.getBound().getWidth();
+        vertices[5] = mBob.getBound().getHeight();
+        vertices[6] = 0;
+        vertices[7] = mBob.getBound().getHeight();
+        mPosPoly.setVertices(vertices);
 
     }
 
@@ -47,10 +62,23 @@ public class ChararcterMoveController extends InputAdapter {
 
 
             Vector2 nextPoint = null;
-            mCurrentPoint.set(mCurrentPoint.x - delta.x, mCurrentPoint.y - delta.y);
+            float dx= -delta.x;
+            float dy= -delta.y;
+            if(delta.x<0)
+            {
+                dx=+mBob.getBound().getWidth();
+            }
+            if(delta.y<0)
+            {
+                dy=+mBob.getBound().getHeight();
+            }
+            mCurrentPoint.set(mCurrentPoint.x -delta.x, mCurrentPoint.y -delta.y);
+            mBoundedCurrentPoint.set(mCurrentPoint.x +dx, mCurrentPoint.y +dy);
+            mPosPoly.setPosition(mCurrentPoint.x, mCurrentPoint.y);
             Vector2 intersection = new Vector2();
             Vector2 nearestIntersection = new Vector2();
             float[] nearestVertice = new float[4];
+            float[] collisionPolyVertice = null;
             int nearestVerticeOffset = 0;
             boolean hasCollision = false;
             Array<Polygon> collisions = MapBodyManager.getInstance().getBodiesCollision();
@@ -60,10 +88,10 @@ public class ChararcterMoveController extends InputAdapter {
                     vertices = poly.getTransformedVertices();
 
                     // search for the nearest polygon segment on last point and touch point segment
-                    if (!Intersector.intersectSegmentPolygon(mLastPoint, mCurrentPoint, poly)) {
+                    if (!Intersector.intersectSegmentPolygon(mLastPoint, mBoundedCurrentPoint, poly) ) {
                         nextPoint = mCurrentPoint;
                     } else {
-                        if (!Intersector.isPointInPolygon(vertices, 0, vertices.length, mCurrentPoint.x, mCurrentPoint.y)) {
+                        if (!Intersector.isPointInPolygon(vertices, 0, vertices.length, mBoundedCurrentPoint.x, mBoundedCurrentPoint.y)) {
                             nextPoint = mCurrentPoint;
                         } else {
                             float nearestDist = Float.MAX_VALUE;
@@ -85,8 +113,8 @@ public class ChararcterMoveController extends InputAdapter {
                                 }
 
                                 Intersector.nearestSegmentPoint(vertices[idx1], vertices[idx2], vertices[idx3], vertices[idx4],
-                                        mCurrentPoint.x, mCurrentPoint.y, intersection);
-                                float dist = intersection.dst(mCurrentPoint.x, mCurrentPoint.y);
+                                        mBoundedCurrentPoint.x, mBoundedCurrentPoint.y, intersection);
+                                float dist = intersection.dst(mBoundedCurrentPoint.x, mBoundedCurrentPoint.y);
                                 if (dist < nearestDist) {
                                     nearestDist = dist;
                                     nearestVerticeOffset = idx1;
@@ -95,6 +123,8 @@ public class ChararcterMoveController extends InputAdapter {
                                     nearestVertice[2] = vertices[idx3];
                                     nearestVertice[3] = vertices[idx4];
                                     nearestIntersection.set(intersection.x, intersection.y);
+                                    collisionPolyVertice = vertices;
+
                                 }
                             }
                         }
@@ -102,7 +132,7 @@ public class ChararcterMoveController extends InputAdapter {
 
                     }
                 }
-                if (hasCollision && vertices != null) {
+                if (hasCollision && collisionPolyVertice != null) {
                     float[] nextPrevVertice = new float[4];
 
                     nextPrevVertice[0] = nearestVertice[0];
@@ -118,8 +148,8 @@ public class ChararcterMoveController extends InputAdapter {
                         if (projDir <= 0) {
                             if (mLastPoint.x == nextPrevVertice[0] && mLastPoint.y == nextPrevVertice[1]) {
                                 // proj on previous vertices
-                                vertIdx = getPreviousVertice(vertices, vertIdx, nextPrevVertice);
-                                //Gdx.app.debug("DEBUG", "projDir=" + projDir + " prev vertice [" + nextPrevVertice[0] + "," + nextPrevVertice[1] + " - " + nextPrevVertice[2] + "," + nextPrevVertice[3] + "]");
+                                vertIdx = getPreviousVertice(collisionPolyVertice, vertIdx, nextPrevVertice);
+                                Gdx.app.debug("DEBUG", "projDir=" + projDir + " prev vertice [" + nextPrevVertice[0] + "," + nextPrevVertice[1] + " - " + nextPrevVertice[2] + "," + nextPrevVertice[3] + "]");
                                 nextIter--;
                             } else {
                                 nextIter = 0;
@@ -130,8 +160,8 @@ public class ChararcterMoveController extends InputAdapter {
                         } else if (projDir >= 1) {
                             if (mLastPoint.x == nextPrevVertice[2] && mLastPoint.y == nextPrevVertice[3]) {
                                 // proj on next vertices
-                                vertIdx = getNextVertice(vertices, vertIdx, nextPrevVertice);
-                                //Gdx.app.debug("DEBUG", "projDir=" + projDir + " next vertice [" + nextPrevVertice[0] + "," + nextPrevVertice[1] + " - " + nextPrevVertice[2] + "," + nextPrevVertice[3] + "]");
+                                vertIdx = getNextVertice(collisionPolyVertice, vertIdx, nextPrevVertice);
+                                Gdx.app.debug("DEBUG", "projDir=" + projDir + " next vertice [" + nextPrevVertice[0] + "," + nextPrevVertice[1] + " - " + nextPrevVertice[2] + "," + nextPrevVertice[3] + "]");
                                 nextIter--;
                             } else {
                                 nextIter = 0;
@@ -157,7 +187,7 @@ public class ChararcterMoveController extends InputAdapter {
             if (nextPoint != null) {
 
                 float distance = (float) Math.sqrt((nextPoint.x - mLastPoint.x) * (nextPoint.x - mLastPoint.x) + (nextPoint.y - mLastPoint.y) * (nextPoint.y - mLastPoint.y));
-                if (distance > 0.1) {
+                if (distance > 0.1 && distance < 10) {
                     path.AddPoint(nextPoint.x, nextPoint.y, 0.1f);
                     mLastPoint.set(nextPoint);
                     mCurrentPoint.set(mLastPoint.x, mLastPoint.y);
@@ -184,7 +214,9 @@ public class ChararcterMoveController extends InputAdapter {
             if (path != null)
                 path.destroy();
             path = new Path();
-
+            Rectangle bobBound = mBob.getBound();
+            mPosPoly.setPosition(bobBound.getX(), bobBound.getY());
+            mCursorPoint.set(bobBound.getX(), bobBound.getY(), mCursorPoint.z);
             path.AddPoint(mCursorPoint.x, mCursorPoint.y, 0.01f);
             mLastPoint.set(mCursorPoint.x, mCursorPoint.y);
             mCurrentPoint.set(mCursorPoint.x, mCursorPoint.y);
@@ -334,5 +366,15 @@ public class ChararcterMoveController extends InputAdapter {
             return true;
         }
         return false;
+    }
+
+    private String logPoly(Polygon aPoly) {
+        float[] vertices = aPoly.getTransformedVertices();
+        String logStr = "[";
+        for (int i = 0; i < vertices.length - 2; i += 2) {
+            logStr += "(" + vertices[i] + "," + vertices[i + 1] + ") ";
+        }
+        logStr += "]";
+        return logStr;
     }
 }
