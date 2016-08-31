@@ -22,7 +22,8 @@ public class Path {
     int nextPointIndex;
     int direction = 1;
     float lastTime = 0;
-    static final float CHECK_RADIUS = 1f;
+    static public final float CHECK_RADIUS = 0.2f;
+    static public final float NEXT_POINT_DELAY = 0.3f;
     Entity entity;
 
     public Path() {
@@ -65,17 +66,22 @@ public class Path {
         lastTime += dT;
         Vector2 nextPointPosition = positions.get(nextPointIndex);
         float d = nextPointPosition.dst2(bodyPosition);
-
+        boolean hasReachedNextPoint = false;
         if (d < CHECK_RADIUS) {
             currentPointIndex = nextPointIndex;
+            lastTime=0;
             if (hasNextPoint()) {
                 nextPointIndex = GetNextPoint();
-                SetNextPointVelocity();
             }
-            return true;
+            else
+            {
+                velocity.set(0,0);
+            }
+            hasReachedNextPoint = true;
 
         }
-        return false;
+        computeVelocity(bodyPosition);
+        return hasReachedNextPoint;
     }
 
     public boolean hasNextPoint() {
@@ -101,6 +107,13 @@ public class Path {
         float dx = nextPosition.x - currentPosition.x;
         float dy = nextPosition.y - currentPosition.y;
         float time = times.get(nextPointIndex);
+        velocity.set(dx / time, dy / time);
+    }
+    void computeVelocity(Vector2 aCurrentPosition) {
+        Vector2 nextPosition = positions.get(nextPointIndex);
+         float dx = nextPosition.x - aCurrentPosition.x;
+        float dy = nextPosition.y - aCurrentPosition.y;
+        float time = NEXT_POINT_DELAY-lastTime;
         velocity.set(dx / time, dy / time);
     }
 

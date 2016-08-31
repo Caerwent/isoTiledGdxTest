@@ -22,31 +22,22 @@ public class ChararcterMoveController extends InputAdapter {
     final Vector3 mCursorPoint = new Vector3();
     final Vector3 last = new Vector3(-1, -1, -1);
     final Vector3 delta = new Vector3();
-    Circle touchSpot = new Circle(0, 0, 2);
+    Circle mPathSpot;
+    Circle mTouchSpot;
 
     Vector2 mLastPoint = new Vector2();
-    Vector2 mCurrentPoint = new Vector2();
-    Vector2 mBoundedCurrentPoint = new Vector2();
+    Vector2 mTouchSpotPoint = new Vector2();
+    Vector2 mPathSpotPoint = new Vector2();
 
     Bob mBob;
     Path path;
-    Polygon mPosPoly;
     public boolean isActive = false;
 
     public ChararcterMoveController(OrthographicCamera camera, Bob aBob) {
         this.camera = camera;
         mBob = aBob;
-        mPosPoly = new Polygon();
-        float[] vertices = new float[8];
-        vertices[0] = 0;
-        vertices[1] = 0;
-        vertices[2] = mBob.getBound().getWidth();
-        vertices[3] = 0;
-        vertices[4] = mBob.getBound().getWidth();
-        vertices[5] = mBob.getBound().getHeight();
-        vertices[6] = 0;
-        vertices[7] = mBob.getBound().getHeight();
-        mPosPoly.setVertices(vertices);
+        mPathSpot = new Circle(0, 0, mBob.getBound().getWidth() / 2);
+        mTouchSpot = new Circle(0, 0, mBob.getBound().getWidth() / 2);
 
     }
 
@@ -60,138 +51,79 @@ public class ChararcterMoveController extends InputAdapter {
             camera.unproject(delta.set(last.x, last.y, 0));
             delta.sub(mCursorPoint);
 
+            if (Math.sqrt(delta.x * delta.x + delta.y * delta.y) < 0.1)
+                return true;
+
 
             Vector2 nextPoint = null;
-            float dx= -delta.x;
-            float dy= -delta.y;
-            if(delta.x<0)
-            {
-                dx=+mBob.getBound().getWidth();
-            }
-            if(delta.y<0)
-            {
-                dy=+mBob.getBound().getHeight();
-            }
-            mCurrentPoint.set(mCurrentPoint.x -delta.x, mCurrentPoint.y -delta.y);
-            mBoundedCurrentPoint.set(mCurrentPoint.x +dx, mCurrentPoint.y +dy);
-            mPosPoly.setPosition(mCurrentPoint.x, mCurrentPoint.y);
+            Vector2 tmpNextPoint = null;
+
+            mTouchSpotPoint.set(mCursorPoint.x, mCursorPoint.y);
+            mTouchSpot.setPosition(mTouchSpotPoint.x, mTouchSpotPoint.y);
+            mPathSpot.setPosition(mLastPoint.x - delta.x, mLastPoint.y - delta.y);
+            mPathSpotPoint.set(mPathSpot.x, mPathSpot.y);
             Vector2 intersection = new Vector2();
-            Vector2 nearestIntersection = new Vector2();
-            float[] nearestVertice = new float[4];
-            float[] collisionPolyVertice = null;
-            int nearestVerticeOffset = 0;
-            boolean hasCollision = false;
+            if(mTouchSpotPoint.y>13)
+            {
+                int debug=0;
+                debug=1;
+            }
             Array<Polygon> collisions = MapBodyManager.getInstance().getBodiesCollision();
-            if (collisions != null) {
-                float[] vertices = null;
+            Gdx.app.debug("DEBUG", "mTouchSpot=(" + mTouchSpot.x + "," + mTouchSpot.y + ") Rx="+mTouchSpot.radius);
+            Gdx.app.debug("DEBUG", "mPathSpot=(" + mPathSpot.x + "," + mPathSpot.y + ") Rx="+mPathSpot.radius);
+            if (collisions != null && collisions.size>0) {
                 for (Polygon poly : collisions) {
-                    vertices = poly.getTransformedVertices();
+
+                    Gdx.app.debug("DEBUG", "Check collision with poly" + logPoly(poly));
+                    Gdx.app.debug("DEBUG", "segment (mLastPoint, mTouchSpotPoint)=[(" + mLastPoint.x + "," + mLastPoint.y + ")" + "(" + mTouchSpotPoint.x + "," + mTouchSpotPoint.y + ")]");
+
 
                     // search for the nearest polygon segment on last point and touch point segment
-                    if (!Intersector.intersectSegmentPolygon(mLastPoint, mBoundedCurrentPoint, poly) ) {
-                        nextPoint = mCurrentPoint;
+                    if (!Intersector.intersectSegmentPolygon(mLastPoint, mTouchSpotPoint, poly) &&
+                            !overlaps(poly, mTouchSpot)) {
+                        tmpNextPoint = mTouchSpotPoint;
+                        Gdx.app.debug("DEBUG", "segment not intersect");
+                    } else if (!overlaps(poly, mPathSpot)) {
+                        tmpNextPoint = mPathSpotPoint;
+                        Gdx.app.debug("DEBUG", "mPathSpot not overlaps");
                     } else {
-                        if (!Intersector.isPointInPolygon(vertices, 0, vertices.length, mBoundedCurrentPoint.x, mBoundedCurrentPoint.y)) {
-                            nextPoint = mCurrentPoint;
-                        } else {
-                            float nearestDist = Float.MAX_VALUE;
-                            hasCollision = true;
-                            int i = -2;
-                            boolean endLoop = false;
-                            int idx1, idx2, idx3, idx4;
-                            while (!endLoop) {
-                                i += 2;
-                                idx1 = i;
-                                idx2 = i + 1;
-                                if (i >= vertices.length - 2) {
-                                    idx3 = 0;
-                                    idx4 = 1;
-                                    endLoop = true;
-                                } else {
-                                    idx3 = i + 2;
-                                    idx4 = i + 3;
-                                }
+                        Gdx.app.debug("DEBUG", "mPathSpot overlaps");
+                        tmpNextPoint=null;
 
-                                Intersector.nearestSegmentPoint(vertices[idx1], vertices[idx2], vertices[idx3], vertices[idx4],
-                                        mBoundedCurrentPoint.x, mBoundedCurrentPoint.y, intersection);
-                                float dist = intersection.dst(mBoundedCurrentPoint.x, mBoundedCurrentPoint.y);
-                                if (dist < nearestDist) {
-                                    nearestDist = dist;
-                                    nearestVerticeOffset = idx1;
-                                    nearestVertice[0] = vertices[idx1];
-                                    nearestVertice[1] = vertices[idx2];
-                                    nearestVertice[2] = vertices[idx3];
-                                    nearestVertice[3] = vertices[idx4];
-                                    nearestIntersection.set(intersection.x, intersection.y);
-                                    collisionPolyVertice = vertices;
-
-                                }
-                            }
+                        intersection.set(mTouchSpotPoint.x, mLastPoint.y);
+                        Gdx.app.debug("DEBUG", "check using next point =(" + intersection.x + "," + intersection.y + ")");
+                        if (!Intersector.intersectSegmentPolygon(mLastPoint, intersection, poly)) {
+                            nextPoint = intersection;
+                            Gdx.app.debug("DEBUG", "nextPoint found");
+                            break;
                         }
 
-
-                    }
-                }
-                if (hasCollision && collisionPolyVertice != null) {
-                    float[] nextPrevVertice = new float[4];
-
-                    nextPrevVertice[0] = nearestVertice[0];
-                    nextPrevVertice[1] = nearestVertice[1];
-                    nextPrevVertice[2] = nearestVertice[2];
-                    nextPrevVertice[3] = nearestVertice[3];
-                    //Gdx.app.debug("DEBUG", "collision with vertice [" + nextPrevVertice[0] + "," + nextPrevVertice[1] + " - " + nextPrevVertice[2] + "," + nextPrevVertice[3] + "]");
-
-                    int vertIdx = nearestVerticeOffset;
-                    int nextIter = 2;
-                    while (nextIter > 0) {
-                        int projDir = isProjectedPointOnLineSegment(nextPrevVertice[0], nextPrevVertice[1], nextPrevVertice[2], nextPrevVertice[3], mCurrentPoint.x, mCurrentPoint.y);
-                        if (projDir <= 0) {
-                            if (mLastPoint.x == nextPrevVertice[0] && mLastPoint.y == nextPrevVertice[1]) {
-                                // proj on previous vertices
-                                vertIdx = getPreviousVertice(collisionPolyVertice, vertIdx, nextPrevVertice);
-                                Gdx.app.debug("DEBUG", "projDir=" + projDir + " prev vertice [" + nextPrevVertice[0] + "," + nextPrevVertice[1] + " - " + nextPrevVertice[2] + "," + nextPrevVertice[3] + "]");
-                                nextIter--;
-                            } else {
-                                nextIter = 0;
-                                intersection.set(nextPrevVertice[0], nextPrevVertice[1]);
-                                nextPoint = intersection;
-                            }
-
-                        } else if (projDir >= 1) {
-                            if (mLastPoint.x == nextPrevVertice[2] && mLastPoint.y == nextPrevVertice[3]) {
-                                // proj on next vertices
-                                vertIdx = getNextVertice(collisionPolyVertice, vertIdx, nextPrevVertice);
-                                Gdx.app.debug("DEBUG", "projDir=" + projDir + " next vertice [" + nextPrevVertice[0] + "," + nextPrevVertice[1] + " - " + nextPrevVertice[2] + "," + nextPrevVertice[3] + "]");
-                                nextIter--;
-                            } else {
-                                nextIter = 0;
-                                intersection.set(nextPrevVertice[2], nextPrevVertice[3]);
-                                nextPoint = intersection;
-                            }
-                        } else {
-                            nextPoint = getProjectedPointOnLineFast(nextPrevVertice[0], nextPrevVertice[1], nextPrevVertice[2], nextPrevVertice[3], mCurrentPoint.x, mCurrentPoint.y);
-                            nextIter = 0;
+                        intersection.set(mLastPoint.x, mTouchSpotPoint.y);
+                        Gdx.app.debug("DEBUG", "check using next point =(" + intersection.x + "," + intersection.y + ")");
+                        if (!Intersector.intersectSegmentPolygon(mLastPoint, intersection, poly)) {
+                            nextPoint = intersection;
+                            Gdx.app.debug("DEBUG", "nextPoint found");
+                            break;
                         }
-                    }
-                  /*  if (nextPoint == null)
-                        Gdx.app.debug("DEBUG", "NO NEXT POINT AFTER COLLISION");
 
-                    else
-                        Gdx.app.debug("DEBUG", "next point after collision [" + nextPoint.x + "," + nextPoint.y + "]");
-*/
+                     }
+                     Gdx.app.debug("DEBUG", "intersection not found, continue with next polygon");
+
                 }
+                if(nextPoint==null && tmpNextPoint!=null)
+                    nextPoint=tmpNextPoint;
+
             } else {
-                nextPoint = mCurrentPoint;
+                nextPoint = mTouchSpotPoint;
             }
 
             if (nextPoint != null) {
 
-                float distance = (float) Math.sqrt((nextPoint.x - mLastPoint.x) * (nextPoint.x - mLastPoint.x) + (nextPoint.y - mLastPoint.y) * (nextPoint.y - mLastPoint.y));
-                if (distance > 0.1 && distance < 10) {
-                    path.AddPoint(nextPoint.x, nextPoint.y, 0.1f);
+                if (nextPoint.dst2(mLastPoint) > Path.CHECK_RADIUS) {
+                    path.AddPoint(nextPoint.x, nextPoint.y, 0.2f);
                     mLastPoint.set(nextPoint);
-                    mCurrentPoint.set(mLastPoint.x, mLastPoint.y);
-                   // Gdx.app.debug("DEBUG", "add pointX=" + mLastPoint.x + " pointY=" + mLastPoint.y);
+                    //  mTouchSpotPoint.set(mLastPoint.x, mLastPoint.y);
+                     Gdx.app.debug("DEBUG", "add pointX=" + mLastPoint.x + " pointY=" + mLastPoint.y);
                 }
 
 
@@ -215,11 +147,13 @@ public class ChararcterMoveController extends InputAdapter {
                 path.destroy();
             path = new Path();
             Rectangle bobBound = mBob.getBound();
-            mPosPoly.setPosition(bobBound.getX(), bobBound.getY());
-            mCursorPoint.set(bobBound.getX(), bobBound.getY(), mCursorPoint.z);
-            path.AddPoint(mCursorPoint.x, mCursorPoint.y, 0.01f);
+            Vector2 bobPos =mBob.getPosition();
+//            mCursorPoint.set(.x, mBob.getPosition().y, mCursorPoint.z);
+            path.AddPoint(bobPos.x, bobPos.y, 0.2f);
             mLastPoint.set(mCursorPoint.x, mCursorPoint.y);
-            mCurrentPoint.set(mCursorPoint.x, mCursorPoint.y);
+            mTouchSpotPoint.set(mCursorPoint.x, mCursorPoint.y);
+            mPathSpot.setPosition(mCursorPoint.x, mCursorPoint.y);
+            mTouchSpot.setPosition(mCursorPoint.x, mCursorPoint.y);
             isActive = true;
         }
         return false;
@@ -332,40 +266,32 @@ public class ChararcterMoveController extends InputAdapter {
         return currIdx;
     }
 
-    public boolean overlaps(Polygon polygon, Circle circle, Vector2 displacement) {
+    public boolean overlaps(Polygon polygon, Circle circle) {
         float[] vertices = polygon.getTransformedVertices();
         Vector2 center = new Vector2(circle.x, circle.y);
+        Vector2 displacement = new Vector2();
         float squareRadius = circle.radius * circle.radius;
-        Vector2 minDisplacement = new Vector2(Float.MAX_VALUE, Float.MAX_VALUE);
-        double minDist = minDisplacement.x * minDisplacement.x + minDisplacement.y * minDisplacement.y;
-        double dist;
         boolean ovelaps = false;
-        for (int i = 0; i < vertices.length; i += 2) {
-            if (i == 0) {
-                if (Intersector.intersectSegmentCircleDisplace(new Vector2(vertices[vertices.length - 2], vertices[vertices.length - 1]), new Vector2(vertices[i], vertices[i + 1]), center, squareRadius, displacement) != Float.POSITIVE_INFINITY) {
-                    ovelaps = true;
-                    dist = displacement.x * displacement.x + displacement.y * displacement.y;
-                    if (dist < minDist) {
-                        minDisplacement.set(displacement.x, displacement.y);
-                        minDist = dist;
+
+
+        if(Intersector.isPointInPolygon(vertices, 0, vertices.length, center.x, center.y))
+        {
+            ovelaps = true;
+        }
+        else {
+            for (int i = 0; i < vertices.length; i += 2) {
+                if (i == 0) {
+                    if (Intersector.intersectSegmentCircleDisplace(new Vector2(vertices[vertices.length - 2], vertices[vertices.length - 1]), new Vector2(vertices[i], vertices[i + 1]), center, squareRadius, displacement) != Float.POSITIVE_INFINITY) {
+                        ovelaps = true;
                     }
-                }
-            } else {
-                if (Intersector.intersectSegmentCircleDisplace(new Vector2(vertices[i - 2], vertices[i - 1]), new Vector2(vertices[i], vertices[i + 1]), center, squareRadius, displacement) != Float.POSITIVE_INFINITY) {
-                    ovelaps = true;
-                    dist = displacement.x * displacement.x + displacement.y * displacement.y;
-                    if (dist < minDist) {
-                        minDisplacement.set(displacement.x, displacement.y);
-                        minDist = dist;
+                } else {
+                    if (Intersector.intersectSegmentCircleDisplace(new Vector2(vertices[i - 2], vertices[i - 1]), new Vector2(vertices[i], vertices[i + 1]), center, squareRadius, displacement) != Float.POSITIVE_INFINITY) {
+                        ovelaps = true;
                     }
                 }
             }
         }
-        if (ovelaps) {
-            displacement.set(minDisplacement.x, minDisplacement.y);
-            return true;
-        }
-        return false;
+        return ovelaps;
     }
 
     private String logPoly(Polygon aPoly) {

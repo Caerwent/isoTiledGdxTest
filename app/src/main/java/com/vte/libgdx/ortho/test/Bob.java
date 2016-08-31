@@ -43,7 +43,8 @@ public class Bob extends Entity implements ICollisionHandler {
     public void SetPath(Path p) {
         path = p;
         path.Reset();
-        setPosition(path.GetCurrentPoint());
+        VisualComponent visual = this.getComponent(VisualComponent.class);
+        setPosition(path.GetCurrentPoint().x,path.GetCurrentPoint().y);
         setVelocity(path.GetVelocity());
     }
 
@@ -53,18 +54,22 @@ public class Bob extends Entity implements ICollisionHandler {
         if (path != null) {
             if (path.hasNextPoint()) {
                 TransformComponent transform = this.getComponent(TransformComponent.class);
+                VisualComponent visual = this.getComponent(VisualComponent.class);
+
                 Vector2 pos2D = new Vector2(transform.position.x, transform.position.y);
-                if (path.UpdatePath(pos2D, dt)) {
-                    setVelocity(path.GetVelocity());
+                path.UpdatePath(pos2D, dt);
+                setVelocity(path.GetVelocity());
 
-
-                }
             } else {
                 path.destroy();
                 path = null;
                 setVelocity(0, 0);
             }
 
+        }
+        else
+        {
+            setVelocity(0, 0);
         }
 
 
@@ -93,11 +98,11 @@ public class Bob extends Entity implements ICollisionHandler {
         float halfWidth = width / 2f;
         float halfHeight = height / 2f;
         //Allow for Offset
-        float originX = /*halfWidth +*/ transform.originOffset.x;
-        float originY = /*halfHeight +*/ transform.originOffset.y;
+        float originX = 0;//transform.originOffset.x;
+        float originY = 0;//transform.originOffset.y;
 
         batch.draw(visual.region,
-                transform.position.x /*- halfWidth*/, transform.position.y /*- halfHeight*/,
+                transform.position.x +transform.originOffset.x, transform.position.y +transform.originOffset.y,
                 originX, originY,
                 width, height,
                 transform.scale, transform.scale,
@@ -116,6 +121,12 @@ public class Bob extends Entity implements ICollisionHandler {
         transformComponent.position.x = pos.x;
         transformComponent.position.y = pos.y;
 
+    }
+
+    public Vector2 getPosition()
+    {
+        TransformComponent transformComponent = this.getComponent(TransformComponent.class);
+        return new Vector2(transformComponent.position.x, transformComponent.position.y);
     }
 
     public void setVelocity(float vx, float vy) {
@@ -144,16 +155,16 @@ public class Bob extends Entity implements ICollisionHandler {
         mBounds.y = tfm.position.y + tfm.originOffset.y;
         mBounds.setSize(walkSheet.getWidth() / 3 * tfm.scale, walkSheet.getHeight() / 4 * tfm.scale);
 
-        mVertices[0] = 0;
-        mVertices[1] = 0;
-        mVertices[2] = mBounds.getWidth();
-        mVertices[3] = 0;
-        mVertices[4] = mBounds.getWidth();
-        mVertices[5] = mBounds.getHeight();
-        mVertices[6] = 0;
-        mVertices[7] = mBounds.getHeight();
+        mVertices[0] = tfm.originOffset.x;
+        mVertices[1] = tfm.originOffset.y;
+        mVertices[2] = mBounds.getWidth()+tfm.originOffset.x;
+        mVertices[3] = tfm.originOffset.y;
+        mVertices[4] = mBounds.getWidth()+tfm.originOffset.x;
+        mVertices[5] = mBounds.getHeight()+tfm.originOffset.y;
+        mVertices[6] = tfm.originOffset.x;
+        mVertices[7] = mBounds.getHeight()+tfm.originOffset.y;
         mPolygonBound.setVertices(mVertices);
-        mPolygonBound.setPosition(mBounds.getX(), mBounds.getY());
+        mPolygonBound.setPosition(tfm.position.x, tfm.position.y);
 
         return mPolygonBound;
     }
@@ -181,7 +192,7 @@ public class Bob extends Entity implements ICollisionHandler {
 
         TransformComponent transform = this.getComponent(TransformComponent.class);
         transform.scale = MyGame.SCALE_FACTOR * BOB_RESIZE_FACTOR;
-
+transform.setOriginOffset(-walkSheet.getWidth() / 3 * transform.scale/2,- walkSheet.getHeight() / 4 * transform.scale/2);
         this.add(new VisualComponent(currentFrame));
 
         setPosition(0, 0);
@@ -195,6 +206,11 @@ public class Bob extends Entity implements ICollisionHandler {
     public void onCollisionStart(CollisionComponent aEntity) {
         if (!mCollisions.contains(aEntity, false)) {
             mCollisions.add(aEntity);
+            if(path!=null) {
+                path.destroy();
+                path = null;
+                setVelocity(0, 0);
+            }
         }
     }
 
