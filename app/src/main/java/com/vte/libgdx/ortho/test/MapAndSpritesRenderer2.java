@@ -238,6 +238,8 @@ public class MapAndSpritesRenderer2 extends OrthogonalTiledMapRenderer {
                                 for (Bob entity : sprites) {
 
                                     for (CollisionComponent collision : entity.getCollisions()) {
+                                        if(collision.mType!=CollisionComponent.Type.ZINDEX)
+                                            continue;
                                         Polygon polygon = new Polygon(new float[]{0, 0, layerTileWidth, 0, layerTileWidth, layerTileHeight, 0, layerTileHeight});
                                         polygon.setPosition(x1, y1);
                                         if (Intersector.overlapConvexPolygons(collision.mBound, polygon) && !entity.rended) {
@@ -280,7 +282,7 @@ public class MapAndSpritesRenderer2 extends OrthogonalTiledMapRenderer {
 
         endRender();
 
-        renderShapes();
+     //   renderShapes();
 
     }
 

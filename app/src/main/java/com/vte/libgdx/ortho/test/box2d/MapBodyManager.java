@@ -54,6 +54,7 @@ public class MapBodyManager implements ICollisionHandler {
     }
 
     public Array<Polygon> buildShapes(Map map, String layerName) {
+        CollisionComponent.Type type = "zindex".compareTo(layerName)==0 ? CollisionComponent.Type.ZINDEX : CollisionComponent.Type.OBSTACLE;
         MapObjects objects = map.getLayers().get(layerName).getObjects();
 
         Array<Polygon> bodies = new Array<Polygon>();
@@ -88,7 +89,7 @@ public class MapBodyManager implements ICollisionHandler {
             if (polygon != null) {
                 bodies.add(polygon);
                 Entity entity = new Entity();
-                entity.add(new CollisionComponent(polygon, this));
+                entity.add(new CollisionComponent(type, polygon, this));
                 EntityEngine.getInstance().addEntity(entity);
             }
 

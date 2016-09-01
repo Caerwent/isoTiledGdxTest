@@ -9,15 +9,24 @@ import com.vte.libgdx.ortho.test.entity.ICollisionHandler;
  */
 
 public class CollisionComponent implements Component {
+    static public enum Type {
+        OBSTACLE,
+        ZINDEX,
+        ITEM,
+        BOB
+    };
+
     public Polygon mBound;
     public ICollisionHandler mHandler;
+    public Type mType;
 
 
     public CollisionComponent() {
     }
 
-    public CollisionComponent(Polygon boundingPolygon, ICollisionHandler aHandler) {
+    public CollisionComponent(Type aType, Polygon boundingPolygon, ICollisionHandler aHandler) {
         mBound = boundingPolygon;
         mHandler = aHandler;
+        mType=aType;
     }
 }

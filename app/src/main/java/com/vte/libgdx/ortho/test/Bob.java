@@ -1,6 +1,7 @@
 package com.vte.libgdx.ortho.test;
 
 import com.badlogic.ashley.core.Entity;
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Batch;
@@ -18,15 +19,21 @@ import com.vte.libgdx.ortho.test.entity.components.TransformComponent;
 import com.vte.libgdx.ortho.test.entity.components.VelocityComponent;
 import com.vte.libgdx.ortho.test.entity.components.VisualComponent;
 
+
 /**
  * Created by vincent on 01/07/2016.
  */
 
 public class Bob extends Entity implements ICollisionHandler {
     public static final float BOB_RESIZE_FACTOR = 1F;
-    Animation walkAnimation; // animation instance
+    Animation[] walkAnimation; // animation instance
     Texture walkSheet; // sprite sheet
     TextureRegion currentFrame; // current animation frame
+    static final int ANIM_IDX_REAR = 0;
+    static final int ANIM_IDX_RIGHT = 1;
+    static final int ANIM_IDX_FACE = 2;
+    static final int ANIM_IDX_LEFT = 3;
+    private int mCurrentAnimationIdx= 0;
     float stateTime; // elapsed time
     private static float ANIMATION_TIME_PERIOD = 0.08f;// this specifies the time between two consecutive frames of animation
     static Texture bobSpriteSheet; // texture sprite sheet for the bob
@@ -46,6 +53,7 @@ public class Bob extends Entity implements ICollisionHandler {
         VisualComponent visual = this.getComponent(VisualComponent.class);
         setPosition(path.GetCurrentPoint().x,path.GetCurrentPoint().y);
         setVelocity(path.GetVelocity());
+        stateTime=0;
     }
 
 
@@ -54,25 +62,28 @@ public class Bob extends Entity implements ICollisionHandler {
         if (path != null) {
             if (path.hasNextPoint()) {
                 TransformComponent transform = this.getComponent(TransformComponent.class);
-                VisualComponent visual = this.getComponent(VisualComponent.class);
 
                 Vector2 pos2D = new Vector2(transform.position.x, transform.position.y);
                 path.UpdatePath(pos2D, dt);
                 setVelocity(path.GetVelocity());
+                stateTime+=dt;
 
             } else {
                 path.destroy();
                 path = null;
                 setVelocity(0, 0);
+                stateTime=0;
             }
 
         }
         else
         {
             setVelocity(0, 0);
+            stateTime=0;
         }
 
-
+        CollisionComponent collision = this.getComponent(CollisionComponent.class);
+        collision.mBound = getPolygonBound();
     }
 
     public Bob() {
@@ -89,10 +100,44 @@ public class Bob extends Entity implements ICollisionHandler {
     public void render(Batch batch) {
         TransformComponent transform = this.getComponent(TransformComponent.class);
         VisualComponent visual = this.getComponent(VisualComponent.class);
-        //    bobSprite.setPosition(position.x, position.y);
-        //    bobSprite.setRegion(currentFrame); // set the bob sprite's texture to the current frame
-        //    bobSprite.draw(batch);
+        VelocityComponent velocity = this.getComponent(VelocityComponent.class);
 
+        if(velocity.y==0 && velocity.x==0)
+        {
+            mCurrentAnimationIdx=ANIM_IDX_FACE;
+            stateTime=0;
+        }
+        else {
+            if (velocity.y == 0) {
+                mCurrentAnimationIdx = velocity.x < 0 ? ANIM_IDX_LEFT : ANIM_IDX_RIGHT;
+            } else
+            {
+                double angle = Math.atan2(velocity.y, velocity.x);
+                double PI4 = Math.PI/4;
+                if (angle < 0)
+                {
+                    angle += Math.PI * 2;
+                }
+
+                if(angle>7*PI4 || angle<=PI4)
+                {
+                    mCurrentAnimationIdx=ANIM_IDX_RIGHT;
+                }else if(angle>PI4 && angle<=3*PI4)
+                {
+                    mCurrentAnimationIdx=ANIM_IDX_REAR;
+                }
+                else if(angle>3*PI4 && angle<=5*PI4)
+                {
+                    mCurrentAnimationIdx=ANIM_IDX_LEFT;
+                }
+                else if(angle>5*PI4 && angle<=7*PI4)
+                {
+                    mCurrentAnimationIdx=ANIM_IDX_FACE;
+                }
+            }
+        }
+        currentFrame = walkAnimation[mCurrentAnimationIdx].getKeyFrame(stateTime, true);
+        visual.region=currentFrame;
         float width = visual.region.getRegionWidth();
         float height = visual.region.getRegionHeight();
         float halfWidth = width / 2f;
@@ -177,18 +222,23 @@ public class Bob extends Entity implements ICollisionHandler {
         TextureRegion[][] tmp = TextureRegion.split(walkSheet,
                 walkSheet.getWidth() / 3, walkSheet.getHeight() / 4);
 // convert 2D array to 1D
-        Array<TextureRegion> walkFrames = new Array();
+
+        walkAnimation = new Animation[4];
         for (int i = 0; i < tmp.length; i++) {
-            for (int j = 0; j < tmp[0].length; j++) {
+            Array<TextureRegion> walkFrames = new Array();
+           for (int j = 0; j < tmp[0].length; j++) {
                 walkFrames.add(tmp[i][j]);
             }
+        walkAnimation[i] = new Animation(ANIMATION_TIME_PERIOD, walkFrames);
+
+        // set the animation to loop
+            walkAnimation[i].setPlayMode(Animation.PlayMode.LOOP);
         }
 // create a new animation sequence with the walk frames and time periodof specified seconds
-        walkAnimation = new Animation(ANIMATION_TIME_PERIOD, walkFrames);
-        // set the animation to loop
-        walkAnimation.setPlayMode(Animation.PlayMode.LOOP);
+//
+//
 // get initial frame
-        currentFrame = walkAnimation.getKeyFrame(stateTime, true);
+        currentFrame = walkAnimation[ANIM_IDX_FACE].getKeyFrame(stateTime, true);
 
         TransformComponent transform = this.getComponent(TransformComponent.class);
         transform.scale = MyGame.SCALE_FACTOR * BOB_RESIZE_FACTOR;
@@ -197,7 +247,7 @@ transform.setOriginOffset(-walkSheet.getWidth() / 3 * transform.scale/2,- walkSh
 
         setPosition(0, 0);
 
-        this.add(new CollisionComponent(getPolygonBound(), this));
+        this.add(new CollisionComponent(CollisionComponent.Type.BOB, getPolygonBound(), this));
 
 
     }
@@ -205,8 +255,13 @@ transform.setOriginOffset(-walkSheet.getWidth() / 3 * transform.scale/2,- walkSh
     @Override
     public void onCollisionStart(CollisionComponent aEntity) {
         if (!mCollisions.contains(aEntity, false)) {
+
+            if(aEntity.mBound.getBoundingRectangle().getY() > mBounds.getY())
+                return;
+
+            Gdx.app.debug("DEBUG", "collision start");
             mCollisions.add(aEntity);
-            if(path!=null) {
+            if(aEntity.mType==CollisionComponent.Type.OBSTACLE && path!=null) {
                 path.destroy();
                 path = null;
                 setVelocity(0, 0);
@@ -218,6 +273,7 @@ transform.setOriginOffset(-walkSheet.getWidth() / 3 * transform.scale/2,- walkSh
     public void onCollisionStop(CollisionComponent aEntity) {
         if (mCollisions.contains(aEntity, false)) {
             mCollisions.removeValue(aEntity, false);
+            Gdx.app.debug("DEBUG", "collision stop");
         }
     }
 
