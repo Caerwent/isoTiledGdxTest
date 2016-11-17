@@ -114,6 +114,10 @@ public class Path {
          float dx = nextPosition.x - aCurrentPosition.x;
         float dy = nextPosition.y - aCurrentPosition.y;
         float time = NEXT_POINT_DELAY-lastTime;
+       /* // constant speed
+        float speed=1.5f;
+float c = (dx*dx+dy*dy )/(speed*speed);
+        velocity.set(dx / c, dy / c);*/
         velocity.set(dx / time, dy / time);
     }
 
