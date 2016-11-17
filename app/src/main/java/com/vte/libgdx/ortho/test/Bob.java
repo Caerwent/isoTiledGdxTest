@@ -36,7 +36,7 @@ public class Bob extends Entity implements ICollisionHandler {
     private int mCurrentAnimationIdx= 0;
     float stateTime; // elapsed time
     private static float ANIMATION_TIME_PERIOD = 0.08f;// this specifies the time between two consecutive frames of animation
-    static Texture bobSpriteSheet; // texture sprite sheet for the bob
+    public static Texture bobSpriteSheet; // texture sprite sheet for the bob
 
     public boolean rended = false;
 

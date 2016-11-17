@@ -22,7 +22,8 @@
         <activity
             android:name=".AndroidLauncher"
             android:configChanges="keyboard|keyboardHidden|orientation"
-            android:label="@string/title_activity" >
+            android:label="@string/title_activity"
+            android:screenOrientation="landscape">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
