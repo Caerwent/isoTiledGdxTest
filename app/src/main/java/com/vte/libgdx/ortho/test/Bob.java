@@ -6,11 +6,10 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.math.Polygon;
-import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 import com.vte.libgdx.ortho.test.box2d.Path;
+import com.vte.libgdx.ortho.test.box2d.PolygonShape;
 import com.vte.libgdx.ortho.test.entity.EntityEngine;
 import com.vte.libgdx.ortho.test.entity.ICollisionHandler;
 import com.vte.libgdx.ortho.test.entity.components.BobComponent;
@@ -41,8 +40,7 @@ public class Bob extends Entity implements ICollisionHandler {
     public boolean rended = false;
 
     private Array<CollisionComponent> mCollisions = new Array<CollisionComponent>();
-    private Rectangle mBounds = new Rectangle();
-    private Polygon mPolygonBound = new Polygon();
+    private PolygonShape mPolygonShape = new PolygonShape();
     private float[] mVertices = new float[8];
 
     Path path;
@@ -83,7 +81,7 @@ public class Bob extends Entity implements ICollisionHandler {
         }
 
         CollisionComponent collision = this.getComponent(CollisionComponent.class);
-        collision.mBound = getPolygonBound();
+        collision.mShape = getPolygonShape();
     }
 
     public Bob() {
@@ -186,32 +184,27 @@ public class Bob extends Entity implements ICollisionHandler {
         velocity.y = v.y;
     }
 
-    public Rectangle getBound() {
-        TransformComponent tfm = this.getComponent(TransformComponent.class);
-        mBounds.x = tfm.position.x + tfm.originOffset.x;
-        mBounds.y = tfm.position.y + tfm.originOffset.y;
-        mBounds.setSize(walkSheet.getWidth() / 3 * tfm.scale, walkSheet.getHeight() / 4 * tfm.scale);
-        return mBounds;
-    }
 
-    public Polygon getPolygonBound() {
+    public PolygonShape getPolygonShape() {
         TransformComponent tfm = this.getComponent(TransformComponent.class);
-        mBounds.x = tfm.position.x + tfm.originOffset.x;
-        mBounds.y = tfm.position.y + tfm.originOffset.y;
-        mBounds.setSize(walkSheet.getWidth() / 3 * tfm.scale, walkSheet.getHeight() / 4 * tfm.scale);
+        mPolygonShape.setX(tfm.position.x + tfm.originOffset.x);
+        mPolygonShape.setY(tfm.position.y + tfm.originOffset.y);
+        float width = walkSheet.getWidth() / 3 * tfm.scale;
+        float height = walkSheet.getHeight() / 4 * tfm.scale;
+
 
         mVertices[0] = tfm.originOffset.x;
         mVertices[1] = tfm.originOffset.y;
-        mVertices[2] = mBounds.getWidth()+tfm.originOffset.x;
+        mVertices[2] = width+tfm.originOffset.x;
         mVertices[3] = tfm.originOffset.y;
-        mVertices[4] = mBounds.getWidth()+tfm.originOffset.x;
-        mVertices[5] = mBounds.getHeight()+tfm.originOffset.y;
+        mVertices[4] = width+tfm.originOffset.x;
+        mVertices[5] = height+tfm.originOffset.y;
         mVertices[6] = tfm.originOffset.x;
-        mVertices[7] = mBounds.getHeight()+tfm.originOffset.y;
-        mPolygonBound.setVertices(mVertices);
-        mPolygonBound.setPosition(tfm.position.x, tfm.position.y);
+        mVertices[7] = height+tfm.originOffset.y;
+        mPolygonShape.getShape().setVertices(mVertices);
+        mPolygonShape.getShape().setPosition(tfm.position.x, tfm.position.y);
 
-        return mPolygonBound;
+        return mPolygonShape;
     }
 
     public void initialize(float width, float height, Texture walkSheet) {
@@ -247,7 +240,7 @@ transform.setOriginOffset(-walkSheet.getWidth() / 3 * transform.scale/2,- walkSh
 
         setPosition(0, 0);
 
-        this.add(new CollisionComponent(CollisionComponent.Type.BOB, getPolygonBound(), this));
+        this.add(new CollisionComponent(CollisionComponent.Type.CHARACTER, getPolygonShape(), "bob",this));
 
 
     }
@@ -256,7 +249,7 @@ transform.setOriginOffset(-walkSheet.getWidth() / 3 * transform.scale/2,- walkSh
     public void onCollisionStart(CollisionComponent aEntity) {
         if (!mCollisions.contains(aEntity, false)) {
 
-            if(aEntity.mBound.getBoundingRectangle().getY() > mBounds.getY())
+            if(aEntity.mShape.getBounds().getY() > mPolygonShape.getBounds().getY())
                 return;
 
             Gdx.app.debug("DEBUG", "collision start");

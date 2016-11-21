@@ -4,7 +4,7 @@ import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.Family;
 import com.badlogic.ashley.systems.IteratingSystem;
 import com.badlogic.ashley.utils.ImmutableArray;
-import com.badlogic.gdx.math.Intersector;
+import com.vte.libgdx.ortho.test.box2d.ShapeUtils;
 import com.vte.libgdx.ortho.test.entity.components.CollisionComponent;
 
 /**
@@ -30,7 +30,12 @@ public class CollisionSystem extends IteratingSystem {
                 continue;
 
             otherCollisionComponent = otherEntity.getComponent(CollisionComponent.class);
-            if (Intersector.overlapConvexPolygons(collisionComponent.mBound, otherCollisionComponent.mBound, null)) {
+            if (otherCollisionComponent.mType != CollisionComponent.Type.CHARACTER &&
+                    collisionComponent.mType != CollisionComponent.Type.CHARACTER) {
+                continue;
+            }
+
+            if (ShapeUtils.overlaps(collisionComponent.mShape, otherCollisionComponent.mShape)) {
                 if (!collisionComponent.mHandler.getCollisions().contains(otherCollisionComponent, false)) {
                     collisionComponent.mHandler.onCollisionStart(otherCollisionComponent);
                 }

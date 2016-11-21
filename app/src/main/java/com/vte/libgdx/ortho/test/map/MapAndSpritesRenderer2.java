@@ -11,11 +11,15 @@ import com.badlogic.gdx.maps.tiled.TiledMapImageLayer;
 import com.badlogic.gdx.maps.tiled.TiledMapTile;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
-import com.badlogic.gdx.math.Intersector;
 import com.badlogic.gdx.math.Polygon;
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.utils.Array;
 import com.vte.libgdx.ortho.test.Bob;
 import com.vte.libgdx.ortho.test.box2d.MapBodyManager;
+import com.vte.libgdx.ortho.test.box2d.PolygonShape;
+import com.vte.libgdx.ortho.test.box2d.RectangleShape;
+import com.vte.libgdx.ortho.test.box2d.Shape;
+import com.vte.libgdx.ortho.test.box2d.ShapeUtils;
 import com.vte.libgdx.ortho.test.entity.components.CollisionComponent;
 
 import java.util.ArrayList;
@@ -236,18 +240,19 @@ public class MapAndSpritesRenderer2 extends OrthogonalTiledMapRenderer {
                                     }
                                 }
                                 boolean tilePainted = false;
-                                for (Bob entity : sprites) {
+                                for (Bob character : sprites) {
 
-                                    for (CollisionComponent collision : entity.getCollisions()) {
+                                    for (CollisionComponent collision : character.getCollisions()) {
                                         if(collision.mType!=CollisionComponent.Type.ZINDEX)
                                             continue;
-                                        Polygon polygon = new Polygon(new float[]{0, 0, layerTileWidth, 0, layerTileWidth, layerTileHeight, 0, layerTileHeight});
-                                        polygon.setPosition(x1, y1);
-                                        if (Intersector.overlapConvexPolygons(collision.mBound, polygon) && !entity.rended) {
+                                        RectangleShape tileShape = new RectangleShape();
+                                        tileShape.setShape(new Rectangle(x1,y1,layerTileWidth,layerTileHeight));
 
-                                            if (collision.mBound.getBoundingRectangle().y < entity.getPolygonBound().getBoundingRectangle().y) {
-                                                entity.render(getBatch());
-                                                entity.rended = true;
+                                        if (ShapeUtils.overlaps(collision.mShape, tileShape) && !character.rended) {
+
+                                            if (collision.mShape.getBounds().getY() < character.getPolygonShape().getBounds().getY()) {
+                                                character.render(getBatch());
+                                                character.rended = true;
 
                                                 batch.draw(region.getTexture(), vertices, 0, NUM_VERTICES);
                                                 tilePainted = true;
@@ -283,7 +288,7 @@ public class MapAndSpritesRenderer2 extends OrthogonalTiledMapRenderer {
 
         endRender();
 
-     //   renderShapes();
+      //  renderShapes();
 
     }
 
@@ -302,15 +307,17 @@ public class MapAndSpritesRenderer2 extends OrthogonalTiledMapRenderer {
     }
 
     private void renderShapes() {
-        Array<Polygon> bodies = MapBodyManager.getInstance().getBodiesCollision();
+        Array<Shape> bodies = MapBodyManager.getInstance().getBodiesZindex();
         shapeRenderer.setProjectionMatrix(getBatch().getProjectionMatrix());
         shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
 
-        for (Polygon body : bodies) {
-            shapeRenderer.polygon(body.getTransformedVertices());
+        for (Shape body : bodies) {
+            if(body.getType()== Shape.Type.POLYGON) {
+                shapeRenderer.polygon(((PolygonShape) body).getShape().getTransformedVertices());
+            }
         }
         for (Bob entity : sprites) {
-            shapeRenderer.polygon(entity.getPolygonBound().getTransformedVertices());
+            shapeRenderer.polygon(entity.getPolygonShape().getShape().getTransformedVertices());
         }
         shapeRenderer.end();
     }

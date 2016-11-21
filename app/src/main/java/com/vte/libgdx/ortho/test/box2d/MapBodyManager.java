@@ -33,8 +33,8 @@ public class MapBodyManager implements ICollisionHandler {
         return s_instance;
     }
 
-    private Array<Polygon> mBodiesZindex = new Array<Polygon>();
-    private Array<Polygon> mBodiesCollision = new Array<Polygon>();
+    private Array<Shape> mBodiesZindex = new Array<Shape>();
+    private Array<Shape> mBodiesCollision = new Array<Shape>();
 
     private Array<CollisionComponent> mCollisions = new Array<CollisionComponent>();
 
@@ -45,19 +45,19 @@ public class MapBodyManager implements ICollisionHandler {
 
     }
 
-    public Array<Polygon> getBodiesZindex() {
+    public Array<Shape> getBodiesZindex() {
         return mBodiesZindex;
     }
 
-    public Array<Polygon> getBodiesCollision() {
+    public Array<Shape> getBodiesCollision() {
         return mBodiesCollision;
     }
 
-    public Array<Polygon> buildShapes(Map map, String layerName) {
+    public Array<Shape> buildShapes(Map map, String layerName) {
         CollisionComponent.Type type = "zindex".compareTo(layerName)==0 ? CollisionComponent.Type.ZINDEX : CollisionComponent.Type.OBSTACLE;
         MapObjects objects = map.getLayers().get(layerName).getObjects();
 
-        Array<Polygon> bodies = new Array<Polygon>();
+        Array<Shape> bodies = new Array<Shape>();
 
         for (MapObject object : objects) {
 
@@ -87,9 +87,12 @@ public class MapBodyManager implements ICollisionHandler {
             }
 
             if (polygon != null) {
-                bodies.add(polygon);
+
                 Entity entity = new Entity();
-                entity.add(new CollisionComponent(type, polygon, this));
+                PolygonShape shape = new PolygonShape();
+                shape.setShape(polygon);
+                bodies.add(shape);
+                entity.add(new CollisionComponent(type, shape, object.getName(), this));
                 EntityEngine.getInstance().addEntity(entity);
             }
 
