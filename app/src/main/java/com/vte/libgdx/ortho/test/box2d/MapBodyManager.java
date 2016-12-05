@@ -14,6 +14,8 @@ import com.vte.libgdx.ortho.test.MyGame;
 import com.vte.libgdx.ortho.test.entity.EntityEngine;
 import com.vte.libgdx.ortho.test.entity.ICollisionHandler;
 import com.vte.libgdx.ortho.test.entity.components.CollisionComponent;
+import com.vte.libgdx.ortho.test.map.MapInteraction;
+import com.vte.libgdx.ortho.test.map.MapInteractionItem;
 
 /**
  * Created by vincent on 07/07/2016.
@@ -36,12 +38,15 @@ public class MapBodyManager implements ICollisionHandler {
     private Array<Shape> mBodiesZindex = new Array<Shape>();
     private Array<Shape> mBodiesCollision = new Array<Shape>();
 
+
     private Array<CollisionComponent> mCollisions = new Array<CollisionComponent>();
+    private Array<MapInteraction> mInteractions = new Array<MapInteraction>();
 
 
     public MapBodyManager(Map map) {
         mBodiesZindex = buildShapes(map, "zindex");
         mBodiesCollision = buildShapes(map, "collision");
+        mInteractions = buildInteractions(map, "interaction");
 
     }
 
@@ -92,14 +97,50 @@ public class MapBodyManager implements ICollisionHandler {
                 PolygonShape shape = new PolygonShape();
                 shape.setShape(polygon);
                 bodies.add(shape);
-                entity.add(new CollisionComponent(type, shape, object.getName(), this));
+                entity.add(new CollisionComponent(type, shape, object.getName(), this, this));
                 EntityEngine.getInstance().addEntity(entity);
             }
 
         }
         return bodies;
     }
+    public Array<MapInteraction> getInteractions() {
+        return mInteractions;
+    }
 
+
+    public Array<MapInteraction> buildInteractions(Map map, String layerName) {
+        MapObjects objects = map.getLayers().get(layerName).getObjects();
+
+        Array<MapInteraction> interactions = new Array<MapInteraction>();
+
+        for (MapObject object : objects) {
+
+            if (object instanceof TextureMapObject) {
+                TextureMapObject textureObject = (TextureMapObject) object;
+                float x = (textureObject.getX()+textureObject.getTextureRegion().getRegionWidth()/2)*MyGame.SCALE_FACTOR;
+                float y = (textureObject.getY()+textureObject.getTextureRegion().getRegionHeight()/2)*MyGame.SCALE_FACTOR;
+                String type = textureObject.getProperties().get("type",String.class);
+                if(type==null)
+                {
+                    continue;
+                }
+                if(type.compareTo(MapInteraction.Type.START.name())==0)
+                {
+                    MapInteraction control = new MapInteraction(x, y, MapInteraction.Type.START);
+                    interactions.add(control);
+                }
+                else if(type.compareTo(MapInteraction.Type.ITEM.name())==0)
+                {
+                    MapInteractionItem item = new MapInteractionItem(x, y, textureObject.getName());
+                    interactions.add(item);
+                }
+
+            }
+
+        }
+        return interactions;
+    }
     @Override
     public void onCollisionStart(CollisionComponent aEntity) {
 

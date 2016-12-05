@@ -1,28 +1,30 @@
 package com.vte.libgdx.ortho.test.map;
 
+import com.vte.libgdx.ortho.test.box2d.Shape;
+
 /**
  * Created by gwalarn on 13/11/16.
  */
 
-public class MapControl {
+public class MapInteraction {
     public enum Type {
-        START
-
+        START,
+        ITEM,
+        CHESS
     }
 
     protected Type mType;
     protected float mX, mY;
 
-    public MapControl(float x, float y, Type aType) {
-        mX = x;
-        mY = y;
+    public MapInteraction(float aX, float aY, Type aType) {
+        mX = aX;
+        mY = aY;
         mType = aType;
     }
 
     public float getX() {
         return mX;
     }
-
     public float getY() {
         return mY;
     }

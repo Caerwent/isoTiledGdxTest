@@ -22,15 +22,17 @@ public class CollisionComponent implements Component {
     public ICollisionHandler mHandler;
     public Type mType;
     public String mName;
+    public Object mData;
 
 
     public CollisionComponent() {
     }
 
-    public CollisionComponent(Type aType, Shape shape, String aName, ICollisionHandler aHandler) {
+    public CollisionComponent(Type aType, Shape shape, String aName, Object aData, ICollisionHandler aHandler) {
         mShape = shape;
         mHandler = aHandler;
         mType=aType;
         mName=aName;
+        mData = aData;
     }
 }

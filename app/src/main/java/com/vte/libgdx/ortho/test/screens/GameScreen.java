@@ -23,9 +23,7 @@ import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.TimeUtils;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
-import com.badlogic.gdx.utils.viewport.FitViewport;
-import com.badlogic.gdx.utils.viewport.StretchViewport;
-import com.badlogic.gdx.utils.viewport.Viewport;
+import com.vte.libgdx.ortho.test.AssetsUtility;
 import com.vte.libgdx.ortho.test.Bob;
 import com.vte.libgdx.ortho.test.ChararcterMoveController;
 import com.vte.libgdx.ortho.test.MyGame;
@@ -40,8 +38,7 @@ import com.vte.libgdx.ortho.test.entity.systems.PathRenderSystem;
 import com.vte.libgdx.ortho.test.gui.TestActor;
 import com.vte.libgdx.ortho.test.gui.UIStage;
 import com.vte.libgdx.ortho.test.map.MapAndSpritesRenderer2;
-import com.vte.libgdx.ortho.test.map.MapControl;
-import com.vte.libgdx.ortho.test.map.MapObjectsManager;
+import com.vte.libgdx.ortho.test.map.MapInteraction;
 
 import static com.vte.libgdx.ortho.test.Bob.bobSpriteSheet;
 import static com.vte.libgdx.ortho.test.Settings.TARGET_HEIGHT;
@@ -52,6 +49,8 @@ import static com.vte.libgdx.ortho.test.Settings.TARGET_WIDTH;
  */
 
 public class GameScreen implements Screen, InputProcessor {
+
+    public final static String TAG = GameScreen.class.getSimpleName();
     public Rectangle viewport;
     public int orientation;
 
@@ -107,14 +106,21 @@ public class GameScreen implements Screen, InputProcessor {
         currentTime = TimeUtils.millis() / 1000.0;
 
         assetManager = new AssetManager();
-        assetManager.setLoader(TiledMap.class, new TmxMapLoader(new InternalFileHandleResolver()));
+       /* assetManager.setLoader(TiledMap.class, new TmxMapLoader(new InternalFileHandleResolver()));
         assetManager.load("data/maps/ortho.tmx", TiledMap.class);
         assetManager.finishLoading();
-        map = assetManager.get("data/maps/ortho.tmx");
+        map = assetManager.get("data/maps/ortho.tmx");*/
+
+        AssetsUtility.loadMapAsset("data/maps/ortho.tmx");
+        if( AssetsUtility.isAssetLoaded("data/maps/ortho.tmx") ) {
+            map = AssetsUtility.getMapAsset("data/maps/ortho.tmx");
+        }else{
+            Gdx.app.debug(TAG, "Map not loaded");
+            return;
+        }
         renderer = new MapAndSpritesRenderer2(map, MyGame.SCALE_FACTOR);
 
         MapBodyManager.createInstance(map);
-        MapObjectsManager.createInstance(map);
 // instantiate the bob
         bob = new Bob();
 // load the bob texture with image from file
@@ -125,9 +131,9 @@ public class GameScreen implements Screen, InputProcessor {
         renderer.addSprite(bob);
 
         bobController = new ChararcterMoveController(camera, bob);
-        Array<MapControl> mapControls = MapObjectsManager.getInstance().getControls();
-        for (MapControl control : mapControls) {
-            if (control.getType() == MapControl.Type.START) {
+        Array<MapInteraction> mapControls = MapBodyManager.getInstance().getInteractions();
+        for (MapInteraction control : mapControls) {
+            if (control.getType() == MapInteraction.Type.START) {
                 bob.setPosition(control.getX(), control.getY());
                 break;
             }

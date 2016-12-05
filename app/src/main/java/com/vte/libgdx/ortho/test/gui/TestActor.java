@@ -27,7 +27,7 @@ public class TestActor extends Group {
     public float dur;
 
     protected String atlasPath() {
-        return "data/tex.atlas";
+        return "data/skins/tex.atlas";
     }
 
 

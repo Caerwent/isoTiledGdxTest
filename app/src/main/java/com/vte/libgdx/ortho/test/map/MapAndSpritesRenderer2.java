@@ -1,5 +1,6 @@
 package com.vte.libgdx.ortho.test.map;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.Batch;
@@ -98,6 +99,14 @@ public class MapAndSpritesRenderer2 extends OrthogonalTiledMapRenderer {
     public void render() {
         for (Bob entity : sprites) {
             entity.rended = false;
+        }
+        for(MapInteraction it : MapBodyManager.getInstance().getInteractions())
+        {
+            if(it.getType()== MapInteraction.Type.ITEM)
+            {
+                ((MapInteractionItem)it).mIsRended = false;
+
+            }
         }
         beginRender();
 
@@ -240,20 +249,31 @@ public class MapAndSpritesRenderer2 extends OrthogonalTiledMapRenderer {
                                     }
                                 }
                                 boolean tilePainted = false;
+                                RectangleShape tileShape = new RectangleShape();
+                                tileShape.setShape(new Rectangle(x1,y1,layerTileWidth,layerTileHeight));
+
                                 for (Bob character : sprites) {
 
                                     for (CollisionComponent collision : character.getCollisions()) {
                                         if(collision.mType!=CollisionComponent.Type.ZINDEX)
                                             continue;
-                                        RectangleShape tileShape = new RectangleShape();
-                                        tileShape.setShape(new Rectangle(x1,y1,layerTileWidth,layerTileHeight));
 
                                         if (ShapeUtils.overlaps(collision.mShape, tileShape) && !character.rended) {
 
                                             if (collision.mShape.getBounds().getY() < character.getPolygonShape().getBounds().getY()) {
                                                 character.render(getBatch());
                                                 character.rended = true;
-
+                                                for(MapInteraction it : MapBodyManager.getInstance().getInteractions())
+                                                {
+                                                    if(it.getType()== MapInteraction.Type.ITEM)
+                                                    {
+                                                        if(it.getX()>=x1 && it.getX()<x2 && it.getY()>=y1 && it.getY()<y2 )
+                                                        {
+                                                            ((MapInteractionItem)it).render(batch);
+                                                            ((MapInteractionItem)it).mIsRended = true;
+                                                        }
+                                                    }
+                                                }
                                                 batch.draw(region.getTexture(), vertices, 0, NUM_VERTICES);
                                                 tilePainted = true;
 
@@ -268,6 +288,17 @@ public class MapAndSpritesRenderer2 extends OrthogonalTiledMapRenderer {
 
                                 }
                                 if (!tilePainted) {
+                                    for(MapInteraction it : MapBodyManager.getInstance().getInteractions())
+                                    {
+                                        if(it.getType()== MapInteraction.Type.ITEM)
+                                        {
+                                            if(it.getX()>=x1 && it.getX()<x2 && it.getY()>=y1 && it.getY()<y2 )
+                                            {
+                                                ((MapInteractionItem)it).render(batch);
+                                                ((MapInteractionItem)it).mIsRended = true;
+                                            }
+                                        }
+                                    }
                                     batch.draw(region.getTexture(), vertices, 0, NUM_VERTICES);
                                 }
 
@@ -288,11 +319,19 @@ public class MapAndSpritesRenderer2 extends OrthogonalTiledMapRenderer {
 
         endRender();
 
-      //  renderShapes();
+       // renderShapes();
 
     }
 
     private void renderRemainingObjects() {
+        for(MapInteraction it : MapBodyManager.getInstance().getInteractions())
+        {
+            if(it.getType()== MapInteraction.Type.ITEM && !((MapInteractionItem)it).mIsRended)
+            {
+                ((MapInteractionItem)it).render(batch);
+
+            }
+        }
         for (Bob entity : sprites) {
             if (!entity.rended) {
                 entity.render(getBatch());
@@ -318,6 +357,16 @@ public class MapAndSpritesRenderer2 extends OrthogonalTiledMapRenderer {
         }
         for (Bob entity : sprites) {
             shapeRenderer.polygon(entity.getPolygonShape().getShape().getTransformedVertices());
+        }
+
+        for(MapInteraction it : MapBodyManager.getInstance().getInteractions())
+        {
+            if(it.getType()== MapInteraction.Type.ITEM && !((MapInteractionItem)it).mIsRended)
+            {
+                Rectangle rect = ((MapInteractionItem)it).getShape().getShape();
+                shapeRenderer.rect(rect.getX(), rect.getY(), 0, 0, rect.getWidth(), rect.getHeight(),1,1,0);
+
+            }
         }
         shapeRenderer.end();
     }
