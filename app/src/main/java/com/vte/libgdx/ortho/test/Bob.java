@@ -17,7 +17,6 @@ import com.vte.libgdx.ortho.test.entity.components.CollisionComponent;
 import com.vte.libgdx.ortho.test.entity.components.TransformComponent;
 import com.vte.libgdx.ortho.test.entity.components.VelocityComponent;
 import com.vte.libgdx.ortho.test.entity.components.VisualComponent;
-import com.vte.libgdx.ortho.test.items.Item;
 import com.vte.libgdx.ortho.test.map.MapInteractionItem;
 import com.vte.libgdx.ortho.test.player.Player;
 
@@ -252,7 +251,7 @@ transform.setOriginOffset(-walkSheet.getWidth() / 3 * transform.scale/2,- walkSh
     public void onCollisionStart(CollisionComponent aEntity) {
         if(aEntity.mType== CollisionComponent.Type.ITEM)
         {
-            Player.getInstance().getInventory().add((((MapInteractionItem) aEntity.mData).getItem()));
+            Player.getInstance().addItem((((MapInteractionItem) aEntity.mData).getItem()));
             return;
         }
         if (!mCollisions.contains(aEntity, false)) {

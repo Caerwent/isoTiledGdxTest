@@ -12,7 +12,6 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
-import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 
 /**
  * Created by gwalarn on 27/11/16.
@@ -24,7 +23,7 @@ public final class AssetsUtility {
     private static InternalFileHandleResolver _filePathResolver = new InternalFileHandleResolver();
 
    // private final static String STATUSUI_TEXTURE_ATLAS_PATH = "skins/statusui.atlas";
-  //  private final static String STATUSUI_SKIN_PATH = "skins/statusui.json";
+    public final static String UI_SKIN_PATH = "data/skins/ui.json";
     private final static String ITEMS_TEXTURE_ATLAS_PATH = "data/items/items.atlas";
     private final static String ITEMS_SKIN_PATH = "data/items/items.json";
 

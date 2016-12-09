@@ -7,7 +7,6 @@ import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.assets.AssetManager;
-import com.badlogic.gdx.assets.loaders.resolvers.InternalFileHandleResolver;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
@@ -15,11 +14,9 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.maps.tiled.TiledMap;
-import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
-
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.TimeUtils;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
@@ -74,7 +71,6 @@ public class GameScreen implements Screen, InputProcessor {
     private float physicsDeltaTime = 1.0f / 60.0f;
 
     Bob bob;
-    UIStage mUI;
 
 
 
@@ -119,6 +115,7 @@ public class GameScreen implements Screen, InputProcessor {
             return;
         }
         renderer = new MapAndSpritesRenderer2(map, MyGame.SCALE_FACTOR);
+        UIStage.createInstance(new ExtendViewport(TARGET_WIDTH, TARGET_HEIGHT, uiCamera));
 
         MapBodyManager.createInstance(map);
 // instantiate the bob
@@ -138,10 +135,8 @@ public class GameScreen implements Screen, InputProcessor {
                 break;
             }
         }
-        mUI = new UIStage(new ExtendViewport(TARGET_WIDTH, TARGET_HEIGHT, uiCamera));
-
         InputMultiplexer inputMultiplexer = new InputMultiplexer();
-        inputMultiplexer.addProcessor(mUI);
+        inputMultiplexer.addProcessor(UIStage.getInstance());
         inputMultiplexer.addProcessor(this);
         inputMultiplexer.addProcessor(bobController);
         inputMultiplexer.addProcessor(cameraController);
@@ -155,7 +150,7 @@ public class GameScreen implements Screen, InputProcessor {
         EntityEngine.getInstance().addSystem(new PathRenderSystem(pathRenderer));
 
 
-        mUI.addActor(new TestActor());
+        UIStage.getInstance().addActor(new TestActor());
     }
 
 
@@ -171,7 +166,7 @@ public class GameScreen implements Screen, InputProcessor {
         float deltaTime = (float) frameTime;
 
         currentTime = newTime;*/
-        mUI.act(delta);
+        UIStage.getInstance().act(delta);
         // set viewport
     //    Gdx.gl.glViewport((int) viewport.x, (int) viewport.y,
     //            (int) viewport.width, (int) viewport.height);
@@ -186,7 +181,7 @@ public class GameScreen implements Screen, InputProcessor {
         batch.begin();
         //font.draw(batch, "FPS: " + Gdx.graphics.getFramesPerSecond(), 10, 20);
         batch.end();
-        mUI.draw();
+        UIStage.getInstance().draw();
         EntityEngine.getInstance().update(delta/*Time*/);
 
     }
