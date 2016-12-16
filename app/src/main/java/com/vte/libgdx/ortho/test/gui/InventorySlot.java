@@ -94,6 +94,13 @@ public class InventorySlot extends Stack {
         return mItems.size;
     }
 
+    public Item getItemOnTop() {
+        if (mItems.size <= 0) {
+            return null;
+        } else {
+            return mItems.first();
+        }
+    }
 
     public boolean doesAcceptItemUseType(Item.ItemTypeID aType) {
         return mItems.size <= 0 || _filterItemType == aType;
@@ -101,7 +108,7 @@ public class InventorySlot extends Stack {
 
     public void setSelected(boolean aIsSelected) {
 
-        _defaultBackground.setColor(UIStage.getInstance().getSkin().getColor(aIsSelected ? "black":"transparent") );
+        _defaultBackground.setColor(UIStage.getInstance().getSkin().getColor(aIsSelected ? "black" : "white"));
     }
 
 

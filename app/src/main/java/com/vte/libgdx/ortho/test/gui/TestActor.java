@@ -14,7 +14,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 public class TestActor extends Group  {
 
     protected final Table mainTable = new Table();
-    private Table mInventorySlotTable = new InventoryTable();
+    private InventoryTable mInventorySlotTable = new InventoryTable();
 
 
     /**
@@ -36,7 +36,8 @@ public class TestActor extends Group  {
         mainTable.row();
 
         mInventorySlotTable.setPosition(50, 25);
-
+        addActor(mInventorySlotTable);
+        mInventorySlotTable.setVisible(false);
       //  mInventorySlotTable.setTouchable(Touchable.enabled);
 
       /*  secondTable.addCaptureListener(new ClickListener(){
@@ -51,10 +52,10 @@ public class TestActor extends Group  {
             public void clicked(InputEvent event, float x, float y) {
                 // app.switchScreens(new MainScreen(app));
                 Gdx.app.log("!!", "klick");
-                if (getChildren().contains(mInventorySlotTable, true)) {
-                    removeActor(mInventorySlotTable);
+                if (mInventorySlotTable.isVisible()) {
+                    mInventorySlotTable.setVisible(false);
                 } else {
-                    addActor(mInventorySlotTable);
+                    mInventorySlotTable.setVisible(true);
                 }
             }
         });

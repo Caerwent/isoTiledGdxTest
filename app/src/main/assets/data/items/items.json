@@ -2,18 +2,22 @@
 {
 	
 	itemTypeID: ITEM1
-	itemShortDescription: Item 1
+	itemShortDescription: "blabla blabla item1"
 },
 {
 	
 	itemTypeID: POTIONS01
-	itemShortDescription: Item 2
+	itemShortDescription: "c'est à boire qu'il nous faut \\n hoho hoho"
 }
 ,
 {
 	
 	itemTypeID: SCROLL01
-	itemShortDescription: Item 2
+	itemShortDescription: " Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse quis blandit diam. Praesent non augue eros. Nam dapibus quam magna, eu tempor augue convallis a. Curabitur feugiat mauris vitae mi vehicula, nec fringilla nisi ornare. Fusce euismod lorem ut sapien malesuada condimentum. Donec convallis libero id lectus bibendum, ut pretium ante tincidunt. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Vestibulum sed ultrices tellus. Pellentesque ac eleifend dolor. Suspendisse ultricies venenatis augue in gravida. Etiam egestas enim ut massa venenatis, vel mattis augue consequat. Sed quam nibh, pharetra non erat sed, fringilla elementum dui. Etiam placerat dignissim arcu, non pretium nisl sollicitudin quis. Aenean sollicitudin elementum est non pretium. Integer consectetur, nulla vitae ultricies pulvinar, augue purus dignissim odio, non vehicula ligula augue eu augue.
+
+	Ut eu ultricies lacus. Curabitur quis lacus sit amet odio tempus pulvinar et ut mauris. Vestibulum gravida ligula eget enim eleifend, ut efficitur lacus tincidunt. Curabitur pellentesque nunc id lorem tincidunt dictum. Ut accumsan diam quis vestibulum volutpat. Vivamus lectus augue, faucibus eget mauris sed, tempor laoreet quam. Sed laoreet quis metus at vehicula. Vivamus quis consectetur justo. Proin ligula purus, sagittis a nisi vel, egestas euismod orci. Phasellus non nisl mattis, egestas velit ut, sollicitudin erat.
+
+	Praesent dolor lorem, feugiat sit amet enim at, iaculis eleifend orci. Phasellus a est ut nisl pulvinar lobortis a non orci. Curabitur viverra massa ac efficitur tempor. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Aenean mattis libero id nulla tempus eleifend. Mauris posuere tellus tortor, quis imperdiet risus bibendum vitae. Donec varius, orci vel imperdiet lacinia, leo urna dictum dui, ac dictum metus elit et erat. Nam faucibus lacinia ex, in tempus enim venenatis vel. Sed non felis volutpat, tincidunt eros vel, suscipit dolor. Nullam nec convallis magna. "
 }
 
 
