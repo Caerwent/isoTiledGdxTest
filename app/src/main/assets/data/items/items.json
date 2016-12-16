@@ -3,6 +3,18 @@
 	
 	itemTypeID: ITEM1
 	itemShortDescription: Item 1
+},
+{
+	
+	itemTypeID: POTIONS01
+	itemShortDescription: Item 2
 }
+,
+{
+	
+	itemTypeID: SCROLL01
+	itemShortDescription: Item 2
+}
+
 
 ]

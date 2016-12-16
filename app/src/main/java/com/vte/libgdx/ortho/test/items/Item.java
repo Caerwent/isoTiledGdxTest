@@ -10,7 +10,9 @@ public class Item {
 
 
     public enum ItemTypeID {
-        ITEM1;
+        ITEM1,
+        POTIONS01,
+        SCROLL01;
     }
 
     private ItemTypeID itemTypeID;
