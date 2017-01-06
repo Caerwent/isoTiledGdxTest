@@ -30,10 +30,10 @@ public class CollisionSystem extends IteratingSystem {
                 continue;
 
             otherCollisionComponent = otherEntity.getComponent(CollisionComponent.class);
-            if (otherCollisionComponent.mType != CollisionComponent.Type.CHARACTER &&
+          /*  if (otherCollisionComponent.mType != CollisionComponent.Type.CHARACTER &&
                     collisionComponent.mType != CollisionComponent.Type.CHARACTER) {
                 continue;
-            }
+            }*/
 
             if (ShapeUtils.overlaps(collisionComponent.mShape, otherCollisionComponent.mShape)) {
                 if (!collisionComponent.mHandler.getCollisions().contains(otherCollisionComponent, false)) {

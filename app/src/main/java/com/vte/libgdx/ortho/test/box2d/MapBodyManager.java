@@ -11,11 +11,14 @@ import com.badlogic.gdx.math.Polygon;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.utils.Array;
 import com.vte.libgdx.ortho.test.MyGame;
+import com.vte.libgdx.ortho.test.characters.CharactersManager;
 import com.vte.libgdx.ortho.test.entity.EntityEngine;
 import com.vte.libgdx.ortho.test.entity.ICollisionHandler;
 import com.vte.libgdx.ortho.test.entity.components.CollisionComponent;
-import com.vte.libgdx.ortho.test.map.MapInteraction;
+import com.vte.libgdx.ortho.test.map.DefaultMapInteraction;
+import com.vte.libgdx.ortho.test.map.IMapInteraction;
 import com.vte.libgdx.ortho.test.map.MapInteractionItem;
+import com.vte.libgdx.ortho.test.map.MapInteractionNPJ;
 
 /**
  * Created by vincent on 07/07/2016.
@@ -40,7 +43,7 @@ public class MapBodyManager implements ICollisionHandler {
 
 
     private Array<CollisionComponent> mCollisions = new Array<CollisionComponent>();
-    private Array<MapInteraction> mInteractions = new Array<MapInteraction>();
+    private Array<IMapInteraction> mInteractions = new Array<IMapInteraction>();
 
 
     public MapBodyManager(Map map) {
@@ -59,7 +62,7 @@ public class MapBodyManager implements ICollisionHandler {
     }
 
     public Array<Shape> buildShapes(Map map, String layerName) {
-        CollisionComponent.Type type = "zindex".compareTo(layerName)==0 ? CollisionComponent.Type.ZINDEX : CollisionComponent.Type.OBSTACLE;
+        CollisionComponent.Type type = "zindex".compareTo(layerName) == 0 ? CollisionComponent.Type.ZINDEX : CollisionComponent.Type.OBSTACLE;
         MapObjects objects = map.getLayers().get(layerName).getObjects();
 
         Array<Shape> bodies = new Array<Shape>();
@@ -104,36 +107,37 @@ public class MapBodyManager implements ICollisionHandler {
         }
         return bodies;
     }
-    public Array<MapInteraction> getInteractions() {
+
+    public Array<IMapInteraction> getInteractions() {
         return mInteractions;
     }
 
 
-    public Array<MapInteraction> buildInteractions(Map map, String layerName) {
+    public Array<IMapInteraction> buildInteractions(Map map, String layerName) {
         MapObjects objects = map.getLayers().get(layerName).getObjects();
 
-        Array<MapInteraction> interactions = new Array<MapInteraction>();
+        Array<IMapInteraction> interactions = new Array<IMapInteraction>();
 
         for (MapObject object : objects) {
 
             if (object instanceof TextureMapObject) {
                 TextureMapObject textureObject = (TextureMapObject) object;
-                float x = (textureObject.getX()+textureObject.getTextureRegion().getRegionWidth()/2)*MyGame.SCALE_FACTOR;
-                float y = (textureObject.getY()+textureObject.getTextureRegion().getRegionHeight()/2)*MyGame.SCALE_FACTOR;
-                String type = textureObject.getProperties().get("type",String.class);
-                if(type==null)
-                {
+                float x = (textureObject.getX() + textureObject.getTextureRegion().getRegionWidth() / 2) * MyGame.SCALE_FACTOR;
+                float y = (textureObject.getY() + textureObject.getTextureRegion().getRegionHeight() / 2) * MyGame.SCALE_FACTOR;
+                String type = textureObject.getProperties().get("type", String.class);
+                if (type == null) {
                     continue;
                 }
-                if(type.compareTo(MapInteraction.Type.START.name())==0)
-                {
-                    MapInteraction control = new MapInteraction(x, y, MapInteraction.Type.START);
+                if (type.compareTo(IMapInteraction.Type.START.name()) == 0) {
+                    IMapInteraction control = new DefaultMapInteraction(x, y, IMapInteraction.Type.START);
                     interactions.add(control);
-                }
-                else if(type.compareTo(MapInteraction.Type.ITEM.name())==0)
-                {
+                } else if (type.compareTo(IMapInteraction.Type.ITEM.name()) == 0) {
                     MapInteractionItem item = new MapInteractionItem(x, y, textureObject.getName());
                     interactions.add(item);
+                }
+                else if (type.compareTo(IMapInteraction.Type.NPJ.name()) == 0) {
+                    MapInteractionNPJ pnj = new MapInteractionNPJ(x, y, CharactersManager.getInstance().getCharactersFactory().getCharacterDefById(textureObject.getName()));
+                    interactions.add(pnj);
                 }
 
             }
@@ -141,14 +145,15 @@ public class MapBodyManager implements ICollisionHandler {
         }
         return interactions;
     }
-    @Override
-    public void onCollisionStart(CollisionComponent aEntity) {
 
+    @Override
+    public boolean onCollisionStart(CollisionComponent aEntity) {
+        return false;
     }
 
     @Override
-    public void onCollisionStop(CollisionComponent aEntity) {
-
+    public boolean onCollisionStop(CollisionComponent aEntity) {
+        return false;
     }
 
     @Override

@@ -17,16 +17,36 @@ import com.vte.libgdx.ortho.test.items.ItemFactory;
  * Created by gwalarn on 27/11/16.
  */
 
-public class MapInteractionItem extends MapInteraction implements ICollisionHandler {
+public class MapInteractionItem implements IMapInteraction, IMapInteractionRendable, ICollisionHandler {
     protected String mId;
     protected Entity mEntity;
     protected Item mItem;
     protected RectangleShape mShape;
-    public boolean mIsRended = false;
+    protected boolean mIsRended = false;
     private Array<CollisionComponent> mCollisions = new Array<CollisionComponent>();
 
+    protected Type mType;
+    protected float mX, mY;
+
+    @Override
+    public float getX() {
+        return mX;
+    }
+
+    @Override
+    public float getY() {
+        return mY;
+    }
+
+    @Override
+    public Type getInteractionType() {
+        return mType;
+    }
+
     public MapInteractionItem(float aX, float aY, String aId) {
-        super(aX, aY, Type.ITEM);
+        mX = aX;
+        mY = aY;
+        mType = Type.ITEM;
         mId = aId;
         mItem = ItemFactory.getInstance().getInventoryItem(Item.ItemTypeID.valueOf(aId));
         mEntity = new Entity();
@@ -65,17 +85,34 @@ public class MapInteractionItem extends MapInteraction implements ICollisionHand
         return mItem;
     }
 
-    @Override
-    public void onCollisionStart(CollisionComponent aEntity) {
-        if (aEntity.mType == CollisionComponent.Type.CHARACTER) {
-            MapBodyManager.getInstance().getInteractions().removeValue(this, true);
-            EntityEngine.getInstance().removeEntity(mEntity);
-        }
+    public boolean isRendable()
+    {
+        return true;
+    }
+
+    public boolean isRended()
+    {
+        return mIsRended;
+    }
+
+    public void setRended(boolean aRended)
+    {
+        mIsRended = aRended;
     }
 
     @Override
-    public void onCollisionStop(CollisionComponent aEntity) {
+    public boolean onCollisionStart(CollisionComponent aEntity) {
+        if (aEntity.mType == CollisionComponent.Type.CHARACTER) {
+            MapBodyManager.getInstance().getInteractions().removeValue(this, true);
+            EntityEngine.getInstance().removeEntity(mEntity);
+            return true;
+        }
+        return false;
+    }
 
+    @Override
+    public boolean onCollisionStop(CollisionComponent aEntity) {
+        return false;
     }
 
     @Override

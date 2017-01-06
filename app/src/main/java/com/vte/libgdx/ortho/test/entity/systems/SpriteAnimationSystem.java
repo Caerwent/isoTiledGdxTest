@@ -22,7 +22,7 @@ public class SpriteAnimationSystem extends IteratingSystem {
         StateComponent state = entity.getComponent(StateComponent.class);
         TextureComponent texture = entity.getComponent(TextureComponent.class);
 
-      /*  Animation newAnimation = animation.data.getAnimation(StateComponent.getName(state.id));
+      /*  Animation newAnimation = animation.data.getAnimation(StateComponent.getName(state.mId));
 
         if (animation.currentAnimation != newAnimation) {
             animation.time = 0.0f;

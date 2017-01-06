@@ -1,6 +1,5 @@
 package com.vte.libgdx.ortho.test.map;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.Batch;
@@ -12,7 +11,6 @@ import com.badlogic.gdx.maps.tiled.TiledMapImageLayer;
 import com.badlogic.gdx.maps.tiled.TiledMapTile;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
-import com.badlogic.gdx.math.Polygon;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.utils.Array;
 import com.vte.libgdx.ortho.test.Bob;
@@ -98,13 +96,13 @@ public class MapAndSpritesRenderer2 extends OrthogonalTiledMapRenderer {
     @Override
     public void render() {
         for (Bob entity : sprites) {
-            entity.rended = false;
+            entity.setRended(false);
         }
-        for(MapInteraction it : MapBodyManager.getInstance().getInteractions())
+        for(IMapInteraction it : MapBodyManager.getInstance().getInteractions())
         {
-            if(it.getType()== MapInteraction.Type.ITEM)
+            if(it instanceof IMapInteractionRendable && ((IMapInteractionRendable) it).isRendable())
             {
-                ((MapInteractionItem)it).mIsRended = false;
+                ((IMapInteractionRendable) it).setRended(false);
 
             }
         }
@@ -258,19 +256,19 @@ public class MapAndSpritesRenderer2 extends OrthogonalTiledMapRenderer {
                                         if(collision.mType!=CollisionComponent.Type.ZINDEX)
                                             continue;
 
-                                        if (ShapeUtils.overlaps(collision.mShape, tileShape) && !character.rended) {
+                                        if (ShapeUtils.overlaps(collision.mShape, tileShape) && !character.isRended()) {
 
                                             if (collision.mShape.getBounds().getY() < character.getPolygonShape().getBounds().getY()) {
                                                 character.render(getBatch());
-                                                character.rended = true;
-                                                for(MapInteraction it : MapBodyManager.getInstance().getInteractions())
+                                                character.setRended(true);
+                                                for(IMapInteraction it : MapBodyManager.getInstance().getInteractions())
                                                 {
-                                                    if(it.getType()== MapInteraction.Type.ITEM)
+                                                    if(it instanceof IMapInteractionRendable && ((IMapInteractionRendable) it).isRendable())
                                                     {
                                                         if(it.getX()>=x1 && it.getX()<x2 && it.getY()>=y1 && it.getY()<y2 )
                                                         {
-                                                            ((MapInteractionItem)it).render(batch);
-                                                            ((MapInteractionItem)it).mIsRended = true;
+                                                            ((IMapInteractionRendable)it).render(batch);
+                                                            ((IMapInteractionRendable)it).setRended(true);
                                                         }
                                                     }
                                                 }
@@ -288,16 +286,16 @@ public class MapAndSpritesRenderer2 extends OrthogonalTiledMapRenderer {
 
                                 }
                                 if (!tilePainted) {
-                                    for(MapInteraction it : MapBodyManager.getInstance().getInteractions())
+                                    for(IMapInteraction it : MapBodyManager.getInstance().getInteractions())
                                     {
-                                        if(it.getType()== MapInteraction.Type.ITEM)
+                                        if(it instanceof IMapInteractionRendable && ((IMapInteractionRendable) it).isRendable() &&
+                                                it.getX()>=x1 && it.getX()<x2 && it.getY()>=y1 && it.getY()<y2)
                                         {
-                                            if(it.getX()>=x1 && it.getX()<x2 && it.getY()>=y1 && it.getY()<y2 )
-                                            {
-                                                ((MapInteractionItem)it).render(batch);
-                                                ((MapInteractionItem)it).mIsRended = true;
-                                            }
+                                            ((IMapInteractionRendable) it).render(batch);
+                                            ((IMapInteractionRendable) it).setRended(true);
+
                                         }
+
                                     }
                                     batch.draw(region.getTexture(), vertices, 0, NUM_VERTICES);
                                 }
@@ -324,16 +322,16 @@ public class MapAndSpritesRenderer2 extends OrthogonalTiledMapRenderer {
     }
 
     private void renderRemainingObjects() {
-        for(MapInteraction it : MapBodyManager.getInstance().getInteractions())
+        for(IMapInteraction it : MapBodyManager.getInstance().getInteractions())
         {
-            if(it.getType()== MapInteraction.Type.ITEM && !((MapInteractionItem)it).mIsRended)
+            if(it instanceof IMapInteractionRendable && ((IMapInteractionRendable) it).isRendable()&& !((IMapInteractionRendable)it).isRended())
             {
-                ((MapInteractionItem)it).render(batch);
+                ((IMapInteractionRendable) it).render(batch);
 
             }
         }
         for (Bob entity : sprites) {
-            if (!entity.rended) {
+            if (!entity.isRended()) {
                 entity.render(getBatch());
             }
         }
@@ -359,9 +357,9 @@ public class MapAndSpritesRenderer2 extends OrthogonalTiledMapRenderer {
             shapeRenderer.polygon(entity.getPolygonShape().getShape().getTransformedVertices());
         }
 
-        for(MapInteraction it : MapBodyManager.getInstance().getInteractions())
+        for(IMapInteraction it : MapBodyManager.getInstance().getInteractions())
         {
-            if(it.getType()== MapInteraction.Type.ITEM && !((MapInteractionItem)it).mIsRended)
+            if(it instanceof MapInteractionItem && ((IMapInteractionRendable) it).isRendable())
             {
                 Rectangle rect = ((MapInteractionItem)it).getShape().getShape();
                 shapeRenderer.rect(rect.getX(), rect.getY(), 0, 0, rect.getWidth(), rect.getHeight(),1,1,0);

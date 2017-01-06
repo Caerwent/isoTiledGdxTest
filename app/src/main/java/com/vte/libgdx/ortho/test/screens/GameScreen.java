@@ -9,7 +9,6 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
@@ -27,6 +26,7 @@ import com.vte.libgdx.ortho.test.MyGame;
 import com.vte.libgdx.ortho.test.OrthoCamController;
 import com.vte.libgdx.ortho.test.Settings;
 import com.vte.libgdx.ortho.test.box2d.MapBodyManager;
+import com.vte.libgdx.ortho.test.characters.CharactersManager;
 import com.vte.libgdx.ortho.test.entity.EntityEngine;
 import com.vte.libgdx.ortho.test.entity.systems.BobSystem;
 import com.vte.libgdx.ortho.test.entity.systems.CollisionSystem;
@@ -35,9 +35,8 @@ import com.vte.libgdx.ortho.test.entity.systems.PathRenderSystem;
 import com.vte.libgdx.ortho.test.gui.TestActor;
 import com.vte.libgdx.ortho.test.gui.UIStage;
 import com.vte.libgdx.ortho.test.map.MapAndSpritesRenderer2;
-import com.vte.libgdx.ortho.test.map.MapInteraction;
+import com.vte.libgdx.ortho.test.map.IMapInteraction;
 
-import static com.vte.libgdx.ortho.test.Bob.bobSpriteSheet;
 import static com.vte.libgdx.ortho.test.Settings.TARGET_HEIGHT;
 import static com.vte.libgdx.ortho.test.Settings.TARGET_WIDTH;
 
@@ -101,6 +100,7 @@ public class GameScreen implements Screen, InputProcessor {
         accumulator = 0.0;
         currentTime = TimeUtils.millis() / 1000.0;
 
+        CharactersManager.getInstance();
         assetManager = new AssetManager();
        /* assetManager.setLoader(TiledMap.class, new TmxMapLoader(new InternalFileHandleResolver()));
         assetManager.load("data/maps/ortho.tmx", TiledMap.class);
@@ -118,19 +118,17 @@ public class GameScreen implements Screen, InputProcessor {
         UIStage.createInstance(new ExtendViewport(TARGET_WIDTH, TARGET_HEIGHT, uiCamera));
 
         MapBodyManager.createInstance(map);
-// instantiate the bob
+
+        // instantiate the bob
         bob = new Bob();
-// load the bob texture with image from file
-        bobSpriteSheet = new
-                Texture(Gdx.files.internal("data/characters/universal_walk.png"));
 // initialize Bob
-        bob.initialize(w, h, bobSpriteSheet);
+        bob.initialize();
         renderer.addSprite(bob);
 
         bobController = new ChararcterMoveController(camera, bob);
-        Array<MapInteraction> mapControls = MapBodyManager.getInstance().getInteractions();
-        for (MapInteraction control : mapControls) {
-            if (control.getType() == MapInteraction.Type.START) {
+        Array<IMapInteraction> mapControls = MapBodyManager.getInstance().getInteractions();
+        for (IMapInteraction control : mapControls) {
+            if (control.getInteractionType() == IMapInteraction.Type.START) {
                 bob.setPosition(control.getX(), control.getY());
                 break;
             }
@@ -230,7 +228,6 @@ public class GameScreen implements Screen, InputProcessor {
     @Override
     public void dispose() {
         EntityEngine.getInstance().removeAllEntities();
-        bobSpriteSheet.dispose();
     }
 
     @Override

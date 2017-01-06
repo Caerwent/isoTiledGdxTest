@@ -1,0 +1,16 @@
+{
+"class" : "charactersFactory",
+"characters":[
+	{
+
+		"id": "pnj1",
+		"type": "QUEST",
+		"spritesheet": "characters/universal_walk.png"
+	},
+	{
+		"id": "none",
+		"type": "DECO",
+		"spritesheet": "characters/universal_walk.png"
+	}
+]
+}

@@ -8,9 +8,9 @@ import com.vte.libgdx.ortho.test.entity.components.CollisionComponent;
  */
 
 public interface ICollisionHandler {
-    public void onCollisionStart(CollisionComponent aEntity);
+    public boolean onCollisionStart(CollisionComponent aEntity);
 
-    public void onCollisionStop(CollisionComponent aEntity);
+    public boolean onCollisionStop(CollisionComponent aEntity);
 
     public Array<CollisionComponent> getCollisions();
 }
