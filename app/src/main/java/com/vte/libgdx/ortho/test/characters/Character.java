@@ -27,6 +27,7 @@ public class Character extends Entity implements ICollisionHandler, IMapInteract
     public String mId;
     public String mType;
     public String mSpriteSheet;
+    public String mDialogId;
 
     static final int ANIM_IDX_REAR = 0;
     static final int ANIM_IDX_RIGHT = 1;
@@ -37,7 +38,7 @@ public class Character extends Entity implements ICollisionHandler, IMapInteract
     protected Texture walkSheet; // sprite sheet
     protected TextureRegion currentFrame; // current animation frame
 
-    protected int mCurrentAnimationIdx= 0;
+    protected int mCurrentAnimationIdx = 0;
     protected float stateTime; // elapsed time
     protected static float ANIMATION_TIME_PERIOD = 0.08f;// this specifies the time between two consecutive frames of animation
     protected boolean mIsRended = false;
@@ -46,17 +47,29 @@ public class Character extends Entity implements ICollisionHandler, IMapInteract
     protected PolygonShape mPolygonShape = new PolygonShape();
     protected float[] mVertices = new float[8];
 
-    public Character(CharacterDef aDef)
-    {
-        this(aDef.id, aDef.type, aDef.spritesheet);
+    public Character(CharacterDef aDef) {
+        this(aDef.id, aDef.type, aDef.spritesheet, aDef.dialogId);
     }
-    public Character(String aId, String aType, String aSpiteSheet)
-    {
+
+    public Character(String aId, String aType, String aSpiteSheet, String aDialogId) {
         super();
 
         mId = aId;
         mType = aType;
         mSpriteSheet = aSpiteSheet;
+        mDialogId = aDialogId;
+    }
+
+    public String getType() {
+        return mType;
+    }
+
+    public String getDialogId() {
+        return mDialogId;
+    }
+
+    public String getId() {
+        return mId;
     }
 
     public void initialize() {
@@ -65,7 +78,7 @@ public class Character extends Entity implements ICollisionHandler, IMapInteract
         this.add(new VelocityComponent());
         this.add(new TransformComponent());
         walkSheet = new
-                Texture(Gdx.files.internal("data/"+mSpriteSheet));
+                Texture(Gdx.files.internal("data/" + mSpriteSheet));
 // initi
 //split the sprite sheet into different textures
         TextureRegion[][] tmp = TextureRegion.split(walkSheet,
@@ -91,12 +104,12 @@ public class Character extends Entity implements ICollisionHandler, IMapInteract
 
         TransformComponent transform = this.getComponent(TransformComponent.class);
         transform.scale = MyGame.SCALE_FACTOR;
-        transform.setOriginOffset(-walkSheet.getWidth() / 3 * transform.scale/2,- walkSheet.getHeight() / 4 * transform.scale/2);
+        transform.setOriginOffset(-walkSheet.getWidth() / 3 * transform.scale / 2, -walkSheet.getHeight() / 4 * transform.scale / 2);
         this.add(new VisualComponent(currentFrame));
 
         setPosition(0, 0);
 
-        this.add(new CollisionComponent(CollisionComponent.Type.CHARACTER, getPolygonShape(), mId,this, this));
+        this.add(new CollisionComponent(CollisionComponent.Type.CHARACTER, getPolygonShape(), mId, this, this));
 
 
     }
@@ -115,8 +128,7 @@ public class Character extends Entity implements ICollisionHandler, IMapInteract
 
     }
 
-    public Vector2 getPosition()
-    {
+    public Vector2 getPosition() {
         TransformComponent transformComponent = this.getComponent(TransformComponent.class);
         return new Vector2(transformComponent.position.x, transformComponent.position.y);
     }
@@ -132,62 +144,51 @@ public class Character extends Entity implements ICollisionHandler, IMapInteract
         velocity.x = v.x;
         velocity.y = v.y;
     }
-    public boolean isRendable()
-    {
+
+    public boolean isRendable() {
         return true;
     }
 
-    public boolean isRended()
-    {
+    public boolean isRended() {
         return mIsRended;
     }
 
-    public void setRended(boolean aRended)
-    {
+    public void setRended(boolean aRended) {
         mIsRended = aRended;
     }
+
     @Override
     public void render(Batch batch) {
         TransformComponent transform = this.getComponent(TransformComponent.class);
         VisualComponent visual = this.getComponent(VisualComponent.class);
         VelocityComponent velocity = this.getComponent(VelocityComponent.class);
 
-        if(velocity.y==0 && velocity.x==0)
-        {
-            mCurrentAnimationIdx=ANIM_IDX_FACE;
-            stateTime=0;
-        }
-        else {
+        if (velocity.y == 0 && velocity.x == 0) {
+            mCurrentAnimationIdx = ANIM_IDX_FACE;
+            stateTime = 0;
+        } else {
             if (velocity.y == 0) {
                 mCurrentAnimationIdx = velocity.x < 0 ? ANIM_IDX_LEFT : ANIM_IDX_RIGHT;
-            } else
-            {
+            } else {
                 double angle = Math.atan2(velocity.y, velocity.x);
-                double PI4 = Math.PI/4;
-                if (angle < 0)
-                {
+                double PI4 = Math.PI / 4;
+                if (angle < 0) {
                     angle += Math.PI * 2;
                 }
 
-                if(angle>7*PI4 || angle<=PI4)
-                {
-                    mCurrentAnimationIdx=ANIM_IDX_RIGHT;
-                }else if(angle>PI4 && angle<=3*PI4)
-                {
-                    mCurrentAnimationIdx=ANIM_IDX_REAR;
-                }
-                else if(angle>3*PI4 && angle<=5*PI4)
-                {
-                    mCurrentAnimationIdx=ANIM_IDX_LEFT;
-                }
-                else if(angle>5*PI4 && angle<=7*PI4)
-                {
-                    mCurrentAnimationIdx=ANIM_IDX_FACE;
+                if (angle > 7 * PI4 || angle <= PI4) {
+                    mCurrentAnimationIdx = ANIM_IDX_RIGHT;
+                } else if (angle > PI4 && angle <= 3 * PI4) {
+                    mCurrentAnimationIdx = ANIM_IDX_REAR;
+                } else if (angle > 3 * PI4 && angle <= 5 * PI4) {
+                    mCurrentAnimationIdx = ANIM_IDX_LEFT;
+                } else if (angle > 5 * PI4 && angle <= 7 * PI4) {
+                    mCurrentAnimationIdx = ANIM_IDX_FACE;
                 }
             }
         }
         currentFrame = walkAnimation[mCurrentAnimationIdx].getKeyFrame(stateTime, true);
-        visual.region=currentFrame;
+        visual.region = currentFrame;
         float width = visual.region.getRegionWidth();
         float height = visual.region.getRegionHeight();
         float halfWidth = width / 2f;
@@ -197,7 +198,7 @@ public class Character extends Entity implements ICollisionHandler, IMapInteract
         float originY = 0;//transform.originOffset.y;
 
         batch.draw(visual.region,
-                transform.position.x +transform.originOffset.x, transform.position.y +transform.originOffset.y,
+                transform.position.x + transform.originOffset.x, transform.position.y + transform.originOffset.y,
                 originX, originY,
                 width, height,
                 transform.scale, transform.scale,
@@ -215,12 +216,12 @@ public class Character extends Entity implements ICollisionHandler, IMapInteract
 
         mVertices[0] = tfm.originOffset.x;
         mVertices[1] = tfm.originOffset.y;
-        mVertices[2] = width+tfm.originOffset.x;
+        mVertices[2] = width + tfm.originOffset.x;
         mVertices[3] = tfm.originOffset.y;
-        mVertices[4] = width+tfm.originOffset.x;
-        mVertices[5] = height+tfm.originOffset.y;
+        mVertices[4] = width + tfm.originOffset.x;
+        mVertices[5] = height + tfm.originOffset.y;
         mVertices[6] = tfm.originOffset.x;
-        mVertices[7] = height+tfm.originOffset.y;
+        mVertices[7] = height + tfm.originOffset.y;
         mPolygonShape.getShape().setVertices(mVertices);
         mPolygonShape.getShape().setPosition(tfm.position.x, tfm.position.y);
 
@@ -232,12 +233,13 @@ public class Character extends Entity implements ICollisionHandler, IMapInteract
         CollisionComponent collision = this.getComponent(CollisionComponent.class);
         collision.mShape = getPolygonShape();
     }
+
     @Override
     public boolean onCollisionStart(CollisionComponent aEntity) {
 
         if (!mCollisions.contains(aEntity, false)) {
 
-            if(aEntity.mShape.getBounds().getY() > mPolygonShape.getBounds().getY())
+            if (aEntity.mShape.getBounds().getY() > mPolygonShape.getBounds().getY())
                 return false;
 
             Gdx.app.debug("DEBUG", "collision start");

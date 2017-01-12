@@ -5,7 +5,8 @@
 
 		"id": "pnj1",
 		"type": "QUEST",
-		"spritesheet": "characters/universal_walk.png"
+		"spritesheet": "characters/universal_walk.png",
+		"dialogId":"pnj1"
 	},
 	{
 		"id": "none",

@@ -13,7 +13,7 @@ public class CharactersFactory {
 
         CharacterDef p = characters.get(id);
 
-        Character m = new Character(p.id, p.type, p.spritesheet);
+        Character m = new Character(p.id, p.type, p.spritesheet, p.dialogId);
 
         return m;
     }

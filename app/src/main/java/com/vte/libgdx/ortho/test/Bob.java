@@ -55,7 +55,7 @@ public class Bob extends Character {
     }
 
     public Bob() {
-        super("bob", "player", "characters/universal_walk.png");
+        super("bob", "player", "characters/universal_walk.png", null);
         this.add(new BobComponent(this));
 
 

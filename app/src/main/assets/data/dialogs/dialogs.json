@@ -1,0 +1,22 @@
+
+[
+	{
+
+		"id": "pnj1",
+		"dialogs" : [
+			"bonjour",
+			"ça va ?"
+		]
+
+	},
+	{
+
+		"id": "pnj2",
+		"dialogs" : [
+			"hello",
+			"ça va ?"
+		]
+
+	}
+]
+

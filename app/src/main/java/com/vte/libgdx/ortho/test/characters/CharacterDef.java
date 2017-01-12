@@ -8,6 +8,7 @@ public class CharacterDef {
     public String id;
     public String type;
     public String spritesheet;
+    public String dialogId;
 
 
 }

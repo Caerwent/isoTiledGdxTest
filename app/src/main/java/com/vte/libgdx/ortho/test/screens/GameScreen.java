@@ -1,5 +1,8 @@
 package com.vte.libgdx.ortho.test.screens;
 
+import com.badlogic.ashley.core.Entity;
+import com.badlogic.ashley.core.Family;
+import com.badlogic.ashley.utils.ImmutableArray;
 import com.badlogic.gdx.Application;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
@@ -7,6 +10,7 @@ import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.assets.AssetManager;
+import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
@@ -28,14 +32,15 @@ import com.vte.libgdx.ortho.test.Settings;
 import com.vte.libgdx.ortho.test.box2d.MapBodyManager;
 import com.vte.libgdx.ortho.test.characters.CharactersManager;
 import com.vte.libgdx.ortho.test.entity.EntityEngine;
+import com.vte.libgdx.ortho.test.entity.components.InputComponent;
 import com.vte.libgdx.ortho.test.entity.systems.BobSystem;
 import com.vte.libgdx.ortho.test.entity.systems.CollisionSystem;
 import com.vte.libgdx.ortho.test.entity.systems.MovementSystem;
 import com.vte.libgdx.ortho.test.entity.systems.PathRenderSystem;
 import com.vte.libgdx.ortho.test.gui.TestActor;
 import com.vte.libgdx.ortho.test.gui.UIStage;
-import com.vte.libgdx.ortho.test.map.MapAndSpritesRenderer2;
 import com.vte.libgdx.ortho.test.map.IMapInteraction;
+import com.vte.libgdx.ortho.test.map.MapAndSpritesRenderer2;
 
 import static com.vte.libgdx.ortho.test.Settings.TARGET_HEIGHT;
 import static com.vte.libgdx.ortho.test.Settings.TARGET_WIDTH;
@@ -71,12 +76,10 @@ public class GameScreen implements Screen, InputProcessor {
 
     Bob bob;
 
-
-
-
     public GameScreen() {
         Gdx.app.setLogLevel(Application.LOG_DEBUG);
 
+        ScreenManager.getInstance().setScreen(this);
         float w = Gdx.graphics.getWidth();
         float h = Gdx.graphics.getHeight();
 
@@ -108,9 +111,9 @@ public class GameScreen implements Screen, InputProcessor {
         map = assetManager.get("data/maps/ortho.tmx");*/
 
         AssetsUtility.loadMapAsset("data/maps/ortho.tmx");
-        if( AssetsUtility.isAssetLoaded("data/maps/ortho.tmx") ) {
+        if (AssetsUtility.isAssetLoaded("data/maps/ortho.tmx")) {
             map = AssetsUtility.getMapAsset("data/maps/ortho.tmx");
-        }else{
+        } else {
             Gdx.app.debug(TAG, "Map not loaded");
             return;
         }
@@ -166,8 +169,8 @@ public class GameScreen implements Screen, InputProcessor {
         currentTime = newTime;*/
         UIStage.getInstance().act(delta);
         // set viewport
-    //    Gdx.gl.glViewport((int) viewport.x, (int) viewport.y,
-    //            (int) viewport.width, (int) viewport.height);
+        //    Gdx.gl.glViewport((int) viewport.x, (int) viewport.y,
+        //            (int) viewport.width, (int) viewport.height);
 
         // clear previous frame
         Gdx.gl.glClearColor(100f / 255f, 100f / 255f, 250f / 255f, 1f);
@@ -223,6 +226,10 @@ public class GameScreen implements Screen, InputProcessor {
     @Override
     public void hide() {
 
+    }
+
+    public Camera getCamera() {
+        return camera;
     }
 
     @Override
@@ -281,7 +288,20 @@ public class GameScreen implements Screen, InputProcessor {
         camera.unproject(curr.set(x, y, 0));
 
 
+        ImmutableArray<Entity> inputEntities = EntityEngine.getInstance().getEntitiesFor(Family.all(InputComponent.class).get());
+        if(inputEntities!=null)
+        {
+            for(Entity entity : inputEntities)
+            {
+                InputComponent input = entity.getComponent(InputComponent.class);
+                if(input.touchDown(x, y, pointer, button))
+                {
+                    return true;
+                }
+            }
+        }
         Gdx.app.debug("DEBUG", "touchX=" + curr.x + " touchY=" + curr.y);
         return false;
     }
+
 }
