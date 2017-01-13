@@ -66,7 +66,11 @@
   </object>
  </objectgroup>
  <objectgroup name="interaction">
-  <object id="36" name="START" type="START" gid="12" x="96" y="477" width="64" height="64"/>
+  <object id="36" name="START" type="START" gid="12" x="96" y="477" width="64" height="64">
+   <properties>
+    <property name="questId" value="quest1"/>
+   </properties>
+  </object>
   <object id="38" name="ITEM1" type="ITEM" gid="20" x="512" y="321" width="64" height="64"/>
   <object id="39" name="POTIONS01" type="ITEM" gid="20" x="128" y="128" width="64" height="64"/>
   <object id="41" name="SCROLL01" type="ITEM" gid="20" x="512" y="144" width="64" height="64"/>

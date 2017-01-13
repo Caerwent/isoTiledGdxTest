@@ -37,10 +37,13 @@ import com.vte.libgdx.ortho.test.entity.systems.BobSystem;
 import com.vte.libgdx.ortho.test.entity.systems.CollisionSystem;
 import com.vte.libgdx.ortho.test.entity.systems.MovementSystem;
 import com.vte.libgdx.ortho.test.entity.systems.PathRenderSystem;
+import com.vte.libgdx.ortho.test.events.EventDispatcher;
 import com.vte.libgdx.ortho.test.gui.TestActor;
 import com.vte.libgdx.ortho.test.gui.UIStage;
 import com.vte.libgdx.ortho.test.map.IMapInteraction;
 import com.vte.libgdx.ortho.test.map.MapAndSpritesRenderer2;
+import com.vte.libgdx.ortho.test.quests.Quest;
+import com.vte.libgdx.ortho.test.quests.QuestManager;
 
 import static com.vte.libgdx.ortho.test.Settings.TARGET_HEIGHT;
 import static com.vte.libgdx.ortho.test.Settings.TARGET_WIDTH;
@@ -103,7 +106,9 @@ public class GameScreen implements Screen, InputProcessor {
         accumulator = 0.0;
         currentTime = TimeUtils.millis() / 1000.0;
 
+        QuestManager.getInstance();
         CharactersManager.getInstance();
+
         assetManager = new AssetManager();
        /* assetManager.setLoader(TiledMap.class, new TmxMapLoader(new InternalFileHandleResolver()));
         assetManager.load("data/maps/ortho.tmx", TiledMap.class);
@@ -122,6 +127,7 @@ public class GameScreen implements Screen, InputProcessor {
 
         MapBodyManager.createInstance(map);
 
+        UIStage.getInstance().addActor(new TestActor());
         // instantiate the bob
         bob = new Bob();
 // initialize Bob
@@ -133,6 +139,15 @@ public class GameScreen implements Screen, InputProcessor {
         for (IMapInteraction control : mapControls) {
             if (control.getInteractionType() == IMapInteraction.Type.START) {
                 bob.setPosition(control.getX(), control.getY());
+                if(control.getQuestId()!=null)
+                {
+                    Quest theQuest = QuestManager.getInstance().getQuestFromId(control.getQuestId());
+                    if(theQuest!=null && !theQuest.isCompleted())
+                    {
+                        theQuest.setActivated(true);
+                        EventDispatcher.getInstance().onQuestActivated(theQuest);
+                    }
+                }
                 break;
             }
         }
@@ -151,7 +166,7 @@ public class GameScreen implements Screen, InputProcessor {
         EntityEngine.getInstance().addSystem(new PathRenderSystem(pathRenderer));
 
 
-        UIStage.getInstance().addActor(new TestActor());
+
     }
 
 

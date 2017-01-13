@@ -1,0 +1,20 @@
+
+{
+	"id": "quest1",
+	"title":"quête 1",
+	"startQuestDialogId":"newQuest",
+	"requiredCompletedQuest": [],
+	"tasks" : [
+		{
+			"id": "quest1task1",
+			"desc":"parler à npj1",
+			"type":"TALK",
+			"targetId":"pnj1",
+			"completedDialogId":"dquest1",
+			"requiredCompletedTask":[]
+		}
+	]
+
+
+}
+

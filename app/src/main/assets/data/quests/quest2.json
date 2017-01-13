@@ -1,0 +1,27 @@
+
+{
+	"id": "quest2",
+	"title":"quête 2",
+	"requiredCompletedQuest":["quest1"],
+	"tasks" : [
+		{
+			"id": "quest2task1",
+			"desc":"",
+			"count":2,
+			"type":"FIND_ITEM",
+			"targetId":"POTIONS01",
+			"requiredCompletedTask":[]
+		},
+		{
+			"id": "quest2task2",
+			"desc":"ramener 2 potions à pnj1",
+			"type":"RETURN_ITEM",
+			"targetId":"pnj1",
+			"dialogId":"dquest2",
+			"completedDialogId":"dquest2Completed",
+			"requiredCompletedTask":["quest2task1"]
+		}
+	]
+
+}
+

@@ -2,6 +2,14 @@
 [
 	{
 
+		"id": "newQuest",
+		"dialogs" : [
+			"Vous avez une nouvelle quête !"
+		]
+
+	},
+	{
+
 		"id": "pnj1",
 		"dialogs" : [
 			"bonjour",
@@ -15,6 +23,37 @@
 		"dialogs" : [
 			"hello",
 			"ça va ?"
+		]
+
+	}
+,
+	{
+
+		"id": "dquest1",
+		"dialogs" : [
+			"machin: hello",
+			"bidule: ça va ?",
+			"machin: j'ai soif, pourrais tu me trouver 2 gourdes d'eau ?",
+			"bidule: oui"
+		]
+
+	}
+,
+	{
+
+		"id": "dquest2",
+		"dialogs" : [
+			"machin: as-tu trouver mes gourdes d'eau ?",
+			"bidule: pas encore"
+		]
+
+	}
+,
+	{
+
+		"id": "dquest2Completed",
+		"dialogs" : [
+			"machin: ha ça va mieux, je n'ai plus soif ? Merci !"
 		]
 
 	}

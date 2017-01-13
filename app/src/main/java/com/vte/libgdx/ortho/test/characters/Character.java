@@ -68,6 +68,11 @@ public class Character extends Entity implements ICollisionHandler, IMapInteract
         return mDialogId;
     }
 
+    public void setDialogId(String aDialogId)
+    {
+        mDialogId = aDialogId;
+    }
+
     public String getId() {
         return mId;
     }

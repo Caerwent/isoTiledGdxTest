@@ -17,7 +17,7 @@ import com.vte.libgdx.ortho.test.items.ItemFactory;
  * Created by gwalarn on 27/11/16.
  */
 
-public class MapInteractionItem implements IMapInteraction, IMapInteractionRendable, ICollisionHandler {
+public class MapInteractionItem extends DefaultMapInteraction implements IMapInteraction, IMapInteractionRendable, ICollisionHandler {
     protected String mId;
     protected Entity mEntity;
     protected Item mItem;
@@ -25,28 +25,9 @@ public class MapInteractionItem implements IMapInteraction, IMapInteractionRenda
     protected boolean mIsRended = false;
     private Array<CollisionComponent> mCollisions = new Array<CollisionComponent>();
 
-    protected Type mType;
-    protected float mX, mY;
-
-    @Override
-    public float getX() {
-        return mX;
-    }
-
-    @Override
-    public float getY() {
-        return mY;
-    }
-
-    @Override
-    public Type getInteractionType() {
-        return mType;
-    }
 
     public MapInteractionItem(float aX, float aY, String aId) {
-        mX = aX;
-        mY = aY;
-        mType = Type.ITEM;
+        super(aX, aY, Type.ITEM);
         mId = aId;
         mItem = ItemFactory.getInstance().getInventoryItem(Item.ItemTypeID.valueOf(aId));
         mEntity = new Entity();

@@ -8,23 +8,22 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.vte.libgdx.ortho.test.AssetsUtility;
 import com.vte.libgdx.ortho.test.box2d.RectangleShape;
-import com.vte.libgdx.ortho.test.characters.Character;
 import com.vte.libgdx.ortho.test.characters.CharacterDef;
-import com.vte.libgdx.ortho.test.dialogs.DialogsManager;
+import com.vte.libgdx.ortho.test.characters.CharacterNPJ;
 import com.vte.libgdx.ortho.test.entity.components.CollisionComponent;
 import com.vte.libgdx.ortho.test.entity.components.InputComponent;
 import com.vte.libgdx.ortho.test.entity.components.TransformComponent;
-import com.vte.libgdx.ortho.test.events.EventDispatcher;
 import com.vte.libgdx.ortho.test.screens.ScreenManager;
 
 /**
  * Created by vincent on 05/01/2017.
  */
 
-public class MapInteractionNPJ extends Character implements IMapInteraction, IMapInteractionRendable, InputProcessor {
+public class MapInteractionNPJ extends CharacterNPJ implements IMapInteraction, IMapInteractionRendable, InputProcessor {
 
     protected Type mType;
     protected boolean mIsRended = false;
+    protected String mQuestId;
 
     private TextureRegion mInteractionTextureRegion;
     private boolean mIsInteractionShown = false;
@@ -60,9 +59,20 @@ public class MapInteractionNPJ extends Character implements IMapInteraction, IMa
 
     @Override
     public Type getInteractionType() {
-        return null;
+        return mType;
     }
 
+    @Override
+    public String getQuestId()
+    {
+        return mQuestId;
+    }
+
+    @Override
+    public void setQuestId(String aQuestId)
+    {
+        mQuestId = aQuestId;
+    }
     public boolean isRendable() {
         return true;
     }
@@ -147,7 +157,7 @@ public class MapInteractionNPJ extends Character implements IMapInteraction, IMa
         if (ret && aEntity.mType == CollisionComponent.Type.CHARACTER) {
             Gdx.app.debug("DEBUG", "NPJ collision stop");
             mIsInteractionShown = false;
-            EventDispatcher.getInstance().onStopDialog(DialogsManager.getInstance().getDialog(getDialogId()));
+            onInteractionStop();
         }
         return ret;
     }
@@ -170,7 +180,7 @@ public class MapInteractionNPJ extends Character implements IMapInteraction, IMa
         ScreenManager.getInstance().getScreen().getCamera().unproject(cursorPoint.set(screenX, screenY, 0));
 
         if (mIsInteractionShown && mMarkShape.getBounds().contains(cursorPoint.x, cursorPoint.y)) {
-            EventDispatcher.getInstance().onStartDialog(DialogsManager.getInstance().getDialog(getDialogId()));
+           onInteractionStart();
         }
         return false;
     }

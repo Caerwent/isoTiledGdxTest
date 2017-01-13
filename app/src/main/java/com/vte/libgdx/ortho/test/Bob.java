@@ -7,8 +7,8 @@ import com.vte.libgdx.ortho.test.entity.components.BobComponent;
 import com.vte.libgdx.ortho.test.entity.components.CollisionComponent;
 import com.vte.libgdx.ortho.test.entity.components.TransformComponent;
 import com.vte.libgdx.ortho.test.entity.components.VisualComponent;
+import com.vte.libgdx.ortho.test.events.EventDispatcher;
 import com.vte.libgdx.ortho.test.map.MapInteractionItem;
-import com.vte.libgdx.ortho.test.player.Player;
 
 
 /**
@@ -66,7 +66,7 @@ public class Bob extends Character {
     public boolean onCollisionStart(CollisionComponent aEntity) {
         if(aEntity.mType== CollisionComponent.Type.ITEM)
         {
-            Player.getInstance().addItem((((MapInteractionItem) aEntity.mData).getItem()));
+            EventDispatcher.getInstance().onItemFound((((MapInteractionItem) aEntity.mData).getItem()));
             return false;
         }
         boolean ret = super.onCollisionStart(aEntity);

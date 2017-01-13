@@ -19,4 +19,8 @@ public interface IMapInteraction {
 
     public Type getInteractionType();
 
+    public String getQuestId();
+
+    public void setQuestId(String aQuestId);
+
 }

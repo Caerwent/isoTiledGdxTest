@@ -12,6 +12,7 @@ import java.util.ArrayList;
  */
 
 public class DialogsManager {
+
     private Json _json = new Json();
     private final String DIALOGS_LIST = "data/dialogs/dialogs.json";
     private static DialogsManager _instance = null;
@@ -36,8 +37,9 @@ public class DialogsManager {
         }
     }
 
-    public GameDialog getDialog(String id)
-    {
+    public GameDialog getDialog(String id) {
+        if (id == null)
+            return null;
         return mDialogs.get(id);
     }
 

@@ -128,17 +128,24 @@ public class MapBodyManager implements ICollisionHandler {
                 if (type == null) {
                     continue;
                 }
+                IMapInteraction interaction = null;
                 if (type.compareTo(IMapInteraction.Type.START.name()) == 0) {
-                    IMapInteraction control = new DefaultMapInteraction(x, y, IMapInteraction.Type.START);
-                    interactions.add(control);
+                    interaction = new DefaultMapInteraction(x, y, IMapInteraction.Type.START);
                 } else if (type.compareTo(IMapInteraction.Type.ITEM.name()) == 0) {
-                    MapInteractionItem item = new MapInteractionItem(x, y, textureObject.getName());
-                    interactions.add(item);
+                    interaction = new MapInteractionItem(x, y, textureObject.getName());
                 }
                 else if (type.compareTo(IMapInteraction.Type.NPJ.name()) == 0) {
-                    MapInteractionNPJ pnj = new MapInteractionNPJ(x, y, CharactersManager.getInstance().getCharactersFactory().getCharacterDefById(textureObject.getName()));
-                    interactions.add(pnj);
+                    interaction = new MapInteractionNPJ(x, y, CharactersManager.getInstance().getCharactersFactory().getCharacterDefById(textureObject.getName()));
+
                 }
+                if(interaction!=null)
+                {
+                    String questId = textureObject.getProperties().get("questId", String.class);
+                    interaction.setQuestId(questId);
+                    interactions.add(interaction);
+                }
+
+
 
             }
 

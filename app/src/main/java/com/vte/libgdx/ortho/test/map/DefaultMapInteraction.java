@@ -7,6 +7,7 @@ package com.vte.libgdx.ortho.test.map;
 public class DefaultMapInteraction implements IMapInteraction {
     protected IMapInteraction.Type mType;
     protected float mX, mY;
+    protected String mQuestId;
 
     public DefaultMapInteraction(float aX, float aY, Type aType) {
         mX = aX;
@@ -27,6 +28,18 @@ public class DefaultMapInteraction implements IMapInteraction {
     @Override
     public IMapInteraction.Type getInteractionType() {
         return mType;
+    }
+
+    @Override
+    public String getQuestId()
+    {
+        return mQuestId;
+    }
+
+    @Override
+    public void setQuestId(String aQuestId)
+    {
+        mQuestId = aQuestId;
     }
 
 }

@@ -1,13 +1,17 @@
 package com.vte.libgdx.ortho.test.player;
 
 import com.badlogic.gdx.utils.Array;
+import com.vte.libgdx.ortho.test.events.EventDispatcher;
+import com.vte.libgdx.ortho.test.events.IItemListener;
 import com.vte.libgdx.ortho.test.items.Item;
 
 /**
  * Created by gwalarn on 05/12/16.
  */
 
-public class Player {
+public class Player implements IItemListener {
+
+
 
     public interface IPlayerListener {
         public void onInventoryChanged();
@@ -25,6 +29,7 @@ public class Player {
     public Player() {
         mInventory = new Array<Item>();
         mListeners = new Array<IPlayerListener>();
+        EventDispatcher.getInstance().addItemListener(this);
     }
 
 
@@ -58,7 +63,30 @@ public class Player {
         }
     }
 
+    @Override
+    public void onItemFound(Item aItem) {
+        addItem(aItem);
+    }
+
+    @Override
+    public void onItemLost(Item aItem) {
+        removeItem(aItem);
+    }
+
     public Array<Item> getInventory() {
         return mInventory;
+    }
+
+    public Array<Item> getItemsInventoryById(String aItemId) {
+
+        Array<Item> result = new Array<Item>();
+        for(Item item:mInventory)
+        {
+            if(item.getItemTypeID().name().equals(aItemId))
+            {
+                result.add(item);
+            }
+        }
+        return result;
     }
 }
