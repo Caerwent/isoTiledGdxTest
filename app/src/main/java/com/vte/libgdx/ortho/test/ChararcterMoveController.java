@@ -9,11 +9,12 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
-import com.vte.libgdx.ortho.test.box2d.MapBodyManager;
 import com.vte.libgdx.ortho.test.box2d.Path;
 import com.vte.libgdx.ortho.test.box2d.PolygonShape;
 import com.vte.libgdx.ortho.test.box2d.Shape;
 import com.vte.libgdx.ortho.test.box2d.ShapeUtils;
+import com.vte.libgdx.ortho.test.characters.CharacterHero;
+import com.vte.libgdx.ortho.test.screens.ScreenManager;
 
 /**
  * Created by vincent on 01/07/2016.
@@ -31,12 +32,12 @@ public class ChararcterMoveController extends InputAdapter {
     Vector2 mTouchSpotPoint = new Vector2();
     Vector2 mPathSpotPoint = new Vector2();
 
-    Bob mBob;
+    CharacterHero mBob;
     Path path;
     public boolean isActive = false;
 
 
-    public ChararcterMoveController(OrthographicCamera camera, Bob aBob) {
+    public ChararcterMoveController(OrthographicCamera camera, CharacterHero aBob) {
         this.camera = camera;
         mBob = aBob;
         float radius = Math.max(mBob.getPolygonShape().getBounds().getWidth(), mBob.getPolygonShape().getBounds().getHeight()) / 2;
@@ -68,7 +69,7 @@ public class ChararcterMoveController extends InputAdapter {
             mPathSpotPoint.set(mPathSpot.x, mPathSpot.y);
             Vector2 intersection = new Vector2();
 
-            Array<Shape> collisions = MapBodyManager.getInstance().getBodiesCollision();
+            Array<Shape> collisions = ScreenManager.getInstance().getScreen().getMap().getBodiesCollision();
             //Gdx.app.debug("DEBUG", "mTouchSpot=(" + mTouchSpot.x + "," + mTouchSpot.y + ") w="+mTouchSpot.getWidth());
             //Gdx.app.debug("DEBUG", "mPathSpot=(" + mPathSpot.x + "," + mPathSpot.y + ") w="+mPathSpot.getWidth());
             if (collisions != null && collisions.size > 0) {

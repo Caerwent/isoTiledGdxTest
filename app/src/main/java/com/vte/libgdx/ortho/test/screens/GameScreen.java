@@ -16,20 +16,13 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
-import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.TimeUtils;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
-import com.vte.libgdx.ortho.test.AssetsUtility;
-import com.vte.libgdx.ortho.test.Bob;
 import com.vte.libgdx.ortho.test.ChararcterMoveController;
-import com.vte.libgdx.ortho.test.MyGame;
-import com.vte.libgdx.ortho.test.OrthoCamController;
 import com.vte.libgdx.ortho.test.Settings;
-import com.vte.libgdx.ortho.test.box2d.MapBodyManager;
 import com.vte.libgdx.ortho.test.characters.CharactersManager;
 import com.vte.libgdx.ortho.test.entity.EntityEngine;
 import com.vte.libgdx.ortho.test.entity.components.InputComponent;
@@ -37,12 +30,10 @@ import com.vte.libgdx.ortho.test.entity.systems.BobSystem;
 import com.vte.libgdx.ortho.test.entity.systems.CollisionSystem;
 import com.vte.libgdx.ortho.test.entity.systems.MovementSystem;
 import com.vte.libgdx.ortho.test.entity.systems.PathRenderSystem;
-import com.vte.libgdx.ortho.test.events.EventDispatcher;
 import com.vte.libgdx.ortho.test.gui.TestActor;
 import com.vte.libgdx.ortho.test.gui.UIStage;
-import com.vte.libgdx.ortho.test.map.IMapInteraction;
-import com.vte.libgdx.ortho.test.map.MapAndSpritesRenderer2;
-import com.vte.libgdx.ortho.test.quests.Quest;
+import com.vte.libgdx.ortho.test.map.GameMap;
+import com.vte.libgdx.ortho.test.player.Player;
 import com.vte.libgdx.ortho.test.quests.QuestManager;
 
 import static com.vte.libgdx.ortho.test.Settings.TARGET_HEIGHT;
@@ -58,13 +49,11 @@ public class GameScreen implements Screen, InputProcessor {
     public Rectangle viewport;
     public int orientation;
 
-    private TiledMap map;
-    // private IsoTileMapRendererWithSprites renderer;
-    private MapAndSpritesRenderer2 renderer;
+    private GameMap map;
+
     private OrthographicCamera camera;
     private OrthographicCamera uiCamera;
     //private OrthoCamController cameraController;
-    private OrthoCamController cameraController;
     private ChararcterMoveController bobController;
     private AssetManager assetManager;
     private BitmapFont font;
@@ -76,8 +65,6 @@ public class GameScreen implements Screen, InputProcessor {
     private static final int POSITION_ITERATIONS = 2;
 
     private float physicsDeltaTime = 1.0f / 60.0f;
-
-    Bob bob;
 
     public GameScreen() {
         Gdx.app.setLogLevel(Application.LOG_DEBUG);
@@ -93,7 +80,7 @@ public class GameScreen implements Screen, InputProcessor {
         //camera.zoom = 2;
         camera.update();
 
-        cameraController = new OrthoCamController(camera);
+        //cameraController = new OrthoCamController(camera);
 
         uiCamera = new OrthographicCamera(TARGET_WIDTH, TARGET_HEIGHT);
 
@@ -110,52 +97,19 @@ public class GameScreen implements Screen, InputProcessor {
         CharactersManager.getInstance();
 
         assetManager = new AssetManager();
-       /* assetManager.setLoader(TiledMap.class, new TmxMapLoader(new InternalFileHandleResolver()));
-        assetManager.load("data/maps/ortho.tmx", TiledMap.class);
-        assetManager.finishLoading();
-        map = assetManager.get("data/maps/ortho.tmx");*/
+        map = new GameMap("ortho", camera);
 
-        AssetsUtility.loadMapAsset("data/maps/ortho.tmx");
-        if (AssetsUtility.isAssetLoaded("data/maps/ortho.tmx")) {
-            map = AssetsUtility.getMapAsset("data/maps/ortho.tmx");
-        } else {
-            Gdx.app.debug(TAG, "Map not loaded");
-            return;
-        }
-        renderer = new MapAndSpritesRenderer2(map, MyGame.SCALE_FACTOR);
         UIStage.createInstance(new ExtendViewport(TARGET_WIDTH, TARGET_HEIGHT, uiCamera));
 
-        MapBodyManager.createInstance(map);
-
         UIStage.getInstance().addActor(new TestActor());
-        // instantiate the bob
-        bob = new Bob();
-// initialize Bob
-        bob.initialize();
-        renderer.addSprite(bob);
 
-        bobController = new ChararcterMoveController(camera, bob);
-        Array<IMapInteraction> mapControls = MapBodyManager.getInstance().getInteractions();
-        for (IMapInteraction control : mapControls) {
-            if (control.getInteractionType() == IMapInteraction.Type.START) {
-                bob.setPosition(control.getX(), control.getY());
-                if(control.getQuestId()!=null)
-                {
-                    Quest theQuest = QuestManager.getInstance().getQuestFromId(control.getQuestId());
-                    if(theQuest!=null && !theQuest.isCompleted())
-                    {
-                        theQuest.setActivated(true);
-                        EventDispatcher.getInstance().onQuestActivated(theQuest);
-                    }
-                }
-                break;
-            }
-        }
+        bobController = new ChararcterMoveController(camera, Player.getInstance().getHero());
+
         InputMultiplexer inputMultiplexer = new InputMultiplexer();
         inputMultiplexer.addProcessor(UIStage.getInstance());
         inputMultiplexer.addProcessor(this);
         inputMultiplexer.addProcessor(bobController);
-        inputMultiplexer.addProcessor(cameraController);
+//        inputMultiplexer.addProcessor(cameraController);
 
         Gdx.input.setInputProcessor(inputMultiplexer);
 
@@ -164,7 +118,6 @@ public class GameScreen implements Screen, InputProcessor {
         EntityEngine.getInstance().addSystem(new BobSystem());
         EntityEngine.getInstance().addSystem(new CollisionSystem());
         EntityEngine.getInstance().addSystem(new PathRenderSystem(pathRenderer));
-
 
 
     }
@@ -190,10 +143,10 @@ public class GameScreen implements Screen, InputProcessor {
         // clear previous frame
         Gdx.gl.glClearColor(100f / 255f, 100f / 255f, 250f / 255f, 1f);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-        camera.update();
+
+        map.render();
         pathRenderer.setProjectionMatrix(camera.combined);
-        renderer.setView(camera);
-        renderer.render();
+
         batch.begin();
         //font.draw(batch, "FPS: " + Gdx.graphics.getFramesPerSecond(), 10, 20);
         batch.end();
@@ -245,6 +198,10 @@ public class GameScreen implements Screen, InputProcessor {
 
     public Camera getCamera() {
         return camera;
+    }
+
+    public GameMap getMap() {
+        return map;
     }
 
     @Override

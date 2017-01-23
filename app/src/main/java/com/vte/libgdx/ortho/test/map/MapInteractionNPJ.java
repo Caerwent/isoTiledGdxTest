@@ -13,6 +13,8 @@ import com.vte.libgdx.ortho.test.characters.CharacterNPJ;
 import com.vte.libgdx.ortho.test.entity.components.CollisionComponent;
 import com.vte.libgdx.ortho.test.entity.components.InputComponent;
 import com.vte.libgdx.ortho.test.entity.components.TransformComponent;
+import com.vte.libgdx.ortho.test.persistence.NPCProfile;
+import com.vte.libgdx.ortho.test.persistence.Profile;
 import com.vte.libgdx.ortho.test.screens.ScreenManager;
 
 /**
@@ -44,9 +46,28 @@ public class MapInteractionNPJ extends CharacterNPJ implements IMapInteraction, 
     @Override
     public void initialize() {
         super.initialize();
-        mMarkShape= new RectangleShape();
+        mMarkShape = new RectangleShape();
         add(new InputComponent(this));
+        NPCProfile profile = Profile.getInstance().getNPCProfile(getId());
+        if (profile != null && profile.dialogId != null) {
+            mDialogId = profile.dialogId;
+        }
     }
+
+    @Override
+    public void setDialogId(String aDialogId) {
+        mDialogId = aDialogId;
+        NPCProfile profile = Profile.getInstance().getNPCProfile(getId());
+        if (profile == null) {
+            profile = new NPCProfile();
+        }
+
+        profile.dialogId = mDialogId;
+        Profile.getInstance().updateNPCProfile(getId(), profile);
+
+
+    }
+
     @Override
     public float getX() {
         return getPosition().x;
@@ -63,16 +84,15 @@ public class MapInteractionNPJ extends CharacterNPJ implements IMapInteraction, 
     }
 
     @Override
-    public String getQuestId()
-    {
+    public String getQuestId() {
         return mQuestId;
     }
 
     @Override
-    public void setQuestId(String aQuestId)
-    {
+    public void setQuestId(String aQuestId) {
         mQuestId = aQuestId;
     }
+
     public boolean isRendable() {
         return true;
     }
@@ -109,6 +129,7 @@ public class MapInteractionNPJ extends CharacterNPJ implements IMapInteraction, 
                     transform.angle);
         }
     }
+
     public void setPosition(float x, float y) {
         super.setPosition(x, y);
         updateInteractionMarkShape();
@@ -121,7 +142,7 @@ public class MapInteractionNPJ extends CharacterNPJ implements IMapInteraction, 
     }
 
     public void updateInteractionMarkShape() {
-        if(mMarkShape==null)
+        if (mMarkShape == null)
             return;
 
         TransformComponent transform = this.getComponent(TransformComponent.class);
@@ -180,7 +201,7 @@ public class MapInteractionNPJ extends CharacterNPJ implements IMapInteraction, 
         ScreenManager.getInstance().getScreen().getCamera().unproject(cursorPoint.set(screenX, screenY, 0));
 
         if (mIsInteractionShown && mMarkShape.getBounds().contains(cursorPoint.x, cursorPoint.y)) {
-           onInteractionStart();
+            onInteractionStart();
         }
         return false;
     }

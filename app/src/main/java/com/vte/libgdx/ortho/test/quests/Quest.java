@@ -53,6 +53,20 @@ public class Quest {
         return tasks;
     }
 
+    public QuestTask getTaskById(String aTaskId)
+    {
+        if(tasks==null || aTaskId==null)
+            return null;
+        for(QuestTask task : tasks)
+        {
+            if(task.getId().equals(aTaskId))
+            {
+                return task;
+            }
+        }
+        return null;
+    }
+
     public void setTasks(ArrayList<QuestTask> aTasks) {
         tasks = aTasks;
     }

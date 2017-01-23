@@ -5,13 +5,13 @@ import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.utils.Array;
 import com.vte.libgdx.ortho.test.MyGame;
-import com.vte.libgdx.ortho.test.box2d.MapBodyManager;
 import com.vte.libgdx.ortho.test.box2d.RectangleShape;
 import com.vte.libgdx.ortho.test.entity.EntityEngine;
 import com.vte.libgdx.ortho.test.entity.ICollisionHandler;
 import com.vte.libgdx.ortho.test.entity.components.CollisionComponent;
 import com.vte.libgdx.ortho.test.items.Item;
 import com.vte.libgdx.ortho.test.items.ItemFactory;
+import com.vte.libgdx.ortho.test.screens.ScreenManager;
 
 /**
  * Created by gwalarn on 27/11/16.
@@ -84,7 +84,7 @@ public class MapInteractionItem extends DefaultMapInteraction implements IMapInt
     @Override
     public boolean onCollisionStart(CollisionComponent aEntity) {
         if (aEntity.mType == CollisionComponent.Type.CHARACTER) {
-            MapBodyManager.getInstance().getInteractions().removeValue(this, true);
+            ScreenManager.getInstance().getScreen().getMap().removeItem(this);
             EntityEngine.getInstance().removeEntity(mEntity);
             return true;
         }

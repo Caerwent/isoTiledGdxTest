@@ -1,16 +1,16 @@
 package com.vte.libgdx.ortho.test.entity.components;
 
 import com.badlogic.ashley.core.Component;
-import com.vte.libgdx.ortho.test.Bob;
+import com.vte.libgdx.ortho.test.characters.CharacterHero;
 
 /**
  * Created by vincent on 20/07/2016.
  */
 
 public class BobComponent implements Component {
-    public Bob bob;
+    public CharacterHero bob;
 
-    public BobComponent(Bob aBob) {
+    public BobComponent(CharacterHero aBob) {
         bob = aBob;
 
     }

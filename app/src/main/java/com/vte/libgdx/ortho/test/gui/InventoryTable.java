@@ -49,6 +49,8 @@ public class InventoryTable extends Group implements Player.IPlayerListener{
         mDetails.setPosition(mLengthSlotRow*mSlotWidth+5, (Settings.TARGET_HEIGHT - 50)/2+25);
         mDetails.setVisible(false);
 
+        update();
+
     }
 
     public void update()

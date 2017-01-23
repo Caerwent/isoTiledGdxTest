@@ -1,8 +1,7 @@
-package com.vte.libgdx.ortho.test;
+package com.vte.libgdx.ortho.test.characters;
 
 import com.badlogic.gdx.math.Vector2;
 import com.vte.libgdx.ortho.test.box2d.Path;
-import com.vte.libgdx.ortho.test.characters.Character;
 import com.vte.libgdx.ortho.test.entity.components.BobComponent;
 import com.vte.libgdx.ortho.test.entity.components.CollisionComponent;
 import com.vte.libgdx.ortho.test.entity.components.TransformComponent;
@@ -15,7 +14,7 @@ import com.vte.libgdx.ortho.test.map.MapInteractionItem;
  * Created by vincent on 01/07/2016.
  */
 
-public class Bob extends Character {
+public class CharacterHero extends Character {
 
     Path path;
 
@@ -54,7 +53,7 @@ public class Bob extends Character {
 
     }
 
-    public Bob() {
+    public CharacterHero() {
         super("bob", "player", "characters/universal_walk.png", null);
         this.add(new BobComponent(this));
 

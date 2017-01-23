@@ -1,9 +1,14 @@
 package com.vte.libgdx.ortho.test.player;
 
 import com.badlogic.gdx.utils.Array;
+import com.vte.libgdx.ortho.test.characters.CharacterHero;
 import com.vte.libgdx.ortho.test.events.EventDispatcher;
 import com.vte.libgdx.ortho.test.events.IItemListener;
 import com.vte.libgdx.ortho.test.items.Item;
+import com.vte.libgdx.ortho.test.items.ItemFactory;
+import com.vte.libgdx.ortho.test.persistence.Profile;
+
+import java.util.ArrayList;
 
 /**
  * Created by gwalarn on 05/12/16.
@@ -25,10 +30,21 @@ public class Player implements IItemListener {
 
     private Array<Item> mInventory;
     private Array<IPlayerListener> mListeners;
+    private CharacterHero mHero;
 
     public Player() {
         mInventory = new Array<Item>();
         mListeners = new Array<IPlayerListener>();
+        ArrayList<String> savedInventory = Profile.getInstance().getInventory();
+
+        if(savedInventory!=null) {
+            for (String itemId : savedInventory) {
+                mInventory.add(ItemFactory.getInstance().getInventoryItem(Item.ItemTypeID.valueOf(itemId)));
+            }
+        }
+        // instantiate the hero
+        mHero = new CharacterHero();
+        mHero.initialize();
         EventDispatcher.getInstance().addItemListener(this);
     }
 
@@ -48,18 +64,22 @@ public class Player implements IItemListener {
     public void addItem(Item aItem) {
         if (!mInventory.contains(aItem, true)) {
             mInventory.add(aItem);
+            Profile.getInstance().updateInventory(mInventory);
             for (IPlayerListener listener : mListeners) {
                 listener.onInventoryChanged();
             }
+
         }
     }
 
     public void removeItem(Item aItem) {
         if (mInventory.contains(aItem, true)) {
             mInventory.removeValue(aItem, true);
+            Profile.getInstance().updateInventory(mInventory);
             for (IPlayerListener listener : mListeners) {
                 listener.onInventoryChanged();
             }
+
         }
     }
 
@@ -88,5 +108,10 @@ public class Player implements IItemListener {
             }
         }
         return result;
+    }
+
+    public CharacterHero getHero()
+    {
+        return mHero;
     }
 }

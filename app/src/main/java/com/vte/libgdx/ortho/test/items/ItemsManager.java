@@ -1,8 +1,5 @@
 package com.vte.libgdx.ortho.test.items;
 
-import com.badlogic.gdx.maps.Map;
-import com.vte.libgdx.ortho.test.box2d.MapBodyManager;
-
 /**
  * Created by gwalarn on 27/11/16.
  */

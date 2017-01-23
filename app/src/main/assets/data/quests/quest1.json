@@ -2,7 +2,7 @@
 {
 	"id": "quest1",
 	"title":"quête 1",
-	"startQuestDialogId":"newQuest",
+	"startQuestDialogId":"startQuest1",
 	"requiredCompletedQuest": [],
 	"tasks" : [
 		{

@@ -2,9 +2,9 @@
 [
 	{
 
-		"id": "newQuest",
+		"id": "startQuest1",
 		"dialogs" : [
-			"Vous avez une nouvelle quête !"
+			"Aller parler à machin !"
 		]
 
 	},
