@@ -20,10 +20,18 @@ public class CharacterHero extends Character {
 
     public void SetPath(Path p) {
         path = p;
-        path.Reset();
-        VisualComponent visual = this.getComponent(VisualComponent.class);
-        setPosition(path.GetCurrentPoint().x, path.GetCurrentPoint().y);
-        setVelocity(path.GetVelocity());
+        if(path==null)
+        {
+            setVelocity(0,0);
+        }
+        else
+        {
+            path.Reset();
+            VisualComponent visual = this.getComponent(VisualComponent.class);
+            setPosition(path.GetCurrentPoint().x, path.GetCurrentPoint().y);
+            setVelocity(path.GetVelocity());
+        }
+
         stateTime = 0;
     }
 

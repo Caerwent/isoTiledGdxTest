@@ -22,6 +22,7 @@ import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.TimeUtils;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
 import com.vte.libgdx.ortho.test.ChararcterMoveController;
+import com.vte.libgdx.ortho.test.MyGame;
 import com.vte.libgdx.ortho.test.Settings;
 import com.vte.libgdx.ortho.test.characters.CharactersManager;
 import com.vte.libgdx.ortho.test.entity.EntityEngine;
@@ -30,10 +31,11 @@ import com.vte.libgdx.ortho.test.entity.systems.BobSystem;
 import com.vte.libgdx.ortho.test.entity.systems.CollisionSystem;
 import com.vte.libgdx.ortho.test.entity.systems.MovementSystem;
 import com.vte.libgdx.ortho.test.entity.systems.PathRenderSystem;
+import com.vte.libgdx.ortho.test.events.EventDispatcher;
+import com.vte.libgdx.ortho.test.events.IGameEventListener;
 import com.vte.libgdx.ortho.test.gui.TestActor;
 import com.vte.libgdx.ortho.test.gui.UIStage;
 import com.vte.libgdx.ortho.test.map.GameMap;
-import com.vte.libgdx.ortho.test.player.Player;
 import com.vte.libgdx.ortho.test.quests.QuestManager;
 
 import static com.vte.libgdx.ortho.test.Settings.TARGET_HEIGHT;
@@ -43,7 +45,7 @@ import static com.vte.libgdx.ortho.test.Settings.TARGET_WIDTH;
  * Created by gwalarn on 16/11/16.
  */
 
-public class GameScreen implements Screen, InputProcessor {
+public class GameScreen implements Screen, InputProcessor, IGameEventListener {
 
     public final static String TAG = GameScreen.class.getSimpleName();
     public Rectangle viewport;
@@ -66,10 +68,12 @@ public class GameScreen implements Screen, InputProcessor {
 
     private float physicsDeltaTime = 1.0f / 60.0f;
 
+    InputMultiplexer mInputMultiplexer = new InputMultiplexer();
+
+
     public GameScreen() {
         Gdx.app.setLogLevel(Application.LOG_DEBUG);
 
-        ScreenManager.getInstance().setScreen(this);
         float w = Gdx.graphics.getWidth();
         float h = Gdx.graphics.getHeight();
 
@@ -97,27 +101,40 @@ public class GameScreen implements Screen, InputProcessor {
         CharactersManager.getInstance();
 
         assetManager = new AssetManager();
-        map = new GameMap("ortho", camera);
+
+
 
         UIStage.createInstance(new ExtendViewport(TARGET_WIDTH, TARGET_HEIGHT, uiCamera));
-
         UIStage.getInstance().addActor(new TestActor());
 
-        bobController = new ChararcterMoveController(camera, Player.getInstance().getHero());
 
-        InputMultiplexer inputMultiplexer = new InputMultiplexer();
-        inputMultiplexer.addProcessor(UIStage.getInstance());
-        inputMultiplexer.addProcessor(this);
-        inputMultiplexer.addProcessor(bobController);
-//        inputMultiplexer.addProcessor(cameraController);
+        bobController = new ChararcterMoveController(camera);
 
-        Gdx.input.setInputProcessor(inputMultiplexer);
 
-        EntityEngine.getInstance().addSystem(new MovementSystem());
-        // EntityEngine.getInstance().addSystem(new VisualRenderSystem(camera));
-        EntityEngine.getInstance().addSystem(new BobSystem());
-        EntityEngine.getInstance().addSystem(new CollisionSystem());
-        EntityEngine.getInstance().addSystem(new PathRenderSystem(pathRenderer));
+        mInputMultiplexer.addProcessor(UIStage.getInstance());
+        mInputMultiplexer.addProcessor(this);
+        mInputMultiplexer.addProcessor(bobController);
+
+        EventDispatcher.getInstance().addGameEventListener(this);
+
+
+
+
+
+    }
+
+    public void loadMap(String aTargetMapId, String aFromMapId) {
+        if(map!=null)
+        {
+            map.destroy();
+        }
+        map=null;
+
+
+        map = new GameMap(aTargetMapId, aFromMapId, camera);
+        bobController.setMap(map);
+
+
 
 
     }
@@ -125,9 +142,23 @@ public class GameScreen implements Screen, InputProcessor {
 
     @Override
     public void show() {
+        Gdx.input.setInputProcessor(mInputMultiplexer);
+        EntityEngine.getInstance().addSystem(new MovementSystem());
+        // EntityEngine.getInstance().addSystem(new VisualRenderSystem(camera));
+        EntityEngine.getInstance().addSystem(new BobSystem());
+        EntityEngine.getInstance().addSystem(new CollisionSystem());
+        EntityEngine.getInstance().addSystem(new PathRenderSystem(pathRenderer));
+    }
+    @Override
+    public void hide() {
+        Gdx.input.setInputProcessor(null);
+        EntityEngine.getInstance().addSystem(EntityEngine.getInstance().getSystem(MovementSystem.class));
+        // EntityEngine.getInstance().addSystem(new VisualRenderSystem(camera));
+        EntityEngine.getInstance().addSystem(EntityEngine.getInstance().getSystem(BobSystem.class));
+        EntityEngine.getInstance().addSystem(EntityEngine.getInstance().getSystem(CollisionSystem.class));
+        EntityEngine.getInstance().addSystem(EntityEngine.getInstance().getSystem(PathRenderSystem.class));
 
     }
-
     @Override
     public void render(float delta) {
        /* double newTime = TimeUtils.millis() / 1000.0;
@@ -144,7 +175,8 @@ public class GameScreen implements Screen, InputProcessor {
         Gdx.gl.glClearColor(100f / 255f, 100f / 255f, 250f / 255f, 1f);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
-        map.render();
+        if (map != null)
+            map.render();
         pathRenderer.setProjectionMatrix(camera.combined);
 
         batch.begin();
@@ -191,10 +223,7 @@ public class GameScreen implements Screen, InputProcessor {
 
     }
 
-    @Override
-    public void hide() {
 
-    }
 
     public Camera getCamera() {
         return camera;
@@ -206,6 +235,11 @@ public class GameScreen implements Screen, InputProcessor {
 
     @Override
     public void dispose() {
+        if(map!=null)
+        {
+            map.destroy();
+        }
+        EventDispatcher.getInstance().removeGameEventListener(this);
         EntityEngine.getInstance().removeAllEntities();
     }
 
@@ -229,7 +263,8 @@ public class GameScreen implements Screen, InputProcessor {
 
         switch (keyCode) {
             case Input.Keys.ESCAPE:
-                Gdx.app.exit();
+            case Input.Keys.BACK:
+                MyGame.getInstance().setScreen(MyGame.getInstance().getScreenType(MyGame.ScreenType.MainMenu));
                 break;
             default:
                 //  Log.out("unknown key");
@@ -261,13 +296,10 @@ public class GameScreen implements Screen, InputProcessor {
 
 
         ImmutableArray<Entity> inputEntities = EntityEngine.getInstance().getEntitiesFor(Family.all(InputComponent.class).get());
-        if(inputEntities!=null)
-        {
-            for(Entity entity : inputEntities)
-            {
+        if (inputEntities != null) {
+            for (Entity entity : inputEntities) {
                 InputComponent input = entity.getComponent(InputComponent.class);
-                if(input.touchDown(x, y, pointer, button))
-                {
+                if (input.touchDown(x, y, pointer, button)) {
                     return true;
                 }
             }
@@ -276,4 +308,13 @@ public class GameScreen implements Screen, InputProcessor {
         return false;
     }
 
+    @Override
+    public void onNewMapRequested(String aMapId) {
+        loadMap(aMapId, map.getMapName());
+    }
+
+    @Override
+    public void onMapLoaded(GameMap aMap) {
+
+    }
 }

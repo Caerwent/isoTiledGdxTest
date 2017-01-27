@@ -2,6 +2,7 @@ package com.vte.libgdx.ortho.test;
 
 import android.os.Bundle;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.backends.android.AndroidApplication;
 import com.badlogic.gdx.backends.android.AndroidApplicationConfiguration;
 
@@ -16,5 +17,6 @@ public class AndroidLauncher extends AndroidApplication {
         super.onCreate(savedInstanceState);
         AndroidApplicationConfiguration config = new AndroidApplicationConfiguration();
         initialize(new MyGame(), config);
+        Gdx.input.setCatchBackKey(true);
     }
 }

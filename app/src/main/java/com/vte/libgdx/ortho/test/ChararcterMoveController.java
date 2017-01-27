@@ -13,8 +13,7 @@ import com.vte.libgdx.ortho.test.box2d.Path;
 import com.vte.libgdx.ortho.test.box2d.PolygonShape;
 import com.vte.libgdx.ortho.test.box2d.Shape;
 import com.vte.libgdx.ortho.test.box2d.ShapeUtils;
-import com.vte.libgdx.ortho.test.characters.CharacterHero;
-import com.vte.libgdx.ortho.test.screens.ScreenManager;
+import com.vte.libgdx.ortho.test.map.GameMap;
 
 /**
  * Created by vincent on 01/07/2016.
@@ -32,18 +31,22 @@ public class ChararcterMoveController extends InputAdapter {
     Vector2 mTouchSpotPoint = new Vector2();
     Vector2 mPathSpotPoint = new Vector2();
 
-    CharacterHero mBob;
     Path path;
     public boolean isActive = false;
+    private GameMap mMap;
 
 
-    public ChararcterMoveController(OrthographicCamera camera, CharacterHero aBob) {
+    public ChararcterMoveController(OrthographicCamera camera) {
         this.camera = camera;
-        mBob = aBob;
-        float radius = Math.max(mBob.getPolygonShape().getBounds().getWidth(), mBob.getPolygonShape().getBounds().getHeight()) / 2;
+
+
+    }
+
+    public void setMap(GameMap aMap) {
+        mMap = aMap;
+        float radius = Math.max(mMap.getPlayer().getHero().getPolygonShape().getBounds().getWidth(), mMap.getPlayer().getHero().getPolygonShape().getBounds().getHeight()) / 2;
         mPathSpot = new Circle(0, 0, radius);
         mTouchSpot = new Circle(0, 0, radius);
-
     }
 
     @Override
@@ -52,7 +55,7 @@ public class ChararcterMoveController extends InputAdapter {
             return false;
         camera.unproject(mCursorPoint.set(x, y, 0));
 
-        if (!(last.x == -1 && last.y == -1 && last.z == -1)) {
+        if (mMap!=null && !(last.x == -1 && last.y == -1 && last.z == -1)) {
             camera.unproject(delta.set(last.x, last.y, 0));
             delta.sub(mCursorPoint);
 
@@ -69,7 +72,7 @@ public class ChararcterMoveController extends InputAdapter {
             mPathSpotPoint.set(mPathSpot.x, mPathSpot.y);
             Vector2 intersection = new Vector2();
 
-            Array<Shape> collisions = ScreenManager.getInstance().getScreen().getMap().getBodiesCollision();
+            Array<Shape> collisions = mMap.getBodiesCollision();
             //Gdx.app.debug("DEBUG", "mTouchSpot=(" + mTouchSpot.x + "," + mTouchSpot.y + ") w="+mTouchSpot.getWidth());
             //Gdx.app.debug("DEBUG", "mPathSpot=(" + mPathSpot.x + "," + mPathSpot.y + ") w="+mPathSpot.getWidth());
             if (collisions != null && collisions.size > 0) {
@@ -144,13 +147,12 @@ public class ChararcterMoveController extends InputAdapter {
     public boolean touchDown(int x, int y, int pointer, int button) {
 
         camera.unproject(mCursorPoint.set(x, y, 0));
-
-        if (mBob.getPolygonShape().getBounds().contains(mCursorPoint.x, mCursorPoint.y)) {
+        if (mMap!=null && mMap.getPlayer()!=null && mMap.getPlayer().getHero()!=null &&  mMap.getPlayer().getHero().getPolygonShape().getBounds().contains(mCursorPoint.x, mCursorPoint.y)) {
             if (path != null)
                 path.destroy();
             path = new Path();
-            Rectangle bobBound = mBob.getPolygonShape().getBounds();
-            Vector2 bobPos = mBob.getPosition();
+            Rectangle bobBound = mMap.getPlayer().getHero().getPolygonShape().getBounds();
+            Vector2 bobPos = mMap.getPlayer().getHero().getPosition();
 //            mCursorPoint.set(.x, mBob.getPosition().y, mCursorPoint.z);
             path.AddPoint(bobPos.x, bobPos.y, 0.2f);
             mLastPoint.set(mCursorPoint.x, mCursorPoint.y);
@@ -165,9 +167,9 @@ public class ChararcterMoveController extends InputAdapter {
     @Override
     public boolean touchUp(int x, int y, int pointer, int button) {
         last.set(-1, -1, -1);
-        if (isActive) {
+        if (mMap!=null && mMap.getPlayer()!=null && mMap.getPlayer().getHero()!=null && isActive) {
             isActive = false;
-            mBob.SetPath(path);
+            mMap.getPlayer().getHero().SetPath(path);
         }
         return false;
     }

@@ -37,6 +37,11 @@ public class Profile {
         PersistenceProvider.getInstance().saveMapProfile(aMapName, aMapProfile);
     }
 
+    public synchronized void newProfile()
+    {
+        sProfile = new Profile();
+        PersistenceProvider.getInstance().save(sProfile);
+    }
     public final QuestProfile getQuestProfile(String aQuestKey) {
         return quests.get(aQuestKey);
     }

@@ -8,6 +8,8 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.ArrayMap;
 import com.vte.libgdx.ortho.test.Settings;
+import com.vte.libgdx.ortho.test.events.EventDispatcher;
+import com.vte.libgdx.ortho.test.events.IPlayerListener;
 import com.vte.libgdx.ortho.test.items.Item;
 import com.vte.libgdx.ortho.test.player.Player;
 
@@ -15,7 +17,7 @@ import com.vte.libgdx.ortho.test.player.Player;
  * Created by vincent on 09/12/2016.
  */
 
-public class InventoryTable extends Group implements Player.IPlayerListener{
+public class InventoryTable extends Group implements IPlayerListener {
     private final int mSlotWidth = 66;
     private final int mSlotHeight = 66;
     private int mLengthSlotRow = 2;
@@ -41,7 +43,7 @@ public class InventoryTable extends Group implements Player.IPlayerListener{
         mInventoryTable.setName("Inventory_Slot_Table");
         mInventoryTable.setPosition(0,25);
         mInventoryTable.setSize(mLengthSlotRow*mSlotWidth+5, Settings.TARGET_HEIGHT - 50);
-        Player.getInstance().registerListener(this);
+        EventDispatcher.getInstance().addPlayerListener(this);
         mDetails = new InventoryDetails(200, (Settings.TARGET_HEIGHT - 50)/2);
 
         addActor(mInventoryTable);
@@ -49,16 +51,20 @@ public class InventoryTable extends Group implements Player.IPlayerListener{
         mDetails.setPosition(mLengthSlotRow*mSlotWidth+5, (Settings.TARGET_HEIGHT - 50)/2+25);
         mDetails.setVisible(false);
 
-        update();
 
     }
 
-    public void update()
+    public void destroy()
+    {
+        EventDispatcher.getInstance().removePlayerListener(this);
+    }
+
+    public void update(Player aPlayer)
     {
         int nbItemInRow=0;
         mInventoryTable.clear();
         mSlots.clear();
-        for(Item item : Player.getInstance().getInventory())
+        for(Item item : aPlayer.getInventory())
         {
             InventorySlot inventorySlot = mSlots.get(item.getItemTypeID());
             if(inventorySlot==null)
@@ -109,7 +115,7 @@ public class InventoryTable extends Group implements Player.IPlayerListener{
     }
 
     @Override
-    public void onInventoryChanged() {
-        update();
+    public void onInventoryChanged(Player aPlayer) {
+        update(aPlayer);
     }
 }

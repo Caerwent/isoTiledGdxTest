@@ -11,7 +11,6 @@ import com.vte.libgdx.ortho.test.entity.ICollisionHandler;
 import com.vte.libgdx.ortho.test.entity.components.CollisionComponent;
 import com.vte.libgdx.ortho.test.items.Item;
 import com.vte.libgdx.ortho.test.items.ItemFactory;
-import com.vte.libgdx.ortho.test.screens.ScreenManager;
 
 /**
  * Created by gwalarn on 27/11/16.
@@ -24,10 +23,12 @@ public class MapInteractionItem extends DefaultMapInteraction implements IMapInt
     protected RectangleShape mShape;
     protected boolean mIsRended = false;
     private Array<CollisionComponent> mCollisions = new Array<CollisionComponent>();
+    private  GameMap mMap;
 
 
-    public MapInteractionItem(float aX, float aY, String aId) {
+    public MapInteractionItem(float aX, float aY, String aId, GameMap aMap) {
         super(aX, aY, Type.ITEM);
+        mMap = aMap;
         mId = aId;
         mItem = ItemFactory.getInstance().getInventoryItem(Item.ItemTypeID.valueOf(aId));
         mEntity = new Entity();
@@ -84,7 +85,7 @@ public class MapInteractionItem extends DefaultMapInteraction implements IMapInt
     @Override
     public boolean onCollisionStart(CollisionComponent aEntity) {
         if (aEntity.mType == CollisionComponent.Type.CHARACTER) {
-            ScreenManager.getInstance().getScreen().getMap().removeItem(this);
+            mMap.removeItem(this);
             EntityEngine.getInstance().removeEntity(mEntity);
             return true;
         }

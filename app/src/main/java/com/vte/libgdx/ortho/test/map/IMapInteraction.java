@@ -6,15 +6,15 @@ package com.vte.libgdx.ortho.test.map;
 
 public interface IMapInteraction {
     public enum Type {
-        START,
         ITEM,
         CHESS,
-        NPJ
+        NPJ,
+        PORTAL
     }
 
 
-
     public float getX();
+
     public float getY();
 
     public Type getInteractionType();

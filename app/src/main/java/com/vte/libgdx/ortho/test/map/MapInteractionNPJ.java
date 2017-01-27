@@ -2,6 +2,7 @@ package com.vte.libgdx.ortho.test.map;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputProcessor;
+import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
@@ -15,7 +16,6 @@ import com.vte.libgdx.ortho.test.entity.components.InputComponent;
 import com.vte.libgdx.ortho.test.entity.components.TransformComponent;
 import com.vte.libgdx.ortho.test.persistence.NPCProfile;
 import com.vte.libgdx.ortho.test.persistence.Profile;
-import com.vte.libgdx.ortho.test.screens.ScreenManager;
 
 /**
  * Created by vincent on 05/01/2017.
@@ -30,9 +30,11 @@ public class MapInteractionNPJ extends CharacterNPJ implements IMapInteraction, 
     private TextureRegion mInteractionTextureRegion;
     private boolean mIsInteractionShown = false;
     private RectangleShape mMarkShape;
+    private Camera mCamera;
 
-    public MapInteractionNPJ(float aX, float aY, CharacterDef aDef) {
+    public MapInteractionNPJ(float aX, float aY, CharacterDef aDef,Camera aCamera) {
         super(aDef);
+        mCamera = aCamera;
         mInteractionTextureRegion = AssetsUtility.ITEMS_TEXTUREATLAS.findRegion("inv_shield");
 
         initialize();
@@ -198,7 +200,7 @@ public class MapInteractionNPJ extends CharacterNPJ implements IMapInteraction, 
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
         Vector3 cursorPoint = new Vector3();
 
-        ScreenManager.getInstance().getScreen().getCamera().unproject(cursorPoint.set(screenX, screenY, 0));
+        mCamera.unproject(cursorPoint.set(screenX, screenY, 0));
 
         if (mIsInteractionShown && mMarkShape.getBounds().contains(cursorPoint.x, cursorPoint.y)) {
             onInteractionStart();

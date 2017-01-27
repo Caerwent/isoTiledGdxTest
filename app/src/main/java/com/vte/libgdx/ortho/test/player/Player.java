@@ -18,23 +18,13 @@ public class Player implements IItemListener {
 
 
 
-    public interface IPlayerListener {
-        public void onInventoryChanged();
-    }
 
-    static private Player sPlayer = new Player();
-
-    public static Player getInstance() {
-        return sPlayer;
-    }
 
     private Array<Item> mInventory;
-    private Array<IPlayerListener> mListeners;
     private CharacterHero mHero;
 
     public Player() {
         mInventory = new Array<Item>();
-        mListeners = new Array<IPlayerListener>();
         ArrayList<String> savedInventory = Profile.getInstance().getInventory();
 
         if(savedInventory!=null) {
@@ -46,28 +36,21 @@ public class Player implements IItemListener {
         mHero = new CharacterHero();
         mHero.initialize();
         EventDispatcher.getInstance().addItemListener(this);
+        EventDispatcher.getInstance().onInventoryChanged(this);
+    }
+
+    public void destroy()
+    {
+        EventDispatcher.getInstance().removeItemListener(this);
     }
 
 
-    public void registerListener(IPlayerListener aListener) {
-        if (!mListeners.contains(aListener, true)) {
-            mListeners.add(aListener);
-        }
-    }
-
-    public void unregisterListener(IPlayerListener aListener) {
-        if (mListeners.contains(aListener, true)) {
-            mListeners.removeValue(aListener, true);
-        }
-    }
 
     public void addItem(Item aItem) {
         if (!mInventory.contains(aItem, true)) {
             mInventory.add(aItem);
             Profile.getInstance().updateInventory(mInventory);
-            for (IPlayerListener listener : mListeners) {
-                listener.onInventoryChanged();
-            }
+            EventDispatcher.getInstance().onInventoryChanged(this);
 
         }
     }
@@ -76,9 +59,7 @@ public class Player implements IItemListener {
         if (mInventory.contains(aItem, true)) {
             mInventory.removeValue(aItem, true);
             Profile.getInstance().updateInventory(mInventory);
-            for (IPlayerListener listener : mListeners) {
-                listener.onInventoryChanged();
-            }
+            EventDispatcher.getInstance().onInventoryChanged(this);
 
         }
     }

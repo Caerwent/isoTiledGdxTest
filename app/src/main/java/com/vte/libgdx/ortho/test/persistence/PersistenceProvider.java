@@ -19,7 +19,7 @@ import java.util.ArrayList;
 
 public class PersistenceProvider {
     private Json _json = new Json();
-    private final String SAVE_FILE = "save.json";
+    private static final String SAVE_FILE = "save.json";
     private static PersistenceProvider _instance = null;
 
 
@@ -39,6 +39,17 @@ public class PersistenceProvider {
 
     }
 
+    public static boolean isProfileExist()
+    {
+        String filename = SAVE_FILE;
+        if (Gdx.files.isLocalStorageAvailable()) {
+            return Gdx.files.local(filename).exists();
+        }
+        else
+        {
+            return false;
+        }
+    }
 
     public void writeProfileToStorage(String fullFilename, String fileData, boolean overwrite) {
 
