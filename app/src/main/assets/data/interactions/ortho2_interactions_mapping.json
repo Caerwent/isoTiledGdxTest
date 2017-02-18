@@ -1,0 +1,32 @@
+[
+  {
+    "id":"monster1",
+    "template":"monster_type1.json",
+    "eventsAction":[
+      {
+        "id":"WAKEUP",
+        "inputEvents":[
+          {
+            "sourceId":"activator1",
+            "type":"STATE",
+            "value":"ACTIVATED"
+          }
+        ]
+      }
+    ],
+    "outputEvents":[]
+  },
+  {
+    "id":"activator1",
+    "template":"activator_type1.json",
+    "eventsAction":[],
+    "outputEvents":[{
+      "type":"STATE",
+      "value":"ACTIVATED"
+    },
+      {
+        "type":"STATE",
+        "value":"IDLE"
+      }]
+  }
+]

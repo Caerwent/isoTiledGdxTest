@@ -1,0 +1,68 @@
+grigri.png
+size: 32, 450
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+move_down1
+  rotate: false
+  xy: 0, 0
+  size: 32, 50
+  orig: 32, 50
+  offset: 0, 0
+  index: -1
+move_down2
+  rotate: false
+  xy: 0, 50
+  size: 32, 50
+  orig: 32, 50
+  offset: 0, 0
+  index: -1
+move_down3
+  rotate: false
+  xy: 0, 100
+  size: 32, 50
+  orig: 32, 50
+  offset: 0, 0
+  index: -1
+move_left1
+  rotate: false
+  xy: 0, 150
+  size: 32, 50
+  orig: 32, 50
+  offset: 0, 0
+  index: -1
+move_left2
+  rotate: false
+  xy: 0, 200
+  size: 32, 50
+  orig: 32, 50
+  offset: 0, 0
+  index: -1
+move_left3
+  rotate: false
+  xy: 0, 250
+  size: 32, 50
+  orig: 32, 50
+  offset: 0, 0
+  index: -1
+move_up1
+  rotate: false
+  xy: 0, 300
+  size: 32, 50
+  orig: 32, 50
+  offset: 0, 0
+  index: -1
+move_up2
+  rotate: false
+  xy: 0, 350
+  size: 32, 50
+  orig: 32, 50
+  offset: 0, 0
+  index: -1
+move_up3
+  rotate: false
+  xy: 0, 400
+  size: 32, 50
+  orig: 32, 50
+  offset: 0, 0
+  index: -1

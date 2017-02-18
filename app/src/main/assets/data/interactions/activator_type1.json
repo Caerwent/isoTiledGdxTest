@@ -1,0 +1,27 @@
+{
+  "type":"ACTIVATOR1",
+  "atlas":"activator1.atlas",
+  "isPersistent":"false",
+  "defaultState":"IDLE",
+  "isClickable": "true",
+  "isRendable": "true",
+  "isMovable": "false",
+  "states": [
+    {
+      "name": "IDLE",
+      "fps":"0",
+      "frames": [
+        "idle"
+      ]
+    },
+    {
+      "name": "ACTIVATED",
+      "fps":"0",
+      "frames": [
+        "activated"
+      ]
+    }
+
+  ]
+
+}

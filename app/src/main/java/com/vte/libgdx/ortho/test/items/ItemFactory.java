@@ -1,13 +1,9 @@
 package com.vte.libgdx.ortho.test.items;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.JsonValue;
-import com.badlogic.gdx.utils.Scaling;
 import com.vte.libgdx.ortho.test.AssetsUtility;
-import com.vte.libgdx.ortho.test.MyGame;
-import com.vte.libgdx.ortho.test.entity.components.VisualComponent;
 
 import java.util.ArrayList;
 import java.util.Hashtable;
@@ -19,8 +15,10 @@ import java.util.Hashtable;
 public class ItemFactory {
     private Json _json = new Json();
     private final String INVENTORY_ITEM = "data/items/items.json";
+    private final String CHESS_FILE = "data/items/chess.json";
     private static ItemFactory _instance = null;
-    private Hashtable<Item.ItemTypeID, Item> _inventoryItemList;
+    private Hashtable<Item.ItemTypeID, Item> mItemsList;
+    private Hashtable<String, Chess> mChessList;
 
     public static ItemFactory getInstance() {
         if (_instance == null) {
@@ -32,17 +30,30 @@ public class ItemFactory {
 
     private ItemFactory() {
         ArrayList<JsonValue> list = _json.fromJson(ArrayList.class, Gdx.files.internal(INVENTORY_ITEM));
-        _inventoryItemList = new Hashtable<Item.ItemTypeID, Item>();
+        mItemsList = new Hashtable<Item.ItemTypeID, Item>();
 
         for (JsonValue jsonVal : list) {
             Item item = _json.readValue(Item.class, jsonVal);
-            _inventoryItemList.put(item.getItemTypeID(), item);
+            mItemsList.put(item.getItemTypeID(), item);
+        }
+
+        ArrayList<JsonValue> chessList = _json.fromJson(ArrayList.class, Gdx.files.internal(CHESS_FILE));
+        mChessList = new Hashtable<String, Chess>();
+
+        for (JsonValue jsonVal : chessList) {
+            Chess chess = _json.readValue(Chess.class, jsonVal);
+            mChessList.put(chess.getId(), chess);
         }
     }
 
     public Item getInventoryItem(Item.ItemTypeID inventoryItemType) {
-        Item item = new Item(_inventoryItemList.get(inventoryItemType));
+        Item item = new Item(mItemsList.get(inventoryItemType));
         item.setTextureRegion(AssetsUtility.ITEMS_TEXTUREATLAS.findRegion(item.getItemTypeID().toString()));
         return item;
+    }
+
+    public Chess getChess(String aChessId)
+    {
+        return mChessList.get(aChessId);
     }
 }

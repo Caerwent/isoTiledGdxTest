@@ -51,9 +51,10 @@
 ,
 	{
 
-		"id": "dquest2Completed",
+		"id": "dquest2TasksCompleted",
 		"dialogs" : [
-			"machin: ha ça va mieux, je n'ai plus soif ? Merci !"
+			"machin: ha ça va mieux, je n'ai plus soif ? Merci !",
+			"machin: Pour te remercier, je vais t'apprendre l'existence d'un passage derriere le grand chene."
 		]
 
 	}

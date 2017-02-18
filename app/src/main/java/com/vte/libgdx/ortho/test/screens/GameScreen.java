@@ -29,10 +29,11 @@ import com.vte.libgdx.ortho.test.entity.EntityEngine;
 import com.vte.libgdx.ortho.test.entity.components.InputComponent;
 import com.vte.libgdx.ortho.test.entity.systems.BobSystem;
 import com.vte.libgdx.ortho.test.entity.systems.CollisionSystem;
+import com.vte.libgdx.ortho.test.entity.systems.InteractionSystem;
 import com.vte.libgdx.ortho.test.entity.systems.MovementSystem;
 import com.vte.libgdx.ortho.test.entity.systems.PathRenderSystem;
 import com.vte.libgdx.ortho.test.events.EventDispatcher;
-import com.vte.libgdx.ortho.test.events.IGameEventListener;
+import com.vte.libgdx.ortho.test.events.ISystemEventListener;
 import com.vte.libgdx.ortho.test.gui.TestActor;
 import com.vte.libgdx.ortho.test.gui.UIStage;
 import com.vte.libgdx.ortho.test.map.GameMap;
@@ -45,7 +46,7 @@ import static com.vte.libgdx.ortho.test.Settings.TARGET_WIDTH;
  * Created by gwalarn on 16/11/16.
  */
 
-public class GameScreen implements Screen, InputProcessor, IGameEventListener {
+public class GameScreen implements Screen, InputProcessor, ISystemEventListener {
 
     public final static String TAG = GameScreen.class.getSimpleName();
     public Rectangle viewport;
@@ -115,7 +116,7 @@ public class GameScreen implements Screen, InputProcessor, IGameEventListener {
         mInputMultiplexer.addProcessor(this);
         mInputMultiplexer.addProcessor(bobController);
 
-        EventDispatcher.getInstance().addGameEventListener(this);
+        EventDispatcher.getInstance().addSystemEventListener(this);
 
 
 
@@ -147,16 +148,18 @@ public class GameScreen implements Screen, InputProcessor, IGameEventListener {
         // EntityEngine.getInstance().addSystem(new VisualRenderSystem(camera));
         EntityEngine.getInstance().addSystem(new BobSystem());
         EntityEngine.getInstance().addSystem(new CollisionSystem());
+        EntityEngine.getInstance().addSystem(new InteractionSystem());
         EntityEngine.getInstance().addSystem(new PathRenderSystem(pathRenderer));
     }
     @Override
     public void hide() {
         Gdx.input.setInputProcessor(null);
-        EntityEngine.getInstance().addSystem(EntityEngine.getInstance().getSystem(MovementSystem.class));
+        EntityEngine.getInstance().removeSystem(EntityEngine.getInstance().getSystem(MovementSystem.class));
         // EntityEngine.getInstance().addSystem(new VisualRenderSystem(camera));
-        EntityEngine.getInstance().addSystem(EntityEngine.getInstance().getSystem(BobSystem.class));
-        EntityEngine.getInstance().addSystem(EntityEngine.getInstance().getSystem(CollisionSystem.class));
-        EntityEngine.getInstance().addSystem(EntityEngine.getInstance().getSystem(PathRenderSystem.class));
+        EntityEngine.getInstance().removeSystem(EntityEngine.getInstance().getSystem(BobSystem.class));
+        EntityEngine.getInstance().removeSystem(EntityEngine.getInstance().getSystem(CollisionSystem.class));
+        EntityEngine.getInstance().removeSystem(EntityEngine.getInstance().getSystem(InteractionSystem.class));
+        EntityEngine.getInstance().removeSystem(EntityEngine.getInstance().getSystem(PathRenderSystem.class));
 
     }
     @Override
@@ -239,7 +242,7 @@ public class GameScreen implements Screen, InputProcessor, IGameEventListener {
         {
             map.destroy();
         }
-        EventDispatcher.getInstance().removeGameEventListener(this);
+        EventDispatcher.getInstance().removeSystemEventListener(this);
         EntityEngine.getInstance().removeAllEntities();
     }
 

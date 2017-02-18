@@ -71,14 +71,14 @@ public class CharacterHero extends Character {
 
     @Override
     public boolean onCollisionStart(CollisionComponent aEntity) {
-        if(aEntity.mType== CollisionComponent.Type.ITEM)
+        if((aEntity.mType & CollisionComponent.ITEM) !=0)
         {
             EventDispatcher.getInstance().onItemFound((((MapInteractionItem) aEntity.mData).getItem()));
             return false;
         }
         boolean ret = super.onCollisionStart(aEntity);
 
-        if (ret && aEntity.mType == CollisionComponent.Type.OBSTACLE && path != null) {
+        if (ret && ((aEntity.mType & CollisionComponent.OBSTACLE) !=0) && path != null) {
             path.destroy();
             path = null;
             setVelocity(0, 0);

@@ -9,7 +9,9 @@ public interface IMapInteraction {
         ITEM,
         CHESS,
         NPJ,
-        PORTAL
+        PORTAL,
+        MONSTER,
+        PATH
     }
 
 

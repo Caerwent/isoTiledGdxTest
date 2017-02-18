@@ -1,7 +1,6 @@
 package com.vte.libgdx.ortho.test.entity.components;
 
 import com.badlogic.ashley.core.Component;
-import com.badlogic.gdx.math.Polygon;
 import com.vte.libgdx.ortho.test.box2d.Shape;
 import com.vte.libgdx.ortho.test.entity.ICollisionHandler;
 
@@ -10,17 +9,16 @@ import com.vte.libgdx.ortho.test.entity.ICollisionHandler;
  */
 
 public class CollisionComponent implements Component {
-    static public enum Type {
-        OBSTACLE,
-        ZINDEX,
-        ITEM,
-        MAPINTERACTION,
-        CHARACTER
-    };
+
+    public static byte OBSTACLE = 1;
+    public static byte ZINDEX = 2;
+    public static byte ITEM = 4;
+    public static byte MAPINTERACTION = 8;
+    public static byte CHARACTER = 16;
 
     public Shape mShape;
     public ICollisionHandler mHandler;
-    public Type mType;
+    public Byte mType;
     public String mName;
     public Object mData;
 
@@ -28,7 +26,7 @@ public class CollisionComponent implements Component {
     public CollisionComponent() {
     }
 
-    public CollisionComponent(Type aType, Shape shape, String aName, Object aData, ICollisionHandler aHandler) {
+    public CollisionComponent(byte aType, Shape shape, String aName, Object aData, ICollisionHandler aHandler) {
         mShape = shape;
         mHandler = aHandler;
         mType=aType;

@@ -24,7 +24,7 @@ public final class AssetsUtility {
 
    // private final static String STATUSUI_TEXTURE_ATLAS_PATH = "skins/statusui.atlas";
     public final static String UI_SKIN_PATH = "data/skins/ui.json";
-    private final static String ITEMS_TEXTURE_ATLAS_PATH = "data/items/items.atlas";
+    private final static String ITEMS_TEXTURE_ATLAS_PATH = "data/items/sprite_atlas.txt";
     private final static String ITEMS_SKIN_PATH = "data/items/items.json";
 
   //  public static TextureAtlas STATUSUI_TEXTUREATLAS = new TextureAtlas(STATUSUI_TEXTURE_ATLAS_PATH);

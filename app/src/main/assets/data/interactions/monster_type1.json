@@ -1,0 +1,56 @@
+{
+  "type":"MONSTER1",
+  "atlas":"monster1.atlas",
+  "isPersistent":"false",
+  "defaultState":"IDLE",
+  "isClickable": "false",
+  "isRendable": "true",
+  "isMovable": "false",
+  "states": [
+    {
+      "name": "IDLE",
+      "fps":"0",
+      "frames": [
+        "idle"
+      ]
+    },
+    {
+      "name": "MOVE_DOWN",
+      "fps":"10",
+      "frames": [
+        "move_down_1",
+        "move_down_2",
+        "move_down_3"
+      ]
+    },
+    {
+      "name": "MOVE_UP",
+      "fps":"10",
+      "frames": [
+        "move_up_1",
+        "move_up_2",
+        "move_up_3"
+      ]
+    },
+    {
+      "name": "MOVE_LEFT",
+      "fps":"10",
+      "frames": [
+        "move_left_1",
+        "move_left_2",
+        "move_left_3"
+      ]
+    },
+    {
+      "name": "MOVE_RIGHT",
+      "fps":"10",
+      "frames": [
+        "move_right_1",
+        "move_right_2",
+        "move_right_3"
+      ]
+    }
+
+  ]
+
+}

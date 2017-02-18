@@ -18,6 +18,7 @@ import com.vte.libgdx.ortho.test.box2d.Shape;
 import com.vte.libgdx.ortho.test.box2d.ShapeUtils;
 import com.vte.libgdx.ortho.test.characters.CharacterHero;
 import com.vte.libgdx.ortho.test.entity.components.CollisionComponent;
+import com.vte.libgdx.ortho.test.interactions.IInteraction;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -106,6 +107,14 @@ public class MapAndSpritesRenderer2 extends OrthogonalTiledMapRenderer {
             if(it instanceof IMapInteractionRendable && ((IMapInteractionRendable) it).isRendable())
             {
                 ((IMapInteractionRendable) it).setRended(false);
+
+            }
+        }
+        for(IInteraction it : mMap.getNewInteractions())
+        {
+            if(it.isRendable())
+            {
+                it.setRended(false);
 
             }
         }
@@ -256,7 +265,7 @@ public class MapAndSpritesRenderer2 extends OrthogonalTiledMapRenderer {
                                 for (CharacterHero character : sprites) {
 
                                     for (CollisionComponent collision : character.getCollisions()) {
-                                        if(collision.mType!=CollisionComponent.Type.ZINDEX)
+                                        if((collision.mType&CollisionComponent.ZINDEX) ==0)
                                             continue;
 
                                         if (ShapeUtils.overlaps(collision.mShape, tileShape) && !character.isRended()) {
@@ -272,6 +281,17 @@ public class MapAndSpritesRenderer2 extends OrthogonalTiledMapRenderer {
                                                         {
                                                             ((IMapInteractionRendable)it).render(batch);
                                                             ((IMapInteractionRendable)it).setRended(true);
+                                                        }
+                                                    }
+                                                }
+                                                for(IInteraction it : mMap.getNewInteractions())
+                                                {
+                                                    if(it.isRendable())
+                                                    {
+                                                        if(it.getX()>=x1 && it.getX()<x2 && it.getY()>=y1 && it.getY()<y2 )
+                                                        {
+                                                            it.render(batch);
+                                                            it.setRended(true);
                                                         }
                                                     }
                                                 }
@@ -296,6 +316,17 @@ public class MapAndSpritesRenderer2 extends OrthogonalTiledMapRenderer {
                                         {
                                             ((IMapInteractionRendable) it).render(batch);
                                             ((IMapInteractionRendable) it).setRended(true);
+
+                                        }
+
+                                    }
+                                    for(IInteraction it : mMap.getNewInteractions())
+                                    {
+                                        if(it.isRendable() &&
+                                                it.getX()>=x1 && it.getX()<x2 && it.getY()>=y1 && it.getY()<y2)
+                                        {
+                                            it.render(batch);
+                                            it.setRended(true);
 
                                         }
 
@@ -333,6 +364,14 @@ public class MapAndSpritesRenderer2 extends OrthogonalTiledMapRenderer {
 
             }
         }
+        for(IInteraction it : mMap.getNewInteractions())
+        {
+            if(!it.isRended())
+            {
+                it.render(batch);
+
+            }
+        }
         for (CharacterHero entity : sprites) {
             if (!entity.isRended()) {
                 entity.render(getBatch());
@@ -363,6 +402,15 @@ public class MapAndSpritesRenderer2 extends OrthogonalTiledMapRenderer {
         for(IMapInteraction it : mMap.getInteractions())
         {
             if(it instanceof MapInteractionItem && ((IMapInteractionRendable) it).isRendable())
+            {
+                Rectangle rect = ((MapInteractionItem)it).getShape().getShape();
+                shapeRenderer.rect(rect.getX(), rect.getY(), 0, 0, rect.getWidth(), rect.getHeight(),1,1,0);
+
+            }
+        }
+        for(IInteraction it : mMap.getNewInteractions())
+        {
+            if(it.isRendable())
             {
                 Rectangle rect = ((MapInteractionItem)it).getShape().getShape();
                 shapeRenderer.rect(rect.getX(), rect.getY(), 0, 0, rect.getWidth(), rect.getHeight(),1,1,0);

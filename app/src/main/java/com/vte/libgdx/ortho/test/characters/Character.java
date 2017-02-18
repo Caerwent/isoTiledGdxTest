@@ -114,7 +114,7 @@ public class Character extends Entity implements ICollisionHandler, IMapInteract
 
         setPosition(0, 0);
 
-        this.add(new CollisionComponent(CollisionComponent.Type.CHARACTER, getPolygonShape(), mId, this, this));
+        this.add(new CollisionComponent(CollisionComponent.CHARACTER, getPolygonShape(), mId, this, this));
 
 
     }

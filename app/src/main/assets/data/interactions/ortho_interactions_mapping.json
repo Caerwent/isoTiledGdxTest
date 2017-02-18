@@ -1,0 +1,28 @@
+[
+  {
+    "id":"monster1",
+    "template":"monster.json",
+    "eventsAction":[
+      {
+        "id":"WAKEUP",
+        "inputEvents":[
+          {
+            "sourceId":"interaction1",
+            "type":"STATE",
+            "value":"State1"
+          }
+        ]
+      }
+    ],
+    "outputEvents":[]
+  },
+  {
+    "id":"activator1",
+    "template":"activator.json",
+    "eventsAction":[],
+    "outputEvents":[{
+      "type":"STATE",
+      "values":["State1","State2"]
+    }]
+  }
+]

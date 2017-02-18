@@ -10,9 +10,8 @@ public class Item {
 
 
     public enum ItemTypeID {
-        ITEM1,
-        POTIONS01,
-        SCROLL01;
+        engrenage32x32,
+        potionBlue;
     }
 
     private ItemTypeID itemTypeID;

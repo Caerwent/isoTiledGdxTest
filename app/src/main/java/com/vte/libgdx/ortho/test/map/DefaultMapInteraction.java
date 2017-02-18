@@ -1,10 +1,12 @@
 package com.vte.libgdx.ortho.test.map;
 
+import com.badlogic.ashley.core.Entity;
+
 /**
  * Created by vincent on 05/01/2017.
  */
 
-public class DefaultMapInteraction implements IMapInteraction {
+public class DefaultMapInteraction extends Entity implements IMapInteraction {
     protected IMapInteraction.Type mType;
     protected float mX, mY;
     protected String mQuestId;

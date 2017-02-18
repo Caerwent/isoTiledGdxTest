@@ -9,7 +9,7 @@
 			"desc":"",
 			"count":2,
 			"type":"FIND_ITEM",
-			"targetId":"POTIONS01",
+			"targetId":"potionBlue",
 			"requiredCompletedTask":[]
 		},
 		{
@@ -18,7 +18,7 @@
 			"type":"RETURN_ITEM",
 			"targetId":"pnj1",
 			"dialogId":"dquest2",
-			"completedDialogId":"dquest2Completed",
+			"completedDialogId":"dquest2TasksCompleted",
 			"requiredCompletedTask":["quest2task1"]
 		}
 	]

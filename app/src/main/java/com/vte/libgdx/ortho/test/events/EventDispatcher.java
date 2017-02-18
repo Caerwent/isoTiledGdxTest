@@ -1,6 +1,7 @@
 package com.vte.libgdx.ortho.test.events;
 
 import com.vte.libgdx.ortho.test.dialogs.GameDialog;
+import com.vte.libgdx.ortho.test.interactions.InteractionEvent;
 import com.vte.libgdx.ortho.test.items.Item;
 import com.vte.libgdx.ortho.test.map.GameMap;
 import com.vte.libgdx.ortho.test.player.Player;
@@ -13,14 +14,16 @@ import java.util.ArrayList;
  * Created by vincent on 12/01/2017.
  */
 
-public class EventDispatcher implements IDialogListener, IItemListener, IQuestListener, IPlayerListener, IGameEventListener {
+public class EventDispatcher implements IDialogListener, IItemListener, IQuestListener, IPlayerListener, ISystemEventListener, IGameEventListener, IInteractionEventListener {
     private static EventDispatcher _instance = null;
 
+    private ArrayList<IGameEventListener> mGameEventsListeners = new ArrayList<IGameEventListener>();
     private ArrayList<IDialogListener> mDialogListeners = new ArrayList<IDialogListener>();
     private ArrayList<IItemListener> mItemListeners = new ArrayList<IItemListener>();
     private ArrayList<IQuestListener> mQuestListeners = new ArrayList<IQuestListener>();
     private ArrayList<IPlayerListener> mPlayerListeners = new ArrayList<IPlayerListener>();
-    private ArrayList<IGameEventListener> mGameEventListeners = new ArrayList<IGameEventListener>();
+    private ArrayList<ISystemEventListener> mSystemEventListeners = new ArrayList<ISystemEventListener>();
+    private ArrayList<IInteractionEventListener> mInteractionEventListeners = new ArrayList<IInteractionEventListener>();
 
     public static EventDispatcher getInstance() {
         if (_instance == null) {
@@ -30,6 +33,24 @@ public class EventDispatcher implements IDialogListener, IItemListener, IQuestLi
         return _instance;
     }
 
+
+    public void onGameEvent(String aGameEvent)
+    {
+        for (IGameEventListener listener : mGameEventsListeners) {
+            listener.onGameEvent(aGameEvent);
+        }
+    }
+    public void addGameEventListener(IGameEventListener aListener) {
+        if (!mGameEventsListeners.contains(aListener)) {
+            mGameEventsListeners.add(aListener);
+        }
+    }
+
+    public void removeGameEventListener(IGameEventListener aListener) {
+        if (mGameEventsListeners.contains(aListener)) {
+            mGameEventsListeners.remove(aListener);
+        }
+    }
     public void addDialogListener(IDialogListener aListener) {
         if (!mDialogListeners.contains(aListener)) {
             mDialogListeners.add(aListener);
@@ -133,28 +154,46 @@ public class EventDispatcher implements IDialogListener, IItemListener, IQuestLi
             listener.onInventoryChanged(aPlayer);
         }
     }
-    public void addGameEventListener(IGameEventListener aListener) {
-        if (!mGameEventListeners.contains(aListener)) {
-            mGameEventListeners.add(aListener);
+    public void addSystemEventListener(ISystemEventListener aListener) {
+        if (!mSystemEventListeners.contains(aListener)) {
+            mSystemEventListeners.add(aListener);
         }
     }
 
-    public void removeGameEventListener(IGameEventListener aListener) {
-        if (mGameEventListeners.contains(aListener)) {
-            mGameEventListeners.remove(aListener);
+    public void removeSystemEventListener(ISystemEventListener aListener) {
+        if (mSystemEventListeners.contains(aListener)) {
+            mSystemEventListeners.remove(aListener);
         }
     }
     @Override
     public void onNewMapRequested(String aMapId) {
-        for (IGameEventListener listener : mGameEventListeners) {
+        for (ISystemEventListener listener : mSystemEventListeners) {
             listener.onNewMapRequested(aMapId);
         }
     }
 
     @Override
     public void onMapLoaded(GameMap aMap) {
-        for (IGameEventListener listener : mGameEventListeners) {
+        for (ISystemEventListener listener : mSystemEventListeners) {
             listener.onMapLoaded(aMap);
+        }
+    }
+
+    public void addInteractionEventListener(IInteractionEventListener aListener) {
+        if (!mInteractionEventListeners.contains(aListener)) {
+            mInteractionEventListeners.add(aListener);
+        }
+    }
+
+    public void removeInteractionEventListener(IInteractionEventListener aListener) {
+        if (mInteractionEventListeners.contains(aListener)) {
+            mInteractionEventListeners.remove(aListener);
+        }
+    }
+    @Override
+    public void onInteractionEvent(InteractionEvent aEvent) {
+        for (IInteractionEventListener listener : mInteractionEventListeners) {
+            listener.onInteractionEvent(aEvent);
         }
     }
 }

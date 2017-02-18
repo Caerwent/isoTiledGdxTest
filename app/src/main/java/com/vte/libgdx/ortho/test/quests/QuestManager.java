@@ -100,14 +100,7 @@ public class QuestManager implements IItemListener, IQuestListener, IPlayerListe
                 for (QuestTask task : quest.getTasks()) {
                     if (!task.isCompleted()) {
                         if (task.getTargetId() != null && task.getTargetId().equals(aNPJ.getId())) {
-                            if (task.getType() == QuestTask.TypeTask.TALK) {
-                                if (quest.isTaskDependenciesCompleted(task)) {
-                                    task.setCompleted(true);
-                                    aNPJ.setDialogId(task.getCompletedDialogId());
-                                    EventDispatcher.getInstance().onQuestTaskCompleted(quest, task);
-                                }
-
-                            } else if (task.getType() == QuestTask.TypeTask.RETURN_ITEM) {
+                             if (task.getType() == QuestTask.TypeTask.RETURN_ITEM) {
                                 // check items not already be found before talking with npj
                                 checkItemFoundTask(quest);
                                 if (quest.isTaskDependenciesCompleted(task)) {
@@ -121,6 +114,14 @@ public class QuestManager implements IItemListener, IQuestListener, IPlayerListe
                                     aNPJ.setDialogId(task.getDialogId());
                                 }
                             }
+                            else if (task.getType() == QuestTask.TypeTask.TALK) {
+                                 if (quest.isTaskDependenciesCompleted(task)) {
+                                     task.setCompleted(true);
+                                     aNPJ.setDialogId(task.getCompletedDialogId());
+                                     EventDispatcher.getInstance().onQuestTaskCompleted(quest, task);
+                                 }
+
+                             }
                         }
                     }
                 }
@@ -209,6 +210,7 @@ public class QuestManager implements IItemListener, IQuestListener, IPlayerListe
             mCompletedQuests.put(aQuest.getId(), aQuest);
         }
         updateItemsFromFoundTask(aQuest);
+        EventDispatcher.getInstance().onGameEvent(aQuest.getId());
 
         for (Quest quest : mQuests.values()) {
             if (!mLivingQuests.containsKey(quest.getId()) &&

@@ -10,6 +10,7 @@ import com.badlogic.gdx.maps.MapObject;
 import com.badlogic.gdx.maps.MapObjects;
 import com.badlogic.gdx.maps.MapProperties;
 import com.badlogic.gdx.maps.objects.PolygonMapObject;
+import com.badlogic.gdx.maps.objects.PolylineMapObject;
 import com.badlogic.gdx.maps.objects.RectangleMapObject;
 import com.badlogic.gdx.maps.objects.TextureMapObject;
 import com.badlogic.gdx.maps.tiled.TiledMap;
@@ -19,6 +20,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 import com.vte.libgdx.ortho.test.AssetsUtility;
 import com.vte.libgdx.ortho.test.MyGame;
+import com.vte.libgdx.ortho.test.box2d.PathMap;
 import com.vte.libgdx.ortho.test.box2d.PolygonShape;
 import com.vte.libgdx.ortho.test.box2d.Shape;
 import com.vte.libgdx.ortho.test.characters.CharactersManager;
@@ -26,6 +28,11 @@ import com.vte.libgdx.ortho.test.entity.EntityEngine;
 import com.vte.libgdx.ortho.test.entity.ICollisionHandler;
 import com.vte.libgdx.ortho.test.entity.components.CollisionComponent;
 import com.vte.libgdx.ortho.test.events.EventDispatcher;
+import com.vte.libgdx.ortho.test.interactions.IInteraction;
+import com.vte.libgdx.ortho.test.interactions.InteractionFactory;
+import com.vte.libgdx.ortho.test.interactions.InteractionMapping;
+import com.vte.libgdx.ortho.test.interactions.InteractionMappingManager;
+import com.vte.libgdx.ortho.test.items.ItemFactory;
 import com.vte.libgdx.ortho.test.persistence.MapProfile;
 import com.vte.libgdx.ortho.test.persistence.Profile;
 import com.vte.libgdx.ortho.test.player.Player;
@@ -33,6 +40,7 @@ import com.vte.libgdx.ortho.test.quests.Quest;
 import com.vte.libgdx.ortho.test.quests.QuestManager;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  * Created by vincent on 20/01/2017.
@@ -52,6 +60,9 @@ public class GameMap implements ICollisionHandler {
 
     private Array<CollisionComponent> mCollisions = new Array<CollisionComponent>();
     private Array<IMapInteraction> mInteractions = new Array<IMapInteraction>();
+    private Array<IInteraction> mNewInteractions = new Array<IInteraction>();
+    private HashMap<String, PathMap> mPaths = new HashMap<String, PathMap>();
+    private InteractionMappingManager mInteractionMappingManager = new InteractionMappingManager();
 
     private boolean mIsInitialized = false;
 
@@ -77,12 +88,16 @@ public class GameMap implements ICollisionHandler {
 
         mPlayer = new Player();
         mPlayer.getHero().SetPath(null);
+        mPaths =  buildPaths(map,"path");
         mInteractions = buildInteractions(map, "interaction");
+        mInteractionMappingManager.loadMappingFile("data/interactions/"+aMapName+"_interactions_mapping.json");
+        mNewInteractions = buildMapInteractions(map,"interactions");
+//
 
 
         for (IMapInteraction control : mInteractions) {
             if (control.getInteractionType() == IMapInteraction.Type.PORTAL) {
-                PortalMapInteraction portal = (PortalMapInteraction) control;
+                MapInteractionPortal portal = (MapInteractionPortal) control;
                 if ((aFromMap == null && portal.isDefaultStart()) ||
                         (aFromMap != null && portal.getTargetMapId() != null && portal.getTargetMapId().compareTo(aFromMap) == 0)) {
                     mPlayer.getHero().setPosition(control.getX(), control.getY());
@@ -116,7 +131,6 @@ public class GameMap implements ICollisionHandler {
                             EventDispatcher.getInstance().onQuestActivated(theQuest);
                         }
                     }
-                    break;
                 } else {
                     portal.setActivated(true);
                 }
@@ -147,6 +161,10 @@ public class GameMap implements ICollisionHandler {
         ImmutableArray<Entity> entities = EntityEngine.getInstance().getEntitiesFor(Family.all(CollisionComponent.class).get());
         for (int i = 0; i < entities.size(); ++i) {
             EntityEngine.getInstance().removeEntity(entities.get(i));
+        }
+        for(IInteraction it:mNewInteractions)
+        {
+            it.destroy();
         }
     }
 
@@ -188,6 +206,14 @@ public class GameMap implements ICollisionHandler {
     public Array<IMapInteraction> getInteractions() {
         return mInteractions;
     }
+    public Array<IInteraction> getNewInteractions() {
+        return mNewInteractions;
+    }
+
+
+    public HashMap<String, PathMap> getPaths() {
+        return mPaths;
+    }
 
     @Override
     public boolean onCollisionStart(CollisionComponent aEntity) {
@@ -205,7 +231,7 @@ public class GameMap implements ICollisionHandler {
     }
 
     private Array<Shape> buildShapes(Map map, String layerName) {
-        CollisionComponent.Type type = "zindex".compareTo(layerName) == 0 ? CollisionComponent.Type.ZINDEX : CollisionComponent.Type.OBSTACLE;
+        byte type = "zindex".compareTo(layerName) == 0 ? CollisionComponent.ZINDEX : CollisionComponent.OBSTACLE;
         MapObjects objects = map.getLayers().get(layerName).getObjects();
 
         Array<Shape> bodies = new Array<Shape>();
@@ -250,7 +276,64 @@ public class GameMap implements ICollisionHandler {
         }
         return bodies;
     }
+    private HashMap<String, PathMap> buildPaths(Map map, String layerName) {
+        HashMap<String, PathMap> paths = new HashMap<String, PathMap>();
 
+        if(map.getLayers().get(layerName)==null)
+            return paths;
+        MapObjects objects = map.getLayers().get(layerName).getObjects();
+
+
+        for (MapObject object : objects) {
+
+
+            if (object instanceof PolylineMapObject) {
+                float[] mapVertices = ((PolylineMapObject) object).getPolyline().getTransformedVertices();
+                float[] vertices = new float[mapVertices.length - 2];
+                PathMap path = new PathMap();
+                for (int i = 0; i < vertices.length-1; i+=2) {
+                    path.addPoint(mapVertices[i] * MyGame.SCALE_FACTOR, mapVertices[i+1] * MyGame.SCALE_FACTOR);
+                }
+                boolean isLoop = false;
+                if (object.getProperties().containsKey("isLoop")) {
+                    isLoop = Boolean.parseBoolean(object.getProperties().get("isLoop", String.class));
+                }
+                path.setLoop(isLoop);
+                paths.put(object.getName(), path);
+
+            }  else {
+                continue;
+            }
+        }
+        return paths;
+    }
+
+    private Array<IInteraction> buildMapInteractions(Map map, String layerName){
+        MapObjects objects = map.getLayers().get(layerName).getObjects();
+        Array<IInteraction> interactions = new Array<IInteraction>();
+        MapProfile mapProfile = Profile.getInstance().getMapProfile(mMapName);
+        for (MapObject object : objects) {
+
+            if (object instanceof TextureMapObject) {
+                TextureMapObject textureObject = (TextureMapObject) object;
+                float x = (textureObject.getX() + textureObject.getTextureRegion().getRegionWidth() / 2) * MyGame.SCALE_FACTOR;
+                float y = (textureObject.getY() + textureObject.getTextureRegion().getRegionHeight() / 2) * MyGame.SCALE_FACTOR;
+                InteractionMapping mapping = mInteractionMappingManager.getInterationMapping(object.getName());
+                if(mapping==null)
+                {
+                    continue;
+                }
+                IInteraction interaction = InteractionFactory.getInstance().createInteractionInstance(x,y,mapping, this);
+                if(interaction!=null)
+                {
+                    interaction.setCamera(mCamera);
+                    interactions.add(interaction);
+                }
+
+            }
+        }
+        return interactions;
+    }
     private Array<IMapInteraction> buildInteractions(Map map, String layerName) {
         MapObjects objects = map.getLayers().get(layerName).getObjects();
 
@@ -273,9 +356,15 @@ public class GameMap implements ICollisionHandler {
                     if (textureObject.getProperties().containsKey("isDefaultStart")) {
                         isDefaultStart = Boolean.parseBoolean(textureObject.getProperties().get("isDefaultStart", String.class));
                     }
+                    String activatedByQuestId = null;
+                    if(textureObject.getProperties().containsKey("activatedByQuestId"))
+                    {
+                        activatedByQuestId = textureObject.getProperties().get("activatedByQuestId", String.class);
+                    }
+                    interaction = new MapInteractionPortal(x, y, textureObject.getProperties().get("targetMapId", String.class), isDefaultStart, this, activatedByQuestId);
+                } else if (type.compareTo(IMapInteraction.Type.CHESS.name()) == 0) {
+                    interaction = new MapInteractionChess(x, y, mCamera, ItemFactory.getInstance().getChess(textureObject.getName()), this);
 
-                    interaction = new PortalMapInteraction(x, y, textureObject.getProperties().get("targetMapId", String.class), isDefaultStart, this);
-                    ((PortalMapInteraction) interaction).setActivated(false);
                 } else if (type.compareTo(IMapInteraction.Type.ITEM.name()) == 0) {
                     boolean itemAlreadyFound = false;
                     if (mapProfile != null) {

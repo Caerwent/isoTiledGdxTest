@@ -1,6 +1,5 @@
 package com.vte.libgdx.ortho.test.map;
 
-import com.badlogic.ashley.core.Entity;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.utils.Array;
@@ -18,7 +17,6 @@ import com.vte.libgdx.ortho.test.items.ItemFactory;
 
 public class MapInteractionItem extends DefaultMapInteraction implements IMapInteraction, IMapInteractionRendable, ICollisionHandler {
     protected String mId;
-    protected Entity mEntity;
     protected Item mItem;
     protected RectangleShape mShape;
     protected boolean mIsRended = false;
@@ -31,11 +29,10 @@ public class MapInteractionItem extends DefaultMapInteraction implements IMapInt
         mMap = aMap;
         mId = aId;
         mItem = ItemFactory.getInstance().getInventoryItem(Item.ItemTypeID.valueOf(aId));
-        mEntity = new Entity();
-        EntityEngine.getInstance().addEntity(mEntity);
+        EntityEngine.getInstance().addEntity(this);
         mShape = new RectangleShape();
         mShape.setShape(new Rectangle(getX(), getY(), mItem.getTextureRegion().getRegionWidth() * MyGame.SCALE_FACTOR, mItem.getTextureRegion().getRegionHeight() * MyGame.SCALE_FACTOR));
-        mEntity.add(new CollisionComponent(CollisionComponent.Type.ITEM, mShape, aId, this, this));
+        add(new CollisionComponent(CollisionComponent.ITEM, mShape, aId, this, this));
     }
 
     public String getId() {
@@ -84,9 +81,9 @@ public class MapInteractionItem extends DefaultMapInteraction implements IMapInt
 
     @Override
     public boolean onCollisionStart(CollisionComponent aEntity) {
-        if (aEntity.mType == CollisionComponent.Type.CHARACTER) {
+        if ((aEntity.mType & CollisionComponent.CHARACTER) !=0) {
             mMap.removeItem(this);
-            EntityEngine.getInstance().removeEntity(mEntity);
+            EntityEngine.getInstance().removeEntity(this);
             return true;
         }
         return false;

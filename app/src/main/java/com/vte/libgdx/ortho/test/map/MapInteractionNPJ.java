@@ -35,7 +35,7 @@ public class MapInteractionNPJ extends CharacterNPJ implements IMapInteraction, 
     public MapInteractionNPJ(float aX, float aY, CharacterDef aDef,Camera aCamera) {
         super(aDef);
         mCamera = aCamera;
-        mInteractionTextureRegion = AssetsUtility.ITEMS_TEXTUREATLAS.findRegion("inv_shield");
+        mInteractionTextureRegion = AssetsUtility.ITEMS_TEXTUREATLAS.findRegion("bulle");
 
         initialize();
         mType = Type.NPJ;
@@ -167,7 +167,7 @@ public class MapInteractionNPJ extends CharacterNPJ implements IMapInteraction, 
     @Override
     public boolean onCollisionStart(CollisionComponent aEntity) {
         boolean ret = super.onCollisionStart(aEntity);
-        if (ret && aEntity.mType == CollisionComponent.Type.CHARACTER) {
+        if (ret && (aEntity.mType & CollisionComponent.CHARACTER)!=0) {
             Gdx.app.debug("DEBUG", "NPJ collision start");
             mIsInteractionShown = true;
         }
@@ -177,7 +177,7 @@ public class MapInteractionNPJ extends CharacterNPJ implements IMapInteraction, 
     @Override
     public boolean onCollisionStop(CollisionComponent aEntity) {
         boolean ret = super.onCollisionStop(aEntity);
-        if (ret && aEntity.mType == CollisionComponent.Type.CHARACTER) {
+        if (ret && (aEntity.mType & CollisionComponent.CHARACTER)!=0) {
             Gdx.app.debug("DEBUG", "NPJ collision stop");
             mIsInteractionShown = false;
             onInteractionStop();
