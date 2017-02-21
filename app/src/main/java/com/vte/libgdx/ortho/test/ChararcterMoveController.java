@@ -44,7 +44,7 @@ public class ChararcterMoveController extends InputAdapter {
 
     public void setMap(GameMap aMap) {
         mMap = aMap;
-        float radius = Math.max(mMap.getPlayer().getHero().getPolygonShape().getBounds().getWidth(), mMap.getPlayer().getHero().getPolygonShape().getBounds().getHeight()) / 2;
+        float radius = Math.max(mMap.getPlayer().getHero().getShape().getBounds().getWidth(), mMap.getPlayer().getHero().getShape().getBounds().getHeight()) / 2;
         mPathSpot = new Circle(0, 0, radius);
         mTouchSpot = new Circle(0, 0, radius);
     }
@@ -147,11 +147,11 @@ public class ChararcterMoveController extends InputAdapter {
     public boolean touchDown(int x, int y, int pointer, int button) {
 
         camera.unproject(mCursorPoint.set(x, y, 0));
-        if (mMap!=null && mMap.getPlayer()!=null && mMap.getPlayer().getHero()!=null &&  mMap.getPlayer().getHero().getPolygonShape().getBounds().contains(mCursorPoint.x, mCursorPoint.y)) {
+        if (mMap!=null && mMap.getPlayer()!=null && mMap.getPlayer().getHero()!=null &&  mMap.getPlayer().getHero().getShape().getBounds().contains(mCursorPoint.x, mCursorPoint.y)) {
             if (path != null)
                 path.destroy();
             path = new Path();
-            Rectangle bobBound = mMap.getPlayer().getHero().getPolygonShape().getBounds();
+            Rectangle bobBound = mMap.getPlayer().getHero().getShape().getBounds();
             Vector2 bobPos = mMap.getPlayer().getHero().getPosition();
 //            mCursorPoint.set(.x, mBob.getPosition().y, mCursorPoint.z);
             path.AddPoint(bobPos.x, bobPos.y, 0.2f);
@@ -169,7 +169,7 @@ public class ChararcterMoveController extends InputAdapter {
         last.set(-1, -1, -1);
         if (mMap!=null && mMap.getPlayer()!=null && mMap.getPlayer().getHero()!=null && isActive) {
             isActive = false;
-            mMap.getPlayer().getHero().SetPath(path);
+            mMap.getPlayer().getHero().setPath(path);
         }
         return false;
     }

@@ -1,0 +1,20 @@
+{
+  "type":"NPC",
+  "atlas":"npc1.atlas",
+  "isPersistent":"true",
+  "defaultState":"IDLE",
+  "isClickable": "true",
+  "isRendable": "true",
+  "isMovable": "false",
+  "states": [
+    {
+      "name": "IDLE",
+      "fps":"0",
+      "frames": [
+        "idle"
+      ]
+    }
+
+  ]
+
+}

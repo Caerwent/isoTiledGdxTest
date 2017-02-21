@@ -1,5 +1,6 @@
 package com.vte.libgdx.ortho.test.map;
 
+import com.badlogic.ashley.core.Entity;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.utils.Array;
@@ -8,6 +9,7 @@ import com.vte.libgdx.ortho.test.box2d.RectangleShape;
 import com.vte.libgdx.ortho.test.entity.EntityEngine;
 import com.vte.libgdx.ortho.test.entity.ICollisionHandler;
 import com.vte.libgdx.ortho.test.entity.components.CollisionComponent;
+import com.vte.libgdx.ortho.test.entity.components.VisualComponent;
 import com.vte.libgdx.ortho.test.items.Item;
 import com.vte.libgdx.ortho.test.items.ItemFactory;
 
@@ -15,7 +17,13 @@ import com.vte.libgdx.ortho.test.items.ItemFactory;
  * Created by gwalarn on 27/11/16.
  */
 
-public class MapInteractionItem extends DefaultMapInteraction implements IMapInteraction, IMapInteractionRendable, ICollisionHandler {
+public class ItemInteraction extends Entity implements IItemInteraction, IMapRendable, ICollisionHandler {
+
+    protected IItemInteraction.Type mType;
+    protected float mX, mY;
+
+
+
     protected String mId;
     protected Item mItem;
     protected RectangleShape mShape;
@@ -24,8 +32,10 @@ public class MapInteractionItem extends DefaultMapInteraction implements IMapInt
     private  GameMap mMap;
 
 
-    public MapInteractionItem(float aX, float aY, String aId, GameMap aMap) {
-        super(aX, aY, Type.ITEM);
+    public ItemInteraction(float aX, float aY, String aId, GameMap aMap) {
+        mX = aX;
+        mY = aY;
+        mType=Type.ITEM;
         mMap = aMap;
         mId = aId;
         mItem = ItemFactory.getInstance().getInventoryItem(Item.ItemTypeID.valueOf(aId));
@@ -33,8 +43,22 @@ public class MapInteractionItem extends DefaultMapInteraction implements IMapInt
         mShape = new RectangleShape();
         mShape.setShape(new Rectangle(getX(), getY(), mItem.getTextureRegion().getRegionWidth() * MyGame.SCALE_FACTOR, mItem.getTextureRegion().getRegionHeight() * MyGame.SCALE_FACTOR));
         add(new CollisionComponent(CollisionComponent.ITEM, mShape, aId, this, this));
+        add(new VisualComponent(mItem.getTextureRegion(), this));
+    }
+    @Override
+    public float getX() {
+        return mX;
     }
 
+    @Override
+    public float getY() {
+        return mY;
+    }
+
+    @Override
+    public IItemInteraction.Type getInteractionType() {
+        return mType;
+    }
     public String getId() {
         return mId;
     }

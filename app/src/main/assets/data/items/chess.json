@@ -1,14 +1,12 @@
 [
   {
 
-    "id":"CHESS1",
-    "openTexture":"chessOpen32x32",
-    "closeTexture":"chessClosed32x32",
+    "id":"chess1",
     "items": ["engrenage32x32", "potionBlue"]
   },
   {
 
-    "id":"CHESS2",
+    "id":"chess2",
     "items": []
   }
 

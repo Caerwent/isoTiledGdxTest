@@ -29,4 +29,18 @@
         "value":"IDLE"
       }]
   }
+,
+  {
+    "id":"chess1",
+    "template":"chess_type1.json",
+    "eventsAction":[],
+    "outputEvents":[]
+  },
+  {
+  "id":"portal1",
+  "template":"portal.json",
+  "eventsAction":[],
+  "outputEvents":[]
+}
+
 ]

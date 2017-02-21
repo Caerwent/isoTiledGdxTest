@@ -7,9 +7,9 @@
 	"tasks" : [
 		{
 			"id": "quest1task1",
-			"desc":"parler à npj1",
+			"desc":"parler à npc1",
 			"type":"TALK",
-			"targetId":"pnj1",
+			"targetId":"npc1",
 			"completedDialogId":"dquest1",
 			"requiredCompletedTask":[]
 		}

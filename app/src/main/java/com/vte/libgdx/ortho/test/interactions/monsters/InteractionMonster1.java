@@ -1,5 +1,6 @@
 package com.vte.libgdx.ortho.test.interactions.monsters;
 
+import com.badlogic.gdx.maps.MapProperties;
 import com.badlogic.gdx.math.Vector2;
 import com.vte.libgdx.ortho.test.box2d.PathMap;
 import com.vte.libgdx.ortho.test.entity.components.TransformComponent;
@@ -16,8 +17,9 @@ import com.vte.libgdx.ortho.test.map.GameMap;
 public class InteractionMonster1 extends Interaction{
     protected PathMap mPath;
 
-    public InteractionMonster1(InteractionDef aDef, float x, float y, InteractionMapping aMapping, GameMap aMap) {
-        super(aDef, x, y, aMapping);
+    public InteractionMonster1(InteractionDef aDef, float x, float y, InteractionMapping aMapping, MapProperties aProperties, GameMap aMap) {
+        super(aDef, x, y, aMapping, aProperties, aMap);
+        mType = Type.MONSTER;
 
         mPath = aMap.getPaths().get(getId());
 

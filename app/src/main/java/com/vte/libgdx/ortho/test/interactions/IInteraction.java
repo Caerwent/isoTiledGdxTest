@@ -1,19 +1,21 @@
 package com.vte.libgdx.ortho.test.interactions;
 
 import com.badlogic.gdx.graphics.Camera;
-import com.badlogic.gdx.graphics.g2d.Batch;
+import com.vte.libgdx.ortho.test.map.IMapRendable;
 
 /**
  * Created by vincent on 08/02/2017.
  */
 
-public interface IInteraction {
+public interface IInteraction extends IMapRendable {
     public enum Type {
         ITEM,
+        HERO,
         CHESS,
-        NPJ,
+        NPC,
         PORTAL,
         MONSTER,
+        ACTIVATOR,
         PATH
     }
 
@@ -31,14 +33,6 @@ public interface IInteraction {
     public boolean isMovable();
 
     public boolean isPersistent();
-
-    public boolean isRendable();
-
-    public boolean isRended();
-
-    public void setRended(boolean aRended);
-
-    public void render(Batch batch);
 
     public void destroy();
 

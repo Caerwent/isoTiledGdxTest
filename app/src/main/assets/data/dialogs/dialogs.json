@@ -10,7 +10,7 @@
 	},
 	{
 
-		"id": "pnj1",
+		"id": "npc1",
 		"dialogs" : [
 			"bonjour",
 			"ça va ?"
@@ -19,7 +19,7 @@
 	},
 	{
 
-		"id": "pnj2",
+		"id": "npc2",
 		"dialogs" : [
 			"hello",
 			"ça va ?"

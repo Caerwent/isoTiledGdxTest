@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.0" orientation="orthogonal" renderorder="right-up" width="12" height="10" tilewidth="64" tileheight="64" nextobjectid="57">
+<map version="1.0" orientation="orthogonal" renderorder="right-up" width="12" height="10" tilewidth="64" tileheight="64" nextobjectid="60">
  <tileset firstgid="1" source="tile2map64.tsx"/>
  <tileset firstgid="61" name="test" tilewidth="0" tileheight="0" tilecount="0" columns="0"/>
  <tileset firstgid="61" name="objects" tilewidth="128" tileheight="128" tilecount="1" columns="0">
@@ -28,27 +28,18 @@
  </layer>
  <layer name="terrain" width="12" height="10">
   <data encoding="base64">
-   AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD0AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAcAAAAMAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACMAAAAkAAAAAAAAAAAAAAAgAAAANAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACcAAAAoAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAALgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+   AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD0AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAALgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
   </data>
  </layer>
  <objectgroup name="zindex">
-  <object id="4" name="souche" x="416" y="224">
-   <polygon points="0,0 -16,0 -48,0 -64,16 -64,32 -80,48 -64,64 -48,64 -32,64 -16,64 16,64 16,48 0,32 0,0"/>
-  </object>
-  <object id="32" name="tree" x="511.333" y="64">
-   <polygon points="0,0 -14.6667,4.66667 -33.3333,28 -55.3333,56.6667 -57.3333,68.6667 -43.3333,98 -20.6667,105.333 -30,118 32,118 16.6667,104 38.6667,100 48,90.6667 55.3333,83.3333 60,63.3333 49.3333,40 37.3333,20.6667 18,3.33333"/>
-  </object>
   <object id="35" name="panneau" x="233.333" y="438">
    <polygon points="0,0 -0.666667,-15.3333 13.3333,-16 12,-42 -35.3333,-42 -35.3333,-16 -20,-15.3333 -20.6667,2"/>
   </object>
-  <object id="52" name="buisson" x="144" y="352">
-   <polygon points="0,0 -32,0 -48,-16 -48,-32 -48,-48 -32,-64 -16,-64 0,-64 16,-48 16,-32 16,-16 16,0"/>
+  <object id="58" name="tree" x="544" y="192">
+   <polygon points="-32,0 -64,0 -64,-16 -80,-32 -96,-64 -48,-128 -16,-128 16,-96 32,-64 16,-32 -16,-16 0,0"/>
   </object>
  </objectgroup>
  <objectgroup name="collision">
-  <object id="5" x="432" y="272">
-   <polygon points="0,0 -16,-16 -16,-32 -80,-32 -80,-16 -96,0 -80,16 0,16 0,0"/>
-  </object>
   <object id="12" x="66" y="206">
    <polygon points="69,-14 158,-12 176,-16 175,-136.667 189,-137 192,0 160,48 -2,47 -1,-12"/>
   </object>
@@ -64,14 +55,8 @@
   <object id="24" x="637.333" y="578.667">
    <polygon points="0,0 -616,-2.66667 -614.667,58.6667 0,60.6667"/>
   </object>
-  <object id="30" x="543.333" y="180.667">
-   <polygon points="0,0 -7.33333,10 -30,12 -60,10.6667 -67.3333,2 -58.6667,-12 -44,-26 -21.3333,-26"/>
-  </object>
   <object id="34" x="214.667" y="438.667">
    <polygon points="0,0 18.6667,0.666667 16.6667,-15.3333 1.33333,-16"/>
-  </object>
-  <object id="49" x="160" y="336">
-   <polygon points="0,0 -16,16 -48,16 -64,0 -32,-16"/>
   </object>
   <object id="53" x="768" y="128">
    <polygon points="0,0 -144,0 -144,512 0,512 0,0"/>
@@ -79,24 +64,28 @@
   <object id="56" x="768" y="64">
    <polygon points="0,0 -16,0 -16,64 0,64"/>
   </object>
- </objectgroup>
- <objectgroup name="interaction">
-  <object id="36" name="PORTAIL1" type="PORTAL" gid="12" x="96" y="477" width="64" height="64">
-   <properties>
-    <property name="isDefaultStart" type="bool" value="true"/>
-    <property name="questId" value="quest1"/>
-   </properties>
+  <object id="59" name="tree" x="544" y="192">
+   <polygon points="0,0 -64,0 -48,-32 -16,-32"/>
   </object>
+ </objectgroup>
+ <objectgroup name="items">
   <object id="38" name="engrenage32x32" type="ITEM" gid="20" x="512" y="321" width="64" height="64"/>
   <object id="39" name="potionBlue" type="ITEM" gid="20" x="128" y="128" width="64" height="64"/>
   <object id="42" name="potionBlue" type="ITEM" gid="20" x="320" y="128" width="64" height="64"/>
-  <object id="44" name="pnj1" type="NPJ" gid="16" x="448" y="512" width="64" height="64"/>
-  <object id="54" name="PORTAL2" type="PORTAL" gid="16" x="672" y="128" width="61" height="64">
+ </objectgroup>
+ <objectgroup name="interactions">
+  <object id="54" name="portal2" type="PORTAL" gid="16" x="672" y="128" width="61" height="64">
    <properties>
     <property name="activatedByQuestId" value="quest2"/>
     <property name="targetMapId" value="ortho2"/>
    </properties>
   </object>
+  <object id="36" name="portal1" type="PORTAL" gid="12" x="96" y="477" width="64" height="64">
+   <properties>
+    <property name="isDefaultStart" type="bool" value="true"/>
+    <property name="questId" value="quest1"/>
+   </properties>
+  </object>
+  <object id="44" name="npc1" gid="16" x="190" y="420" width="64" height="64"/>
  </objectgroup>
- <objectgroup name="interactions"/>
 </map>

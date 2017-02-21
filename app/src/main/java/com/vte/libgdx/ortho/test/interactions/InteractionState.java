@@ -24,30 +24,36 @@ public class InteractionState {
     public ArrayList<String> frames;
 
     private Animation mAnimation;
+    private TextureRegion mFixRegion;
 
     public void init(TextureAtlas aAtlas)
     {
-        if(frames==null && frames.size()<=0)
+        if(frames==null || frames.size()<=0)
             return;
 
-        Array<TextureRegion> regions = new Array<TextureRegion>();
-        for(String key:frames)
-        {
-            TextureRegion reg = aAtlas.findRegion(key);
-            if(reg!=null)
-            {
-                regions.add( reg);
+        if(fps==0 || frames.size()==1) {
+            mFixRegion=aAtlas.findRegion(frames.get(0));
+        }
+        else {
+            Array<TextureRegion> regions = new Array<TextureRegion>();
+            for (String key : frames) {
+                TextureRegion reg = aAtlas.findRegion(key);
+                if (reg != null) {
+                    regions.add(reg);
+                }
             }
+
+            mAnimation = new Animation((1F / (float)fps), regions);
+            mAnimation.setPlayMode(Animation.PlayMode.LOOP);
         }
-        if(fps==0) {
-            fps = 1;
-        }
-        mAnimation = new Animation((float) (1/fps), regions);
-        mAnimation.setPlayMode(Animation.PlayMode.LOOP);
     }
 
     public TextureRegion getTextureRegion(float aTime)
     {
+        if(mFixRegion!=null)
+        {
+            return mFixRegion;
+        }
         return mAnimation.getKeyFrame(aTime, true);
     }
 }

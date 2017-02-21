@@ -1,0 +1,27 @@
+{
+  "type":"CHESS",
+  "atlas":"chess1.atlas",
+  "isPersistent":"true",
+  "defaultState":"CLOSED",
+  "isClickable": "true",
+  "isRendable": "true",
+  "isMovable": "false",
+  "states": [
+    {
+      "name": "CLOSED",
+      "fps":"0",
+      "frames": [
+        "closed"
+      ]
+    },
+    {
+      "name": "OPEN",
+      "fps":"0",
+      "frames": [
+        "open"
+      ]
+    }
+
+  ]
+
+}

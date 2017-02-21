@@ -1,28 +1,37 @@
 [
   {
-    "id":"monster1",
-    "template":"monster.json",
+    "id":"portal1",
+    "template":"portal.json",
+    "eventsAction":[],
+    "outputEvents":[]
+  },
+  {
+    "id":"portal2",
+    "template":"portal.json",
+    "eventsAction":[],
+    "outputEvents":[]
+  },
+  {
+    "id":"npc1",
+    "template":"npc1.json",
+    "properties":{
+      "dialogId":"npc1"
+    },
     "eventsAction":[
       {
-        "id":"WAKEUP",
+        "id":"DIALOG",
         "inputEvents":[
           {
-            "sourceId":"interaction1",
+            "sourceId":"dquest2TasksCompleted",
             "type":"STATE",
-            "value":"State1"
+            "value":"ACTIVATED"
           }
         ]
       }
     ],
-    "outputEvents":[]
-  },
-  {
-    "id":"activator1",
-    "template":"activator.json",
-    "eventsAction":[],
     "outputEvents":[{
-      "type":"STATE",
-      "values":["State1","State2"]
+      "type":"TALK",
+      "value":""
     }]
   }
 ]

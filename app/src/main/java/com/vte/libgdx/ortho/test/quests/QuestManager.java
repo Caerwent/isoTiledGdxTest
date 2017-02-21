@@ -5,14 +5,13 @@ import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.ObjectMap;
 import com.badlogic.gdx.utils.OrderedMap;
-import com.vte.libgdx.ortho.test.characters.CharacterNPJ;
 import com.vte.libgdx.ortho.test.dialogs.DialogsManager;
 import com.vte.libgdx.ortho.test.events.EventDispatcher;
 import com.vte.libgdx.ortho.test.events.IItemListener;
 import com.vte.libgdx.ortho.test.events.IPlayerListener;
 import com.vte.libgdx.ortho.test.events.IQuestListener;
+import com.vte.libgdx.ortho.test.interactions.InteractionNPC;
 import com.vte.libgdx.ortho.test.items.Item;
-import com.vte.libgdx.ortho.test.map.IArea;
 import com.vte.libgdx.ortho.test.persistence.Profile;
 import com.vte.libgdx.ortho.test.persistence.QuestProfile;
 import com.vte.libgdx.ortho.test.persistence.QuestTaskProfile;
@@ -89,39 +88,36 @@ public class QuestManager implements IItemListener, IQuestListener, IPlayerListe
         return mQuests.get(aId);
     }
 
-    public void enterArea(IArea aArea) {
 
-    }
-
-    public void onNPJ(CharacterNPJ aNPJ) {
+    public void onNPC(InteractionNPC aNPC) {
 
         for (Quest quest : mLivingQuests.values()) {
             if (quest.isActivated() && !quest.isCompleted()) {
                 for (QuestTask task : quest.getTasks()) {
                     if (!task.isCompleted()) {
-                        if (task.getTargetId() != null && task.getTargetId().equals(aNPJ.getId())) {
-                             if (task.getType() == QuestTask.TypeTask.RETURN_ITEM) {
+                        if (task.getTargetId() != null && task.getTargetId().equals(aNPC.getId())) {
+                            if (task.getType() == QuestTask.TypeTask.RETURN_ITEM) {
                                 // check items not already be found before talking with npj
                                 checkItemFoundTask(quest);
                                 if (quest.isTaskDependenciesCompleted(task)) {
                                     task.setCompleted(true);
                                     if (task.getCompletedDialogId() != null) {
-                                        aNPJ.setDialogId(task.getCompletedDialogId());
+                                        aNPC.setDialogId(task.getCompletedDialogId());
                                     }
 
                                     EventDispatcher.getInstance().onQuestTaskCompleted(quest, task);
                                 } else if (task.getDialogId() != null) {
-                                    aNPJ.setDialogId(task.getDialogId());
+                                    aNPC.setDialogId(task.getDialogId());
                                 }
                             }
                             else if (task.getType() == QuestTask.TypeTask.TALK) {
-                                 if (quest.isTaskDependenciesCompleted(task)) {
-                                     task.setCompleted(true);
-                                     aNPJ.setDialogId(task.getCompletedDialogId());
-                                     EventDispatcher.getInstance().onQuestTaskCompleted(quest, task);
-                                 }
+                                if (quest.isTaskDependenciesCompleted(task)) {
+                                    task.setCompleted(true);
+                                    aNPC.setDialogId(task.getCompletedDialogId());
+                                    EventDispatcher.getInstance().onQuestTaskCompleted(quest, task);
+                                }
 
-                             }
+                            }
                         }
                     }
                 }

@@ -139,12 +139,14 @@ public class PathMap {
         double D = Math.sqrt(dx*dx + dy*dy);
 
         double angle = Math.acos(dx/D);
-        if(dx==0)
-        {
-            angle = angle * (dy<0 ? -1 : 1);
-        }
+        angle = angle * (dy<0 ? -1 : 1);
+
+
         double vx = Math.cos(angle)*VELOCITY;
         double vy = Math.sin(angle)*VELOCITY;
+
+//        Gdx.app.debug("DEBUG", "p=("+aCurrentPosition.x+","+aCurrentPosition.y+") n=("+nextPosition.x+","+nextPosition.y+") dx="+dx+" dy="+dy+" D="+D+" angle="+angle +" vx="+vx+" vy"+vy);
+
         mVelocity.set((float) vx, (float) vy);
 
 

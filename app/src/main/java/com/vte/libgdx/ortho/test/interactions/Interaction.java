@@ -6,11 +6,13 @@ import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.maps.MapProperties;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
 import com.vte.libgdx.ortho.test.MyGame;
 import com.vte.libgdx.ortho.test.box2d.PolygonShape;
+import com.vte.libgdx.ortho.test.box2d.Shape;
 import com.vte.libgdx.ortho.test.entity.EntityEngine;
 import com.vte.libgdx.ortho.test.entity.ICollisionHandler;
 import com.vte.libgdx.ortho.test.entity.components.CollisionComponent;
@@ -21,6 +23,7 @@ import com.vte.libgdx.ortho.test.entity.components.VelocityComponent;
 import com.vte.libgdx.ortho.test.entity.components.VisualComponent;
 import com.vte.libgdx.ortho.test.events.EventDispatcher;
 import com.vte.libgdx.ortho.test.events.IInteractionEventListener;
+import com.vte.libgdx.ortho.test.map.GameMap;
 
 import java.util.ArrayList;
 
@@ -43,7 +46,7 @@ public class Interaction extends Entity implements ICollisionHandler, IInteracti
     protected InteractionState mCurrentState;
 
     protected Array<CollisionComponent> mCollisions = new Array<CollisionComponent>();
-    protected PolygonShape mPolygonShape = new PolygonShape();
+    protected Shape mShape;
     protected float[] mVertices = new float[8];
 
 
@@ -52,26 +55,30 @@ public class Interaction extends Entity implements ICollisionHandler, IInteracti
     public ArrayList<InteractionEventAction> mEventsAction;
     public ArrayList<InteractionEvent> mOutputEvents;
 
+    protected MapProperties mProperties;
+    protected GameMap mMap;
+
     @Override
     public void setCamera(Camera aCamera) {
         mCamera = aCamera;
     }
 
-    public Interaction(InteractionDef aDef, float x, float y, InteractionMapping aMapping) {
+    public Interaction(InteractionDef aDef, float x, float y, InteractionMapping aMapping, MapProperties aProperties, GameMap aMap) {
         mId = aMapping.id;
         mDef = aDef;
         mEventsAction = aMapping.eventsAction;
         mOutputEvents = aMapping.outputEvents;
-        if(mOutputEvents!=null)
-        {
-            for(InteractionEvent event : mOutputEvents)
-            {
+        mMap = aMap;
+        mProperties = aProperties;
+    //    mType = IInteraction.Type.valueOf(mDef.type);
+        if (mOutputEvents != null) {
+            for (InteractionEvent event : mOutputEvents) {
                 event.sourceId = mId;
             }
         }
+        mShape = createShape();
         initialize(x, y);
-        if(mEventsAction!=null)
-        {
+        if (mEventsAction != null) {
             EventDispatcher.getInstance().addInteractionEventListener(this);
         }
 
@@ -107,14 +114,11 @@ public class Interaction extends Entity implements ICollisionHandler, IInteracti
         return mIsMovable;
     }
 
-    public void setMovable(boolean isMovable)
-    {
+    public void setMovable(boolean isMovable) {
         mIsMovable = isMovable;
         if (mIsMovable) {
             this.add(new VelocityComponent());
-        }
-        else
-        {
+        } else {
             remove(VelocityComponent.class);
         }
     }
@@ -135,25 +139,22 @@ public class Interaction extends Entity implements ICollisionHandler, IInteracti
 
     protected void setState(String aStateName) {
         InteractionState state = getState(aStateName);
-        if(state!=null)
-        {
+        if (state != null) {
             mCurrentState = state;
-            if(mOutputEvents!=null)
-            {
-                for(InteractionEvent event:mOutputEvents)
-                {
-                    if(InteractionEvent.EventType.STATE == InteractionEvent.EventType.valueOf(event.type))
-                    {
+            if (mOutputEvents != null) {
+                for (InteractionEvent event : mOutputEvents) {
+                    if (InteractionEvent.EventType.STATE == InteractionEvent.EventType.valueOf(event.type)) {
                         EventDispatcher.getInstance().onInteractionEvent(event);
                     }
                 }
             }
         }
     }
-    public void destroy()
-    {
+
+    public void destroy() {
         EventDispatcher.getInstance().removeInteractionEventListener(this);
     }
+
     public void initialize(float x, float y) {
 
         EntityEngine.getInstance().addEntity(this);
@@ -175,13 +176,13 @@ public class Interaction extends Entity implements ICollisionHandler, IInteracti
                 TransformComponent transform = this.getComponent(TransformComponent.class);
                 transform.scale = MyGame.SCALE_FACTOR;
 
-                transform.setOriginOffset(mCurrentFrame.getRegionWidth() * transform.scale / 2, mCurrentFrame.getRegionHeight() * transform.scale / 2);
-                this.add(new VisualComponent(mCurrentFrame));
+                transform.setOriginOffset(-mCurrentFrame.getRegionWidth() * transform.scale / 2, -mCurrentFrame.getRegionHeight() * transform.scale / 2);
+                this.add(new VisualComponent(mCurrentFrame, this));
             }
 
         }
         setPosition(x, y);
-        this.add(new CollisionComponent(CollisionComponent.MAPINTERACTION, getPolygonShape(), mId, this, this));
+        this.add(new CollisionComponent(CollisionComponent.MAPINTERACTION, getShape(), mId, this, this));
 
 
     }
@@ -207,7 +208,7 @@ public class Interaction extends Entity implements ICollisionHandler, IInteracti
 
     public void setVelocity(float vx, float vy) {
         VelocityComponent velocity = this.getComponent(VelocityComponent.class);
-        if(velocity!=null) {
+        if (velocity != null) {
             velocity.x = vx;
             velocity.y = vy;
         }
@@ -215,7 +216,7 @@ public class Interaction extends Entity implements ICollisionHandler, IInteracti
 
     public void setVelocity(Vector2 v) {
         VelocityComponent velocity = this.getComponent(VelocityComponent.class);
-        if(velocity!=null) {
+        if (velocity != null) {
             velocity.x = v.x;
             velocity.y = v.y;
         }
@@ -266,6 +267,7 @@ public class Interaction extends Entity implements ICollisionHandler, IInteracti
             }
         }
         mCurrentFrame = mCurrentState.getTextureRegion(mStateTime);
+
         visual.region = mCurrentFrame;
         float width = visual.region.getRegionWidth();
         float height = visual.region.getRegionHeight();
@@ -283,34 +285,44 @@ public class Interaction extends Entity implements ICollisionHandler, IInteracti
                 transform.angle);
     }
 
-
-    public PolygonShape getPolygonShape() {
+    public Shape createShape() {
+        return new PolygonShape();
+    }
+    @Override
+    public Shape getShape() {
         TransformComponent tfm = this.getComponent(TransformComponent.class);
-        mPolygonShape.setX(tfm.position.x + tfm.originOffset.x);
-        mPolygonShape.setY(tfm.position.y + tfm.originOffset.y);
-        float width = mCurrentFrame.getRegionWidth() * tfm.scale;
-        float height = mCurrentFrame.getRegionHeight() * tfm.scale;
+        mShape.setX(tfm.position.x + tfm.originOffset.x);
+        mShape.setY(tfm.position.y + tfm.originOffset.y);
+
+        if(isRendable()) {
+            float width = mCurrentFrame.getRegionWidth() * tfm.scale;
+            float height = mCurrentFrame.getRegionHeight() * tfm.scale;
 
 
-        mVertices[0] = tfm.originOffset.x;
-        mVertices[1] = tfm.originOffset.y;
-        mVertices[2] = width + tfm.originOffset.x;
-        mVertices[3] = tfm.originOffset.y;
-        mVertices[4] = width + tfm.originOffset.x;
-        mVertices[5] = height + tfm.originOffset.y;
-        mVertices[6] = tfm.originOffset.x;
-        mVertices[7] = height + tfm.originOffset.y;
-        mPolygonShape.getShape().setVertices(mVertices);
-        mPolygonShape.getShape().setPosition(tfm.position.x, tfm.position.y);
+            mVertices[0] = tfm.originOffset.x;
+            mVertices[1] = tfm.originOffset.y;
+            mVertices[2] = width + tfm.originOffset.x;
+            mVertices[3] = tfm.originOffset.y;
+            mVertices[4] = width + tfm.originOffset.x;
+            mVertices[5] = height + tfm.originOffset.y;
+            mVertices[6] = tfm.originOffset.x;
+            mVertices[7] = height + tfm.originOffset.y;
+            if (mShape.getType() == Shape.Type.POLYGON) {
+                ((PolygonShape) mShape).getShape().setVertices(mVertices);
+            }
 
-        return mPolygonShape;
+            mShape.setX(tfm.position.x);
+            mShape.setY(tfm.position.y);
+        }
+        return mShape;
     }
 
 
     @Override
     public void update(float dt) {
         CollisionComponent collision = this.getComponent(CollisionComponent.class);
-        collision.mShape = getPolygonShape();
+        collision.mShape = getShape();
+        mStateTime+=dt;
     }
 
     /*****************
@@ -327,7 +339,7 @@ public class Interaction extends Entity implements ICollisionHandler, IInteracti
                     add(new InputComponent(this));
                 }
 
-                onCollisionInteraction();
+                onStartCollisionInteraction(aEntity);
             }
             return ret;
         }
@@ -341,6 +353,7 @@ public class Interaction extends Entity implements ICollisionHandler, IInteracti
             if (mDef.isClickable) {
                 remove(InputComponent.class);
             }
+            onStopCollisionInteraction(aEntity);
             return true;
         }
         return false;
@@ -355,7 +368,10 @@ public class Interaction extends Entity implements ICollisionHandler, IInteracti
         return false;
     }
 
-    public void onCollisionInteraction() {
+    public void onStartCollisionInteraction(CollisionComponent aEntity) {
+
+    }
+    public void onStopCollisionInteraction(CollisionComponent aEntity) {
 
     }
 
@@ -416,35 +432,26 @@ public class Interaction extends Entity implements ICollisionHandler, IInteracti
 
     @Override
     public void onInteractionEvent(InteractionEvent aEvent) {
-        if(mEventsAction!=null && aEvent!=null)
-        {
-            for(InteractionEventAction action : mEventsAction)
-            {
-                if(action.inputEvents!=null)
-                {
-                    boolean performed=false;
-                    for(InteractionEvent expectedEvent : action.inputEvents)
-                    {
-                        if(expectedEvent.sourceId!=null && expectedEvent.sourceId.equals(aEvent.sourceId) && expectedEvent.type.equals(aEvent.type) && expectedEvent.value.equals(aEvent.value))
-                        {
+        if (mEventsAction != null && aEvent != null) {
+            for (InteractionEventAction action : mEventsAction) {
+                if (action.inputEvents != null) {
+                    boolean performed = false;
+                    for (InteractionEvent expectedEvent : action.inputEvents) {
+                        if (expectedEvent.sourceId != null && expectedEvent.sourceId.equals(aEvent.sourceId) && expectedEvent.type.equals(aEvent.type) && expectedEvent.value.equals(aEvent.value)) {
                             expectedEvent.setPerformed(true);
-                            performed=true;
+                            performed = true;
                             break;
                         }
                     }
-                    if(performed)
-                    {
-                        boolean allPerformed=true;
-                        for(InteractionEvent expectedEvent : action.inputEvents)
-                        {
-                            if(!expectedEvent.isPerformed())
-                            {
-                                allPerformed=false;
+                    if (performed) {
+                        boolean allPerformed = true;
+                        for (InteractionEvent expectedEvent : action.inputEvents) {
+                            if (!expectedEvent.isPerformed()) {
+                                allPerformed = false;
                                 break;
                             }
                         }
-                        if(allPerformed)
-                        {
+                        if (allPerformed) {
                             doActionOnEvent(action);
                         }
                     }
@@ -453,8 +460,7 @@ public class Interaction extends Entity implements ICollisionHandler, IInteracti
         }
     }
 
-    protected void doActionOnEvent(InteractionEventAction aAction)
-    {
+    protected void doActionOnEvent(InteractionEventAction aAction) {
 
     }
 }

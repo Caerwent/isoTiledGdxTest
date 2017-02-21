@@ -1,0 +1,59 @@
+{
+  "type":"HERO",
+  "atlas":"grigri.atlas",
+  "isPersistent":"true",
+  "defaultState":"IDLE",
+  "isClickable": "true",
+  "isRendable": "true",
+  "isMovable": "true",
+  "states": [
+    {
+      "name": "IDLE",
+      "fps":"0",
+      "frames": [
+        "idle"
+      ]
+    },
+    {
+      "name": "MOVE_DOWN",
+      "fps":"6",
+      "frames": [
+        "move_down_1",
+        "move_down_2",
+        "move_down_3"
+      ]
+    },
+    {
+      "name": "MOVE_UP",
+      "fps":"6",
+      "frames": [
+        "move_up_1",
+        "move_up_2",
+        "move_up_3"
+      ]
+    },
+    {
+      "name": "MOVE_LEFT",
+      "fps":"6",
+      "frames": [
+        "move_left_1",
+        "move_left_2",
+        "move_left_3"
+      ]
+    },
+    {
+      "name": "MOVE_RIGHT",
+      "fps":"6",
+      "frames": [
+        "move_right_1",
+        "move_right_2",
+        "move_right_3"
+      ]
+    }
+
+  ],
+
+  "properties":{
+  }
+
+}

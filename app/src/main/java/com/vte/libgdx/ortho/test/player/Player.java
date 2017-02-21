@@ -1,9 +1,10 @@
 package com.vte.libgdx.ortho.test.player;
 
 import com.badlogic.gdx.utils.Array;
-import com.vte.libgdx.ortho.test.characters.CharacterHero;
 import com.vte.libgdx.ortho.test.events.EventDispatcher;
 import com.vte.libgdx.ortho.test.events.IItemListener;
+import com.vte.libgdx.ortho.test.interactions.InteractionFactory;
+import com.vte.libgdx.ortho.test.interactions.InteractionHero;
 import com.vte.libgdx.ortho.test.items.Item;
 import com.vte.libgdx.ortho.test.items.ItemFactory;
 import com.vte.libgdx.ortho.test.persistence.Profile;
@@ -21,7 +22,7 @@ public class Player implements IItemListener {
 
 
     private Array<Item> mInventory;
-    private CharacterHero mHero;
+    private InteractionHero mHero;
 
     public Player() {
         mInventory = new Array<Item>();
@@ -33,8 +34,7 @@ public class Player implements IItemListener {
             }
         }
         // instantiate the hero
-        mHero = new CharacterHero();
-        mHero.initialize();
+        mHero = InteractionFactory.getInstance().createInteractionHero();
         EventDispatcher.getInstance().addItemListener(this);
         EventDispatcher.getInstance().onInventoryChanged(this);
     }
@@ -91,7 +91,7 @@ public class Player implements IItemListener {
         return result;
     }
 
-    public CharacterHero getHero()
+    public InteractionHero getHero()
     {
         return mHero;
     }

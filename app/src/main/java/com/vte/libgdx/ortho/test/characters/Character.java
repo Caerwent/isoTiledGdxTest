@@ -16,13 +16,13 @@ import com.vte.libgdx.ortho.test.entity.components.CollisionComponent;
 import com.vte.libgdx.ortho.test.entity.components.TransformComponent;
 import com.vte.libgdx.ortho.test.entity.components.VelocityComponent;
 import com.vte.libgdx.ortho.test.entity.components.VisualComponent;
-import com.vte.libgdx.ortho.test.map.IMapInteractionRendable;
+import com.vte.libgdx.ortho.test.map.IMapRendable;
 
 /**
  * Created by vincent on 05/01/2017.
  */
 
-public class Character extends Entity implements ICollisionHandler, IMapInteractionRendable {
+public class Character extends Entity implements ICollisionHandler, IMapRendable {
 
     public String mId;
     public String mType;
@@ -110,11 +110,11 @@ public class Character extends Entity implements ICollisionHandler, IMapInteract
         TransformComponent transform = this.getComponent(TransformComponent.class);
         transform.scale = MyGame.SCALE_FACTOR;
         transform.setOriginOffset(-walkSheet.getWidth() / 3 * transform.scale / 2, -walkSheet.getHeight() / 4 * transform.scale / 2);
-        this.add(new VisualComponent(currentFrame));
+        this.add(new VisualComponent(currentFrame, this));
 
         setPosition(0, 0);
 
-        this.add(new CollisionComponent(CollisionComponent.CHARACTER, getPolygonShape(), mId, this, this));
+        this.add(new CollisionComponent(CollisionComponent.CHARACTER, getShape(), mId, this, this));
 
 
     }
@@ -211,7 +211,7 @@ public class Character extends Entity implements ICollisionHandler, IMapInteract
     }
 
 
-    public PolygonShape getPolygonShape() {
+    public PolygonShape getShape() {
         TransformComponent tfm = this.getComponent(TransformComponent.class);
         mPolygonShape.setX(tfm.position.x + tfm.originOffset.x);
         mPolygonShape.setY(tfm.position.y + tfm.originOffset.y);
@@ -236,7 +236,7 @@ public class Character extends Entity implements ICollisionHandler, IMapInteract
 
     public void update(float dt) {
         CollisionComponent collision = this.getComponent(CollisionComponent.class);
-        collision.mShape = getPolygonShape();
+        collision.mShape = getShape();
     }
 
     @Override

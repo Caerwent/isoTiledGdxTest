@@ -14,9 +14,9 @@
 		},
 		{
 			"id": "quest2task2",
-			"desc":"ramener 2 potions à pnj1",
+			"desc":"ramener 2 potions à npc1",
 			"type":"RETURN_ITEM",
-			"targetId":"pnj1",
+			"targetId":"npc1",
 			"dialogId":"dquest2",
 			"completedDialogId":"dquest2TasksCompleted",
 			"requiredCompletedTask":["quest2task1"]

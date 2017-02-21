@@ -1,0 +1,23 @@
+{
+  "type":"PORTAL",
+  "atlas":"",
+  "isPersistent":"true",
+  "defaultState":"IDLE",
+  "isClickable": "true",
+  "isRendable": "false",
+  "isMovable": "false",
+  "states": [
+    {
+      "name": "IDLE",
+      "fps":"0",
+      "frames": []
+    },
+    {
+      "name": "ACTIVATED",
+      "fps":"0",
+      "frames": []
+    }
+
+  ]
+
+}
