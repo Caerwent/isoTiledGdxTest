@@ -8,6 +8,7 @@ import java.util.ArrayList;
 
 public class InteractionEventAction {
     public String id;
+    public String value;
     public ArrayList<InteractionEvent> inputEvents;
 
 }

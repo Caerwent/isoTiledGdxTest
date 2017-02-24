@@ -1,6 +1,5 @@
 package com.vte.libgdx.ortho.test.box2d;
 
-import com.badlogic.gdx.math.Circle;
 import com.badlogic.gdx.math.Rectangle;
 
 /**
@@ -51,6 +50,13 @@ public class RectangleShape extends Shape<Rectangle> {
     {
 
         return mRect;
+    }
+    @Override
+    public Shape clone()
+    {
+        RectangleShape clone = new RectangleShape();
+        clone.getShape().set(mRect);
+        return clone;
     }
 
 }

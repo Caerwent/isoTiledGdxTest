@@ -145,7 +145,6 @@ public class GameMap implements ICollisionHandler {
         mIsInitialized = true;
     }
 
-
     public String getMapName() {
         return mMapName;
     }

@@ -155,5 +155,11 @@ public class InteractionNPC extends Interaction{
         mQuestId = aQuestId;
     }
 
-
+    @Override
+    protected void doActionOnEvent(InteractionEventAction aAction)
+    {
+        if(aAction!=null && "DIALOG".equals(aAction.id)){
+            setDialogId(aAction.value);
+        }
+    }
 }

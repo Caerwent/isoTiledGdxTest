@@ -1,7 +1,5 @@
 package com.vte.libgdx.ortho.test.box2d;
 
-import android.graphics.RectF;
-
 import com.badlogic.gdx.math.Rectangle;
 
 /**
@@ -29,4 +27,5 @@ public abstract class Shape<T> {
     abstract public void setX(float x);
     abstract public void setY(float y);
     abstract public Rectangle getBounds();
+    abstract public Shape clone();
 }

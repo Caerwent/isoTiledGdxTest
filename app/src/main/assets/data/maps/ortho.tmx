@@ -58,8 +58,8 @@
   <object id="34" x="214.667" y="438.667">
    <polygon points="0,0 18.6667,0.666667 16.6667,-15.3333 1.33333,-16"/>
   </object>
-  <object id="53" x="768" y="128">
-   <polygon points="0,0 -144,0 -144,512 0,512 0,0"/>
+  <object id="53" name="water" x="768" y="128">
+   <polygon points="-64,0 -144,0 -144,512 0,512 0,0"/>
   </object>
   <object id="56" x="768" y="64">
    <polygon points="0,0 -16,0 -16,64 0,64"/>

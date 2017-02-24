@@ -1,6 +1,5 @@
 package com.vte.libgdx.ortho.test.box2d;
 
-import com.badlogic.gdx.math.Circle;
 import com.badlogic.gdx.math.Polygon;
 import com.badlogic.gdx.math.Rectangle;
 
@@ -49,5 +48,16 @@ public class PolygonShape extends Shape<Polygon> {
     @Override
     public Rectangle getBounds() {
         return mPoly.getBoundingRectangle();
+    }
+
+    @Override
+    public Shape clone()
+    {
+        PolygonShape clone = new PolygonShape();
+        clone.getShape().setVertices(mPoly.getVertices());
+        clone.getShape().setOrigin(mPoly.getOriginX(), mPoly.getOriginY());
+        clone.setX(getX());
+        clone.setY(getY());
+        return clone;
     }
 }

@@ -10,6 +10,7 @@ import com.badlogic.gdx.utils.Align;
 import com.vte.libgdx.ortho.test.dialogs.GameDialog;
 import com.vte.libgdx.ortho.test.events.EventDispatcher;
 import com.vte.libgdx.ortho.test.events.IDialogListener;
+import com.vte.libgdx.ortho.test.interactions.InteractionEvent;
 
 /**
  * Created by vincent on 06/01/2017.
@@ -70,6 +71,10 @@ public class DialogTable extends Table implements IDialogListener {
             }
             else
             {
+                InteractionEvent event = new InteractionEvent();
+                event.type = InteractionEvent.EventType.DIALOG.name();
+                event.value = mDialog.getId();
+                EventDispatcher.getInstance().onInteractionEvent(event);
                 onStopDialog(mDialog);
             }
         }

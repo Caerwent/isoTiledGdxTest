@@ -11,6 +11,7 @@ import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.Camera;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
@@ -21,10 +22,10 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.TimeUtils;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
-import com.vte.libgdx.ortho.test.ChararcterMoveController;
+import com.vte.libgdx.ortho.test.ChararcterMoveController2;
 import com.vte.libgdx.ortho.test.MyGame;
 import com.vte.libgdx.ortho.test.Settings;
-import com.vte.libgdx.ortho.test.characters.CharactersManager;
+import com.vte.libgdx.ortho.test.box2d.Shape;
 import com.vte.libgdx.ortho.test.entity.EntityEngine;
 import com.vte.libgdx.ortho.test.entity.components.InputComponent;
 import com.vte.libgdx.ortho.test.entity.systems.BobSystem;
@@ -57,11 +58,13 @@ public class GameScreen implements Screen, InputProcessor, ISystemEventListener 
     private OrthographicCamera camera;
     private OrthographicCamera uiCamera;
     //private OrthoCamController cameraController;
-    private ChararcterMoveController bobController;
+    private ChararcterMoveController2 bobController;
     private AssetManager assetManager;
     private BitmapFont font;
     private SpriteBatch batch;
     ShapeRenderer pathRenderer;
+    private ShapeRenderer mPathSpotRenderer;
+    private Shape mSpot;
     private double accumulator;
     private double currentTime;
     private static final int VELOCITY_ITERATIONS = 6;
@@ -94,22 +97,24 @@ public class GameScreen implements Screen, InputProcessor, ISystemEventListener 
         pathRenderer = new ShapeRenderer();
         pathRenderer.setAutoShapeType(true);
         pathRenderer.setProjectionMatrix(camera.combined);
+        mPathSpotRenderer = new ShapeRenderer();
+        mPathSpotRenderer.setColor(new Color(0x80ff00ff));
+        mPathSpotRenderer.setAutoShapeType(true);
+        mPathSpotRenderer.setProjectionMatrix(camera.combined);
 
         accumulator = 0.0;
         currentTime = TimeUtils.millis() / 1000.0;
 
         QuestManager.getInstance();
-        CharactersManager.getInstance();
 
         assetManager = new AssetManager();
-
 
 
         UIStage.createInstance(new ExtendViewport(TARGET_WIDTH, TARGET_HEIGHT, uiCamera));
         UIStage.getInstance().addActor(new TestActor());
 
 
-        bobController = new ChararcterMoveController(camera);
+        bobController = new ChararcterMoveController2(camera);
 
 
         mInputMultiplexer.addProcessor(UIStage.getInstance());
@@ -119,23 +124,21 @@ public class GameScreen implements Screen, InputProcessor, ISystemEventListener 
         EventDispatcher.getInstance().addSystemEventListener(this);
 
 
+    }
 
-
-
+    public void setSpotShape(Shape aSpot) {
+        mSpot = aSpot;
     }
 
     public void loadMap(String aTargetMapId, String aFromMapId) {
-        if(map!=null)
-        {
+        if (map != null) {
             map.destroy();
         }
-        map=null;
+        map = null;
 
 
         map = new GameMap(aTargetMapId, aFromMapId, camera);
         bobController.setMap(map);
-
-
 
 
     }
@@ -151,6 +154,7 @@ public class GameScreen implements Screen, InputProcessor, ISystemEventListener 
         EntityEngine.getInstance().addSystem(new InteractionSystem());
         EntityEngine.getInstance().addSystem(new PathRenderSystem(pathRenderer));
     }
+
     @Override
     public void hide() {
         Gdx.input.setInputProcessor(null);
@@ -162,6 +166,7 @@ public class GameScreen implements Screen, InputProcessor, ISystemEventListener 
         EntityEngine.getInstance().removeSystem(EntityEngine.getInstance().getSystem(PathRenderSystem.class));
 
     }
+
     @Override
     public void render(float delta) {
        /* double newTime = TimeUtils.millis() / 1000.0;
@@ -184,9 +189,33 @@ public class GameScreen implements Screen, InputProcessor, ISystemEventListener 
 
         batch.begin();
         //font.draw(batch, "FPS: " + Gdx.graphics.getFramesPerSecond(), 10, 20);
+        if (mSpot != null) {
+           /* mPathSpotRenderer.begin();
+            mPathSpotRenderer.setProjectionMatrix(camera.combined);
+            if (mSpot.getType() == Shape.Type.POLYGON) {
+                mPathSpotRenderer.polygon(((PolygonShape) mSpot).getShape().getTransformedVertices());
+            } else if (mSpot.getType() == Shape.Type.RECT) {
+                Rectangle rect = ((RectangleShape) mSpot).getShape();
+                mPathSpotRenderer.rect(rect.getX(), rect.getY(), 0, 0, rect.getWidth(), rect.getHeight(), 1, 1, 0);
+            } else if (mSpot.getType() == Shape.Type.CIRCLE) {
+                mPathSpotRenderer.circle(mSpot.getX(), mSpot.getY(), mSpot.getBounds().getWidth(), 24);
+            }
+            mPathSpotRenderer.end();*/
+            batch.setProjectionMatrix(camera.combined);
+
+            batch.setColor(Color.YELLOW);
+            batch.enableBlending();
+             map.getPlayer().getHero().renderShadowed(mSpot.getX(), mSpot.getY(), batch);
+        }
+
         batch.end();
-        UIStage.getInstance().draw();
-        EntityEngine.getInstance().update(delta/*Time*/);
+        UIStage.getInstance().
+
+                draw();
+
+        EntityEngine.getInstance().
+
+                update(delta/*Time*/);
 
     }
 
@@ -227,7 +256,6 @@ public class GameScreen implements Screen, InputProcessor, ISystemEventListener 
     }
 
 
-
     public Camera getCamera() {
         return camera;
     }
@@ -238,8 +266,7 @@ public class GameScreen implements Screen, InputProcessor, ISystemEventListener 
 
     @Override
     public void dispose() {
-        if(map!=null)
-        {
+        if (map != null) {
             map.destroy();
         }
         EventDispatcher.getInstance().removeSystemEventListener(this);

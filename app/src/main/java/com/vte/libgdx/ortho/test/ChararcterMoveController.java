@@ -9,7 +9,7 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
-import com.vte.libgdx.ortho.test.box2d.Path;
+import com.vte.libgdx.ortho.test.box2d.PathHero;
 import com.vte.libgdx.ortho.test.box2d.PolygonShape;
 import com.vte.libgdx.ortho.test.box2d.Shape;
 import com.vte.libgdx.ortho.test.box2d.ShapeUtils;
@@ -31,7 +31,7 @@ public class ChararcterMoveController extends InputAdapter {
     Vector2 mTouchSpotPoint = new Vector2();
     Vector2 mPathSpotPoint = new Vector2();
 
-    Path path;
+    PathHero path;
     public boolean isActive = false;
     private GameMap mMap;
 
@@ -125,8 +125,8 @@ public class ChararcterMoveController extends InputAdapter {
 
             if (nextPoint != null) {
 
-                if (nextPoint.dst2(mLastPoint) > Path.CHECK_RADIUS) {
-                    path.AddPoint(nextPoint.x, nextPoint.y, 0.2f);
+                if (nextPoint.dst2(mLastPoint) > PathHero.CHECK_RADIUS) {
+                    path.addPoint(nextPoint.x, nextPoint.y);
                     mLastPoint.set(nextPoint);
                     //  mTouchSpotPoint.set(mLastPoint.x, mLastPoint.y);
                     //   Gdx.app.debug("DEBUG", "add pointX=" + mLastPoint.x + " pointY=" + mLastPoint.y);
@@ -150,11 +150,11 @@ public class ChararcterMoveController extends InputAdapter {
         if (mMap!=null && mMap.getPlayer()!=null && mMap.getPlayer().getHero()!=null &&  mMap.getPlayer().getHero().getShape().getBounds().contains(mCursorPoint.x, mCursorPoint.y)) {
             if (path != null)
                 path.destroy();
-            path = new Path();
+            path = new PathHero();
             Rectangle bobBound = mMap.getPlayer().getHero().getShape().getBounds();
             Vector2 bobPos = mMap.getPlayer().getHero().getPosition();
 //            mCursorPoint.set(.x, mBob.getPosition().y, mCursorPoint.z);
-            path.AddPoint(bobPos.x, bobPos.y, 0.2f);
+            path.addPoint(bobPos.x, bobPos.y);
             mLastPoint.set(mCursorPoint.x, mCursorPoint.y);
             mTouchSpotPoint.set(mCursorPoint.x, mCursorPoint.y);
             mPathSpot.setPosition(mCursorPoint.x, mCursorPoint.y);

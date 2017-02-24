@@ -58,5 +58,12 @@
 		]
 
 	}
+,
+	{
+		"id":"endQuest2",
+		"dialogs" : [
+			"machin: j'espere que tu as trouve ce que tu cherches."
+		]
+	}
 ]
 

@@ -5,6 +5,7 @@
     "eventsAction":[
       {
         "id":"WAKEUP",
+        "value":"",
         "inputEvents":[
           {
             "sourceId":"activator1",

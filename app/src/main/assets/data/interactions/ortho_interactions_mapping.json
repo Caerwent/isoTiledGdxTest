@@ -20,11 +20,12 @@
     "eventsAction":[
       {
         "id":"DIALOG",
+        "value":"endQuest2",
         "inputEvents":[
           {
-            "sourceId":"dquest2TasksCompleted",
-            "type":"STATE",
-            "value":"ACTIVATED"
+            "sourceId":"",
+            "type":"DIALOG",
+            "value":"dquest2TasksCompleted"
           }
         ]
       }

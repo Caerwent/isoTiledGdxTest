@@ -19,7 +19,7 @@ public class PathMap {
     boolean isLoop=false;
     float lastTime = 0;
     static public final float CHECK_RADIUS = 0.2f;
-    static public final float VELOCITY = 2;
+    public float mVelocityCte = 2;
 
     public PathMap() {
         positions = new ArrayList<Vector2>();
@@ -35,6 +35,10 @@ public class PathMap {
         mIsCompleted = false;
     }
 
+    public void setVelocityCte(float aVelocity)
+    {
+        mVelocityCte = aVelocity;
+    }
     public boolean isLoop() {
         return isLoop;
     }
@@ -142,8 +146,8 @@ public class PathMap {
         angle = angle * (dy<0 ? -1 : 1);
 
 
-        double vx = Math.cos(angle)*VELOCITY;
-        double vy = Math.sin(angle)*VELOCITY;
+        double vx = Math.cos(angle)*mVelocityCte;
+        double vy = Math.sin(angle)*mVelocityCte;
 
 //        Gdx.app.debug("DEBUG", "p=("+aCurrentPosition.x+","+aCurrentPosition.y+") n=("+nextPosition.x+","+nextPosition.y+") dx="+dx+" dy="+dy+" D="+D+" angle="+angle +" vx="+vx+" vy"+vy);
 

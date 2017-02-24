@@ -59,4 +59,13 @@ public class CircleShape extends Shape<Circle> {
 
         return mBounds;
     }
+    @Override
+    public Shape clone()
+    {
+        CircleShape clone = new CircleShape();
+        clone.setRadius(mCircle.radius);
+        clone.setX(getX());
+        clone.setY(getY());
+        return clone;
+    }
 }

@@ -6,7 +6,8 @@ package com.vte.libgdx.ortho.test.interactions;
 
 public class InteractionEvent {
     public static enum EventType {
-        STATE;
+        STATE,
+        DIALOG;
     }
     public String sourceId;
     public String type;

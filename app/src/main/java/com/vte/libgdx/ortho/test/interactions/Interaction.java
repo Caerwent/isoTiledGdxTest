@@ -182,7 +182,7 @@ public class Interaction extends Entity implements ICollisionHandler, IInteracti
 
         }
         setPosition(x, y);
-        this.add(new CollisionComponent(CollisionComponent.MAPINTERACTION, getShape(), mId, this, this));
+        this.add(new CollisionComponent((byte) (CollisionComponent.MAPINTERACTION | CollisionComponent.OBSTACLE), getShape(), mId, this, this));
 
 
     }
@@ -437,7 +437,7 @@ public class Interaction extends Entity implements ICollisionHandler, IInteracti
                 if (action.inputEvents != null) {
                     boolean performed = false;
                     for (InteractionEvent expectedEvent : action.inputEvents) {
-                        if (expectedEvent.sourceId != null && expectedEvent.sourceId.equals(aEvent.sourceId) && expectedEvent.type.equals(aEvent.type) && expectedEvent.value.equals(aEvent.value)) {
+                        if ((expectedEvent.sourceId==null || expectedEvent.sourceId.isEmpty()  || expectedEvent.sourceId.equals(aEvent.sourceId)) && expectedEvent.type.equals(aEvent.type) && expectedEvent.value.equals(aEvent.value)) {
                             expectedEvent.setPerformed(true);
                             performed = true;
                             break;
