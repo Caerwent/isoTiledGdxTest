@@ -8,7 +8,12 @@
 	
 	itemTypeID: potionBlue
 	itemShortDescription: "c'est à boire qu'il nous faut \\n hoho hoho"
-}
+},
+	{
+
+		itemTypeID: tonneau
+		itemShortDescription: "un gros tonneau"
+	}
 
 
 ]

@@ -5,6 +5,7 @@ import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.badlogic.gdx.scenes.scene2d.utils.DragAndDrop;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.ArrayMap;
 import com.vte.libgdx.ortho.test.Settings;
@@ -26,6 +27,8 @@ public class InventoryTable extends Group implements IPlayerListener {
     private InventorySlot mSelectedItem;
     private InventoryDetails mDetails;
 
+    private DragAndDrop _dragAndDrop;
+
     public InventoryTable () {
         super();
         init();
@@ -35,6 +38,7 @@ public class InventoryTable extends Group implements IPlayerListener {
     private void init()
     {
         mSlots = new ArrayMap();
+        _dragAndDrop = new DragAndDrop();
         mInventoryTable = new Table();
         mInventoryTable.setBackground(UIStage.getInstance().getSkin().getDrawable("window1"));
         mInventoryTable.setColor(UIStage.getInstance().getSkin().getColor("lt-blue"));
@@ -64,12 +68,16 @@ public class InventoryTable extends Group implements IPlayerListener {
         int nbItemInRow=0;
         mInventoryTable.clear();
         mSlots.clear();
+        _dragAndDrop.clear();
         for(Item item : aPlayer.getInventory())
         {
             InventorySlot inventorySlot = mSlots.get(item.getItemTypeID());
             if(inventorySlot==null)
             {
                 inventorySlot = new InventorySlot();
+                _dragAndDrop.addTarget(new InventorySlotTarget(inventorySlot));
+                _dragAndDrop.addSource(new InventorySlotSource(inventorySlot, _dragAndDrop));
+
                 mSlots.put(item.getItemTypeID(), inventorySlot);
                 inventorySlot.setTouchable(Touchable.enabled);
                 mInventoryTable.add(inventorySlot).size(mSlotWidth, mSlotHeight);
