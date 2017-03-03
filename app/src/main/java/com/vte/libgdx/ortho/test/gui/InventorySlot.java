@@ -4,6 +4,7 @@ import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Stack;
+import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Array;
 import com.vte.libgdx.ortho.test.items.Item;
@@ -15,7 +16,7 @@ import com.vte.libgdx.ortho.test.items.Item;
 public class InventorySlot extends Stack {
 
     //All slots have this default image
-    private Stack _defaultBackground;
+    private Table _defaultBackground;
     private Image _mImg;
     private Label _numItemsLabel;
     private int _numItemsVal = 0;
@@ -24,7 +25,9 @@ public class InventorySlot extends Stack {
 
 
     public InventorySlot() {
-        _defaultBackground = new Stack();
+        _defaultBackground = new Table();
+        _defaultBackground.setBackground(UIStage.getInstance().getSkin().getDrawable("window1"));
+        _defaultBackground.setColor(UIStage.getInstance().getSkin().getColor("lt-blue"));
         _numItemsLabel = new Label(String.valueOf(_numItemsVal), UIStage.getInstance().getSkin(), "inventory-item-count");
         _numItemsLabel.setAlignment(Align.bottomRight);
         _numItemsLabel.setVisible(false);
@@ -108,7 +111,7 @@ public class InventorySlot extends Stack {
 
     public void setSelected(boolean aIsSelected) {
 
-        _defaultBackground.setColor(UIStage.getInstance().getSkin().getColor(aIsSelected ? "black" : "white"));
+        _defaultBackground.setColor(UIStage.getInstance().getSkin().getColor(aIsSelected ? "dark-blue" : "lt-blue"));
     }
 
 

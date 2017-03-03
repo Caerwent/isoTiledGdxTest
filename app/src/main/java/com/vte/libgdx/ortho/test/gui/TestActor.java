@@ -1,12 +1,18 @@
 package com.vte.libgdx.ortho.test.gui;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
+import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
+import com.vte.libgdx.ortho.test.MyGame;
+import com.vte.libgdx.ortho.test.effects.Effect;
+import com.vte.libgdx.ortho.test.effects.EffectFactory;
+import com.vte.libgdx.ortho.test.screens.GameScreen;
 
+import static com.vte.libgdx.ortho.test.MyGame.ScreenType.MainGame;
 import static com.vte.libgdx.ortho.test.Settings.TARGET_WIDTH;
 
 /**
@@ -21,7 +27,8 @@ public class TestActor extends Group  {
     protected final Table mainTable = new Table();
     private InventoryTable mInventorySlotTable = new InventoryTable();
     protected final DialogTable mDialogTable = new DialogTable(DIALOG_W, DIALOG_H);
-
+    protected Image mInventoryButton ;
+    protected Image mSpellButton ;
     /**
      * the duration of the screen transition for the screenOut method
      */
@@ -30,14 +37,22 @@ public class TestActor extends Group  {
 
     public TestActor() {
 
-        mainTable.setSize(50, 50);
+        mainTable.setSize(128, 64);
 
 
         this.addActor(mainTable);
         mainTable.setBackground(UIStage.getInstance().getSkin().getDrawable("window1"));
         mainTable.setColor(UIStage.getInstance().getSkin().getColor("dark-blue"));
         mainTable.setSkin(UIStage.getInstance().getSkin());
-        mainTable.add("I");
+
+        mInventoryButton = new Image();
+        mInventoryButton.setDrawable(new TextureRegionDrawable(UIStage.getInstance().getTextureAtlas().findRegion("bag")));
+        mainTable.add(mInventoryButton);
+
+        mSpellButton= new Image();
+        mSpellButton.setDrawable(new TextureRegionDrawable(UIStage.getInstance().getTextureAtlas().findRegion("spell")));
+        mainTable.add(mSpellButton);
+
         mainTable.row();
 
         mInventorySlotTable.setPosition(50, 25);
@@ -55,11 +70,9 @@ public class TestActor extends Group  {
         mDialogTable.setPosition((TARGET_WIDTH-DIALOG_W)/2, 0);
         mDialogTable.setVisible(false);
         addActor(mDialogTable);
-        mainTable.addListener(new ClickListener() {
+        mInventoryButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                // app.switchScreens(new MainScreen(app));
-                Gdx.app.log("!!", "klick");
                 if (mInventorySlotTable.isVisible()) {
                     mInventorySlotTable.setVisible(false);
                 } else {
@@ -67,7 +80,15 @@ public class TestActor extends Group  {
                 }
             }
         });
-        mainTable.setTouchable(Touchable.enabled);
+        mInventoryButton.setTouchable(Touchable.enabled);
+
+        mSpellButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                ((GameScreen) MyGame.getInstance().getScreenType(MainGame)   ).getMap().getPlayer().getHero().launchEffect(EffectFactory.getInstance().getEffect(Effect.Type.FREEZE));
+            }
+        });
+        mInventoryButton.setTouchable(Touchable.enabled);
 
     }
 

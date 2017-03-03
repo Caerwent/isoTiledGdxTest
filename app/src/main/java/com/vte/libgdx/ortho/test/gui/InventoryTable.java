@@ -46,13 +46,13 @@ public class InventoryTable extends Group implements IPlayerListener {
         mInventoryTable.align(Align.topLeft);
         mInventoryTable.setName("Inventory_Slot_Table");
         mInventoryTable.setPosition(0,25);
-        mInventoryTable.setSize(mLengthSlotRow*mSlotWidth+5, Settings.TARGET_HEIGHT - 50);
+        mInventoryTable.setSize(mLengthSlotRow*mSlotWidth+5, Settings.TARGET_HEIGHT - 64);
         EventDispatcher.getInstance().addPlayerListener(this);
-        mDetails = new InventoryDetails(200, (Settings.TARGET_HEIGHT - 50)/2);
+        mDetails = new InventoryDetails(200, (Settings.TARGET_HEIGHT - 64)/2);
 
         addActor(mInventoryTable);
         addActor(mDetails);
-        mDetails.setPosition(mLengthSlotRow*mSlotWidth+5, (Settings.TARGET_HEIGHT - 50)/2+25);
+        mDetails.setPosition(mLengthSlotRow*mSlotWidth+5, (Settings.TARGET_HEIGHT - 64)/2+25);
         mDetails.setVisible(false);
 
 

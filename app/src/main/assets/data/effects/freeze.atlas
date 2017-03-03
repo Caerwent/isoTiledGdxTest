@@ -1,0 +1,33 @@
+
+freeze.png
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+freeze_1
+  rotate: false
+  xy: 1, 1
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+freeze_2
+  rotate: false
+  xy: 64, 1
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+freeze_3
+  rotate: false
+  xy: 1, 64
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+freeze_4
+  rotate: false
+  xy: 64, 64
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1

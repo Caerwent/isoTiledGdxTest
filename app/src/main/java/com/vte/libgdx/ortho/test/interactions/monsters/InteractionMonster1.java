@@ -4,6 +4,7 @@ import com.badlogic.gdx.maps.MapProperties;
 import com.badlogic.gdx.math.Vector2;
 import com.vte.libgdx.ortho.test.box2d.PathMap;
 import com.vte.libgdx.ortho.test.entity.components.TransformComponent;
+import com.vte.libgdx.ortho.test.entity.components.VelocityComponent;
 import com.vte.libgdx.ortho.test.interactions.Interaction;
 import com.vte.libgdx.ortho.test.interactions.InteractionDef;
 import com.vte.libgdx.ortho.test.interactions.InteractionEventAction;
@@ -27,19 +28,16 @@ public class InteractionMonster1 extends Interaction{
     @Override
     public void update(float dt) {
         super.update(dt);
-
-        if (isMovable() &&  mPath!= null) {
-            if (mPath.hasNextPoint()) {
+            VelocityComponent velocity = this.getComponent(VelocityComponent.class);
+        if (velocity!=null) {
+            if (mPath!=null && mPath.hasNextPoint()) {
                 TransformComponent transform = this.getComponent(TransformComponent.class);
                 Vector2 pos2D = new Vector2(transform.position.x, transform.position.y);
-                Vector2 velocity = mPath.getVelocityForPosAndTime(pos2D, dt);
-                setVelocity(velocity);
+                setVelocity(mPath.getVelocityForPosAndTime(pos2D, dt));
             } else {
                 setMovable(false);
             }
 
-        } else {
-            setMovable(false);
         }
     }
     @Override
@@ -52,4 +50,5 @@ public class InteractionMonster1 extends Interaction{
             }
         }
     }
+
 }

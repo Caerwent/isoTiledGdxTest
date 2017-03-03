@@ -42,3 +42,17 @@ window1
   orig: 64, 64
   offset: 0, 0
   index: -1
+bag
+  rotate: false
+  xy: 168, 8
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+spell
+  rotate: false
+  xy: 209, 77
+  size: 40, 40
+  orig: 40, 40
+  offset: 0, 0
+  index: -1

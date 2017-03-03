@@ -15,6 +15,7 @@ public class CollisionComponent implements Component {
     public static byte ITEM = 4;
     public static byte MAPINTERACTION = 8;
     public static byte CHARACTER = 16;
+    public static byte EFFECT = 32;
 
     public Shape mShape;
     public ICollisionHandler mHandler;

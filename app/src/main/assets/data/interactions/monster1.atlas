@@ -10,6 +10,13 @@ idle
   orig: 32, 32
   offset: 0, 0
   index: -1
+frozen
+  rotate: false
+  xy: 64, 1
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
 move_down_1
   rotate: false
   xy: 1, 32

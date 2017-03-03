@@ -54,7 +54,7 @@ public class MainMenuScreen implements Screen {
                                       @Override
                                       public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
                                           MyGame.getInstance().newProfile();
-                                          MyGame.getInstance().setScreen(MyGame.getInstance().getScreenType(MyGame.ScreenType.MainGame));
+                                          MyGame.getInstance().setScreen(MyGame.ScreenType.MainGame);
                                       }
                                   }
         );
@@ -68,7 +68,7 @@ public class MainMenuScreen implements Screen {
 
                                        @Override
                                        public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-                                           MyGame.getInstance().setScreen(MyGame.getInstance().getScreenType(MyGame.ScreenType.MainGame));
+                                           MyGame.getInstance().setScreen(MyGame.ScreenType.MainGame);
                                        }
                                    }
         );

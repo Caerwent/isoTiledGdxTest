@@ -1,5 +1,4 @@
-package com.vte.libgdx.ortho.test.interactions;
-
+package com.vte.libgdx.ortho.test.effects;
 
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
@@ -9,36 +8,41 @@ import com.badlogic.gdx.utils.Array;
 import java.util.ArrayList;
 
 /**
- * Created by vincent on 08/02/2017.
+ * Created by vincent on 25/02/2017.
  */
 
-public class InteractionState {
-
-    public final static String STATE_MOVE_LEFT="MOVE_LEFT";
-    public final static String STATE_MOVE_RIGHT="MOVE_RIGHT";
-    public final static String STATE_MOVE_DOWN="MOVE_DOWN";
-    public final static String STATE_MOVE_UP="MOVE_UP";
-    public final static String STATE_FROZEN="FROZEN";
-
-    public String name;
+public class Effect {
+    public enum Type {
+        FREEZE
+    }
+    public Type id;
+    public String atlasFile;
+    public float distance;
+    public float duration;
+    public String targetState;
     public int fps;
     public ArrayList<String> frames;
 
+    private TextureAtlas mAtlas;
     private Animation mAnimation;
     private TextureRegion mFixRegion;
 
-    public void init(TextureAtlas aAtlas)
+    public Effect() {
+    }
+    public void init()
     {
+        mAtlas = new TextureAtlas("data/effects/" + atlasFile);
+
         if(frames==null || frames.size()<=0)
             return;
 
         if(fps==0 || frames.size()==1) {
-            mFixRegion=aAtlas.findRegion(frames.get(0));
+            mFixRegion=mAtlas.findRegion(frames.get(0));
         }
         else {
             Array<TextureRegion> regions = new Array<TextureRegion>();
             for (String key : frames) {
-                TextureRegion reg = aAtlas.findRegion(key);
+                TextureRegion reg = mAtlas.findRegion(key);
                 if (reg != null) {
                     regions.add(reg);
                 }
@@ -57,4 +61,5 @@ public class InteractionState {
         }
         return mAnimation.getKeyFrame(aTime, true);
     }
+
 }

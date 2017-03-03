@@ -1,5 +1,6 @@
 package com.vte.libgdx.ortho.test.box2d;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector2;
 
 import java.util.ArrayList;
@@ -15,8 +16,8 @@ public class PathMap {
     int nextPointIndex;
     boolean mIsCompleted = false;
 
-    boolean isRevert=false;
-    boolean isLoop=false;
+    boolean isRevert = false;
+    boolean isLoop = false;
     float lastTime = 0;
     static public final float CHECK_RADIUS = 0.2f;
     public float mVelocityCte = 2;
@@ -35,10 +36,10 @@ public class PathMap {
         mIsCompleted = false;
     }
 
-    public void setVelocityCte(float aVelocity)
-    {
+    public void setVelocityCte(float aVelocity) {
         mVelocityCte = aVelocity;
     }
+
     public boolean isLoop() {
         return isLoop;
     }
@@ -62,6 +63,7 @@ public class PathMap {
     public void setCompleted(boolean aIsCompleted) {
         this.mIsCompleted = aIsCompleted;
     }
+
     public Vector2 getCurrentPoint() {
         return positions.get(currentPointIndex);
     }
@@ -74,60 +76,46 @@ public class PathMap {
         boolean hasReachedNextPoint = false;
         if (d < CHECK_RADIUS) {
             currentPointIndex = nextPointIndex;
-            lastTime=0;
+            lastTime = 0;
             if (hasNextPoint()) {
                 nextPointIndex = getNextPoint();
                 mIsCompleted = false;
-            }
-            else
-            {
+            } else {
                 mIsCompleted = true;
-                mVelocity.set(0,0);
+                mVelocity.set(0, 0);
             }
 
         }
-        if(!mIsCompleted) {
+        if (!mIsCompleted) {
             computeVelocity(bodyPosition, dT);
         }
         return mVelocity;
     }
 
     public boolean hasNextPoint() {
-        if(isLoop)
+        if (isLoop)
             return true;
 
-        if(isRevert)
-        {
-            return currentPointIndex>0;
-        }
-        else
-        {
-            return currentPointIndex<positions.size()-1;
+        if (isRevert) {
+            return currentPointIndex > 0;
+        } else {
+            return currentPointIndex < positions.size() - 1;
         }
 
 
     }
 
     int getNextPoint() {
-        if(isRevert)
-        {
-            if(currentPointIndex<=0)
-            {
-                return isLoop ? positions.size()-1 : -1;
+        if (isRevert) {
+            if (currentPointIndex <= 0) {
+                return isLoop ? positions.size() - 1 : -1;
+            } else {
+                return currentPointIndex - 1;
             }
-            else
-            {
-                return currentPointIndex-1;
-            }
-        }
-        else
-        {
-            if(currentPointIndex<positions.size()-1)
-            {
-                return currentPointIndex+1;
-            }
-            else
-            {
+        } else {
+            if (currentPointIndex < positions.size() - 1) {
+                return currentPointIndex + 1;
+            } else {
                 return isLoop ? 0 : -1;
             }
 
@@ -138,18 +126,17 @@ public class PathMap {
     void computeVelocity(Vector2 aCurrentPosition, float dT) {
 
         Vector2 nextPosition = positions.get(nextPointIndex);
-        float dx = nextPosition.x - aCurrentPosition.x;
-        float dy = nextPosition.y - aCurrentPosition.y;
-        double D = Math.sqrt(dx*dx + dy*dy);
+        double dx = nextPosition.x - aCurrentPosition.x;
+        double dy = nextPosition.y - aCurrentPosition.y;
+        double D = Math.sqrt(dx * dx + dy * dy);
 
-        double angle = Math.acos(dx/D);
-        angle = angle * (dy<0 ? -1 : 1);
+        double angle = Math.acos(dx / D);
+        angle = angle * (dy < 0 ? -1d : 1d);
 
+        double vx = Math.cos(angle) * mVelocityCte;
+        double vy = Math.sin(angle) * mVelocityCte;
 
-        double vx = Math.cos(angle)*mVelocityCte;
-        double vy = Math.sin(angle)*mVelocityCte;
-
-//        Gdx.app.debug("DEBUG", "p=("+aCurrentPosition.x+","+aCurrentPosition.y+") n=("+nextPosition.x+","+nextPosition.y+") dx="+dx+" dy="+dy+" D="+D+" angle="+angle +" vx="+vx+" vy"+vy);
+        Gdx.app.debug("DEBUG", "p=("+aCurrentPosition.x+","+aCurrentPosition.y+") n=("+nextPosition.x+","+nextPosition.y+") dx="+dx+" dy="+dy+" D="+D+" angle="+angle +" vx="+vx+" vy"+vy);
 
         mVelocity.set((float) vx, (float) vy);
 

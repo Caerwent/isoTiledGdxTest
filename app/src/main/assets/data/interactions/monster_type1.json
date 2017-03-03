@@ -15,6 +15,13 @@
       ]
     },
     {
+      "name": "FROZEN",
+      "fps":"0",
+      "frames": [
+        "frozen"
+      ]
+    },
+    {
       "name": "MOVE_DOWN",
       "fps":"10",
       "frames": [

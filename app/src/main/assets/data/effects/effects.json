@@ -1,0 +1,14 @@
+[{
+  "id":"FREEZE",
+  "atlasFile":"freeze.atlas",
+  "distance": "1",
+  "duration":"5",
+  "targetState":"FROZEN",
+  "fps":"10",
+  "frames": [
+        "freeze_1","freeze_2","freeze_3", "freeze_4"
+      ]
+
+
+}
+  ]

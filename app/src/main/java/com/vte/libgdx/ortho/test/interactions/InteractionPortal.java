@@ -1,8 +1,7 @@
 package com.vte.libgdx.ortho.test.interactions;
 
 import com.badlogic.gdx.maps.MapProperties;
-import com.badlogic.gdx.math.Rectangle;
-import com.vte.libgdx.ortho.test.box2d.RectangleShape;
+import com.vte.libgdx.ortho.test.box2d.CircleShape;
 import com.vte.libgdx.ortho.test.box2d.Shape;
 import com.vte.libgdx.ortho.test.entity.components.CollisionComponent;
 import com.vte.libgdx.ortho.test.events.EventDispatcher;
@@ -54,8 +53,10 @@ public class InteractionPortal extends Interaction implements IQuestListener {
 
     @Override
     public Shape createShape() {
-        mShape = new RectangleShape();
-        mShape.setShape(new Rectangle(0, 0, 1, 1));
+        mShape = new CircleShape();
+        mShape.setY(0);
+        mShape.setX(0);
+        ((CircleShape) mShape).getShape().setRadius(1);
         return mShape;
     }
     public boolean hasCollisionInteraction(CollisionComponent aEntity) {

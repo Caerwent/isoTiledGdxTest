@@ -34,7 +34,6 @@ import com.vte.libgdx.ortho.test.entity.systems.InteractionSystem;
 import com.vte.libgdx.ortho.test.entity.systems.MovementSystem;
 import com.vte.libgdx.ortho.test.entity.systems.PathRenderSystem;
 import com.vte.libgdx.ortho.test.events.EventDispatcher;
-import com.vte.libgdx.ortho.test.events.ISystemEventListener;
 import com.vte.libgdx.ortho.test.gui.TestActor;
 import com.vte.libgdx.ortho.test.gui.UIStage;
 import com.vte.libgdx.ortho.test.map.GameMap;
@@ -47,7 +46,7 @@ import static com.vte.libgdx.ortho.test.Settings.TARGET_WIDTH;
  * Created by gwalarn on 16/11/16.
  */
 
-public class GameScreen implements Screen, InputProcessor, ISystemEventListener {
+public class GameScreen implements Screen, InputProcessor {
 
     public final static String TAG = GameScreen.class.getSimpleName();
     public Rectangle viewport;
@@ -121,8 +120,6 @@ public class GameScreen implements Screen, InputProcessor, ISystemEventListener 
         mInputMultiplexer.addProcessor(this);
         mInputMultiplexer.addProcessor(bobController);
 
-        EventDispatcher.getInstance().addSystemEventListener(this);
-
 
     }
 
@@ -139,6 +136,7 @@ public class GameScreen implements Screen, InputProcessor, ISystemEventListener 
 
         map = new GameMap(aTargetMapId, aFromMapId, camera);
         bobController.setMap(map);
+        EventDispatcher.getInstance().onMapLoaded(map);
 
 
     }
@@ -146,6 +144,8 @@ public class GameScreen implements Screen, InputProcessor, ISystemEventListener 
 
     @Override
     public void show() {
+
+        Gdx.app.debug("DEBUG", "show");
         Gdx.input.setInputProcessor(mInputMultiplexer);
         EntityEngine.getInstance().addSystem(new MovementSystem());
         // EntityEngine.getInstance().addSystem(new VisualRenderSystem(camera));
@@ -157,6 +157,8 @@ public class GameScreen implements Screen, InputProcessor, ISystemEventListener 
 
     @Override
     public void hide() {
+
+        Gdx.app.debug("DEBUG", "hide");
         Gdx.input.setInputProcessor(null);
         EntityEngine.getInstance().removeSystem(EntityEngine.getInstance().getSystem(MovementSystem.class));
         // EntityEngine.getInstance().addSystem(new VisualRenderSystem(camera));
@@ -169,6 +171,7 @@ public class GameScreen implements Screen, InputProcessor, ISystemEventListener 
 
     @Override
     public void render(float delta) {
+        Gdx.app.debug("DEBUG", "render");
        /* double newTime = TimeUtils.millis() / 1000.0;
         double frameTime = Math.min(newTime - currentTime, 0.25);
         float deltaTime = (float) frameTime;
@@ -190,22 +193,11 @@ public class GameScreen implements Screen, InputProcessor, ISystemEventListener 
         batch.begin();
         //font.draw(batch, "FPS: " + Gdx.graphics.getFramesPerSecond(), 10, 20);
         if (mSpot != null) {
-           /* mPathSpotRenderer.begin();
-            mPathSpotRenderer.setProjectionMatrix(camera.combined);
-            if (mSpot.getType() == Shape.Type.POLYGON) {
-                mPathSpotRenderer.polygon(((PolygonShape) mSpot).getShape().getTransformedVertices());
-            } else if (mSpot.getType() == Shape.Type.RECT) {
-                Rectangle rect = ((RectangleShape) mSpot).getShape();
-                mPathSpotRenderer.rect(rect.getX(), rect.getY(), 0, 0, rect.getWidth(), rect.getHeight(), 1, 1, 0);
-            } else if (mSpot.getType() == Shape.Type.CIRCLE) {
-                mPathSpotRenderer.circle(mSpot.getX(), mSpot.getY(), mSpot.getBounds().getWidth(), 24);
-            }
-            mPathSpotRenderer.end();*/
             batch.setProjectionMatrix(camera.combined);
 
             batch.setColor(Color.YELLOW);
             batch.enableBlending();
-             map.getPlayer().getHero().renderShadowed(mSpot.getX(), mSpot.getY(), batch);
+            map.getPlayer().getHero().renderShadowed(mSpot.getX(), mSpot.getY(), batch);
         }
 
         batch.end();
@@ -213,10 +205,10 @@ public class GameScreen implements Screen, InputProcessor, ISystemEventListener 
 
                 draw();
 
+
         EntityEngine.getInstance().
-
                 update(delta/*Time*/);
-
+        Gdx.app.debug("DEBUG", "end render");
     }
 
     @Override
@@ -269,7 +261,6 @@ public class GameScreen implements Screen, InputProcessor, ISystemEventListener 
         if (map != null) {
             map.destroy();
         }
-        EventDispatcher.getInstance().removeSystemEventListener(this);
         EntityEngine.getInstance().removeAllEntities();
     }
 
@@ -294,7 +285,7 @@ public class GameScreen implements Screen, InputProcessor, ISystemEventListener 
         switch (keyCode) {
             case Input.Keys.ESCAPE:
             case Input.Keys.BACK:
-                MyGame.getInstance().setScreen(MyGame.getInstance().getScreenType(MyGame.ScreenType.MainMenu));
+                MyGame.getInstance().setScreen(MyGame.ScreenType.MainMenu);
                 break;
             default:
                 //  Log.out("unknown key");
@@ -338,13 +329,4 @@ public class GameScreen implements Screen, InputProcessor, ISystemEventListener 
         return false;
     }
 
-    @Override
-    public void onNewMapRequested(String aMapId) {
-        loadMap(aMapId, map.getMapName());
-    }
-
-    @Override
-    public void onMapLoaded(GameMap aMap) {
-
-    }
 }
