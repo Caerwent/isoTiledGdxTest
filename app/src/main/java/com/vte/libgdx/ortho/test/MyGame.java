@@ -4,14 +4,16 @@ import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.vte.libgdx.ortho.test.events.EventDispatcher;
+import com.vte.libgdx.ortho.test.events.ISystemEventListener;
+import com.vte.libgdx.ortho.test.map.GameMap;
+import com.vte.libgdx.ortho.test.persistence.LocationProfile;
 import com.vte.libgdx.ortho.test.persistence.Profile;
 import com.vte.libgdx.ortho.test.quests.QuestManager;
 import com.vte.libgdx.ortho.test.screens.GameScreen;
 import com.vte.libgdx.ortho.test.screens.GenericUI;
 import com.vte.libgdx.ortho.test.screens.LoadingScreen;
 import com.vte.libgdx.ortho.test.screens.MainMenuScreen;
-
-import static com.vte.libgdx.ortho.test.MyGame.ScreenType.MainMenu;
 
 /**
  * MyGame class that extends Game, which implements
@@ -21,10 +23,28 @@ import static com.vte.libgdx.ortho.test.MyGame.ScreenType.MainMenu;
  * orientation is changed. The Batcher is created once since it is memory
  * expensive.
  */
-public class MyGame extends Game {
+public class MyGame extends Game implements ISystemEventListener {
     public static float SCALE_FACTOR = 1.0F / 32.0F;
+    private static String DEFAULT_MAP_NAME = "ortho";
 
     static private MyGame s_instance;
+
+    private boolean mIsGameReadyToBeShown = true;
+    private Screen mScreenRequested = null;
+    private Screen mCurrentScreen = null;
+    @Override
+    public void onNewMapRequested(String aMapId) {
+        if(mGameScreen!=null) {
+            mScreenRequested = mLoadingScreen;
+            mIsGameReadyToBeShown = false;
+            mGameScreen.loadMap(aMapId, mGameScreen.getMap().getMapName());
+        }
+    }
+
+    @Override
+    public void onMapLoaded(GameMap aMap) {
+        mScreenRequested = mGameScreen;
+    }
 
     public static enum ScreenType {
         MainMenu,
@@ -32,21 +52,49 @@ public class MyGame extends Game {
         LoadingGame,
     }
 
+    public void setScreen(ScreenType screenType) {
+
+        switch (screenType) {
+            case MainMenu:
+                mScreenRequested= mMainMenuScreen;
+                break;
+            case LoadingGame:
+                mScreenRequested=  mLoadingScreen;
+                break;
+            case MainGame:
+
+                if (mGameScreen == null) {
+                    mScreenRequested=mLoadingScreen;
+                    mGameScreen = new GameScreen();
+                    loadDefaultMap();
+                }
+                else
+                {
+                    mScreenRequested=mGameScreen;
+
+                }
+                break;
+
+            default: {
+                mScreenRequested= mMainMenuScreen;
+
+            }
+        }
+    }
+
     public Screen getScreenType(ScreenType screenType) {
+
         switch (screenType) {
             case MainMenu:
                 return mMainMenuScreen;
             case LoadingGame:
                 return mLoadingScreen;
             case MainGame:
-                if (mGameScreen == null) {
-                    mGameScreen = new GameScreen();
-                    mGameScreen.loadMap("ortho", null);
-                }
                 return mGameScreen;
 
-            default:
+            default: {
                 return mMainMenuScreen;
+            }
         }
 
     }
@@ -69,29 +117,57 @@ public class MyGame extends Game {
         font = new BitmapFont();
         mMainMenuScreen = new MainMenuScreen();
         mLoadingScreen = new LoadingScreen();
-        this.setScreen(getScreenType(MainMenu));
+        mCurrentScreen=mMainMenuScreen;
+        mScreenRequested = mMainMenuScreen;
+        setScreen(mMainMenuScreen);
+
+
+        EventDispatcher.getInstance().addSystemEventListener(this);
     }
 
     public void render() {
         super.render(); //important!
+        if(mCurrentScreen!=mScreenRequested)
+        {
+            mCurrentScreen = mScreenRequested;
+            setScreen(mCurrentScreen);
+        }
+
     }
 
     public void newProfile() {
-        Profile.getInstance().newProfile();
+        Profile.newProfile();
         QuestManager.getInstance().restoreQuestsFromProfile();
         if (mGameScreen != null)
             mGameScreen.dispose();
         mGameScreen = new GameScreen();
-        mGameScreen.loadMap("ortho", null);
+        loadDefaultMap();
+    }
+
+    private void loadDefaultMap()
+    {
+        LocationProfile location = Profile.getInstance().getLocationProfile();
+        if(location==null || location.mMapId == null)
+        {
+            mGameScreen.loadMap(DEFAULT_MAP_NAME, null);
+        }
+        else
+        {
+            mGameScreen.loadMap(location.mMapId, location.mFromMapId);
+        }
     }
 
     public void dispose() {
+
+        EventDispatcher.getInstance().removeSystemEventListener(this);
         batch.dispose();
         font.dispose();
         mMainMenuScreen.dispose();
         mLoadingScreen.dispose();
-        if (mGameScreen != null)
+        if (mGameScreen != null) {
             mGameScreen.dispose();
+            mGameScreen = null;
+        }
     }
 
 

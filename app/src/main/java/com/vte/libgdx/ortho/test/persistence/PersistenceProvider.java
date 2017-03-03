@@ -146,4 +146,9 @@ public class PersistenceProvider {
     public void saveNPCProfile(String aNPCId, NPCProfile aNPCProfile) {
         save(Profile.getInstance());
     }
+
+    public void saveLocationProfile(LocationProfile aLocationProfile)
+    {
+        save(Profile.getInstance());
+    }
 }

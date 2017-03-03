@@ -17,6 +17,7 @@ public class Profile {
     ArrayList<String> inventory = new ArrayList<>();
     HashMap<String, QuestProfile> quests = new HashMap<>();
     HashMap<String, NPCProfile> npcs = new HashMap<>();
+    LocationProfile location = new LocationProfile();
 
     static private Profile sProfile;
 
@@ -37,7 +38,7 @@ public class Profile {
         PersistenceProvider.getInstance().saveMapProfile(aMapName, aMapProfile);
     }
 
-    public synchronized void newProfile() {
+    public static synchronized void newProfile() {
         sProfile = new Profile();
         PersistenceProvider.getInstance().save(sProfile);
     }
@@ -83,6 +84,17 @@ public class Profile {
         npcs.put(aNPCId, aNPC);
         PersistenceProvider.getInstance().saveNPCProfile(aNPCId, aNPC);
 
+    }
+
+    public LocationProfile getLocationProfile()
+    {
+        return location;
+    }
+
+    public void setLocationProfile(LocationProfile aLocation)
+    {
+        location = aLocation;
+        PersistenceProvider.getInstance().saveLocationProfile(location);
     }
 
 }

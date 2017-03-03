@@ -32,6 +32,7 @@ import com.vte.libgdx.ortho.test.interactions.InteractionFactory;
 import com.vte.libgdx.ortho.test.interactions.InteractionMapping;
 import com.vte.libgdx.ortho.test.interactions.InteractionMappingManager;
 import com.vte.libgdx.ortho.test.interactions.InteractionPortal;
+import com.vte.libgdx.ortho.test.persistence.LocationProfile;
 import com.vte.libgdx.ortho.test.persistence.MapProfile;
 import com.vte.libgdx.ortho.test.persistence.Profile;
 import com.vte.libgdx.ortho.test.player.Player;
@@ -133,6 +134,11 @@ public class GameMap implements ICollisionHandler {
                             EventDispatcher.getInstance().onQuestActivated(theQuest);
                         }
                     }
+
+                    LocationProfile locationProfile = new LocationProfile();
+                    locationProfile.mMapId = mMapName;
+                    locationProfile.mFromMapId = aFromMap;
+                    Profile.getInstance().setLocationProfile(locationProfile);
                 } else {
                     portal.setActivated(true);
                 }
