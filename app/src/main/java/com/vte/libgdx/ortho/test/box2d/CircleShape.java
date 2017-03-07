@@ -41,17 +41,20 @@ public class CircleShape extends Shape<Circle> {
         mCircle.setRadius(radius);
         mBounds.setWidth(radius);
         mBounds.setHeight(radius);
+        mBounds.setPosition(mCircle.x-mCircle.radius/2, mCircle.y-mCircle.radius/2);
     }
     @Override
     public void setX(float x)
     {
         mCircle.x = x;
-        mBounds.setPosition(mCircle.x, mCircle.y);
+        mBounds.setPosition(mCircle.x-mCircle.radius/2, mCircle.y-mCircle.radius/2);
     }
     @Override
     public void setY(float y)
     {
         mCircle.y = y;
+
+        mBounds.setPosition(mCircle.x-mCircle.radius/2, mCircle.y-mCircle.radius/2);
     }
     @Override
     public Rectangle getBounds()

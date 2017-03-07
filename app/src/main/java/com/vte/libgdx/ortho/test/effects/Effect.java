@@ -13,15 +13,19 @@ import java.util.ArrayList;
 
 public class Effect {
     public enum Type {
-        FREEZE
+        FREEZE,
+        BURN
     }
     public Type id;
     public String atlasFile;
     public float distance;
     public float duration;
     public String targetState;
+    public float targetDuration;
+    public String description;
     public int fps;
     public ArrayList<String> frames;
+    public String icon;
 
     private TextureAtlas mAtlas;
     private Animation mAnimation;
@@ -61,5 +65,11 @@ public class Effect {
         }
         return mAnimation.getKeyFrame(aTime, true);
     }
+
+    public TextureRegion getIcon()
+    {
+        return mAtlas.findRegion(icon);
+    }
+
 
 }

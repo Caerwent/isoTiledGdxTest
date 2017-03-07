@@ -1,12 +1,10 @@
 package com.vte.libgdx.ortho.test.gui;
 
-import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.DragAndDrop;
-import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.ArrayMap;
 import com.vte.libgdx.ortho.test.Settings;
 import com.vte.libgdx.ortho.test.events.EventDispatcher;
@@ -18,7 +16,7 @@ import com.vte.libgdx.ortho.test.player.Player;
  * Created by vincent on 09/12/2016.
  */
 
-public class InventoryTable extends Group implements IPlayerListener {
+public class InventoryTable extends Table implements IPlayerListener {
     private final int mSlotWidth = 66;
     private final int mSlotHeight = 66;
     private int mLengthSlotRow = 2;
@@ -40,19 +38,20 @@ public class InventoryTable extends Group implements IPlayerListener {
         mSlots = new ArrayMap();
         _dragAndDrop = new DragAndDrop();
         mInventoryTable = new Table();
-        mInventoryTable.setBackground(UIStage.getInstance().getSkin().getDrawable("window1"));
-        mInventoryTable.setColor(UIStage.getInstance().getSkin().getColor("lt-blue"));
+  //      mInventoryTable.setBackground(UIStage.getInstance().getSkin().getDrawable("window1"));
+  //     mInventoryTable.setColor(UIStage.getInstance().getSkin().getColor("lt-green"));
+
         mInventoryTable.setSkin(UIStage.getInstance().getSkin());
-        mInventoryTable.align(Align.topLeft);
+      //  mInventoryTable.align(Align.topLeft);
         mInventoryTable.setName("Inventory_Slot_Table");
-        mInventoryTable.setPosition(0,25);
-        mInventoryTable.setSize(mLengthSlotRow*mSlotWidth+5, Settings.TARGET_HEIGHT - 64);
+      //  mInventoryTable.setPosition(0,25);
+      //  mInventoryTable.setSize(mLengthSlotRow*mSlotWidth+5, Settings.TARGET_HEIGHT - 64);
         EventDispatcher.getInstance().addPlayerListener(this);
         mDetails = new InventoryDetails(200, (Settings.TARGET_HEIGHT - 64)/2);
-
-        addActor(mInventoryTable);
-        addActor(mDetails);
-        mDetails.setPosition(mLengthSlotRow*mSlotWidth+5, (Settings.TARGET_HEIGHT - 64)/2+25);
+        add(mInventoryTable).fillY().expand().left();
+        add(mDetails).top();
+        row();
+       // mDetails.setPosition(mLengthSlotRow*mSlotWidth+5, (Settings.TARGET_HEIGHT - 64)/2+25);
         mDetails.setVisible(false);
 
 
@@ -80,7 +79,7 @@ public class InventoryTable extends Group implements IPlayerListener {
 
                 mSlots.put(item.getItemTypeID(), inventorySlot);
                 inventorySlot.setTouchable(Touchable.enabled);
-                mInventoryTable.add(inventorySlot).size(mSlotWidth, mSlotHeight);
+                mInventoryTable.top().add(inventorySlot).size(mSlotWidth, mSlotHeight);
                 inventorySlot.addListener(new ClickListener() {
                     @Override
                     public void clicked (InputEvent event, float x, float y)
@@ -95,7 +94,7 @@ public class InventoryTable extends Group implements IPlayerListener {
                                     mSelectedItem.setSelected(false);
                                 mSelectedItem = newSelectedItem;
                                 mSelectedItem.setSelected(true);
-                                mDetails.setItem(mSelectedItem.getItemOnTop());
+                                mDetails.setText(mSelectedItem.getItemOnTop().getItemShortDescription());
                                 mDetails.setVisible(true);
                             }
                             else if(mSelectedItem!=null && mSelectedItem==newSelectedItem)

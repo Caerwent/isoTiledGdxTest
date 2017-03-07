@@ -1,0 +1,47 @@
+ui.png
+size: 256, 141
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+button_default
+  rotate: false
+  xy: 90, 29
+  size: 142, 112
+  orig: 142, 112
+  offset: 0, 0
+  index: -1
+dialog
+  rotate: false
+  xy: 16, 29
+  size: 74, 64
+  orig: 74, 64
+  offset: 0, 0
+  index: -1
+slider1
+  rotate: false
+  xy: 0, 0
+  size: 203, 11
+  orig: 203, 11
+  offset: 0, 0
+  index: -1
+slider2
+  rotate: false
+  xy: 0, 29
+  size: 16, 26
+  orig: 16, 26
+  offset: 0, 0
+  index: -1
+tab_active
+  rotate: false
+  xy: 0, 11
+  size: 128, 18
+  orig: 128, 18
+  offset: 0, 0
+  index: -1
+tab_inactive
+  rotate: false
+  xy: 128, 11
+  size: 128, 18
+  orig: 128, 18
+  offset: 0, 0
+  index: -1

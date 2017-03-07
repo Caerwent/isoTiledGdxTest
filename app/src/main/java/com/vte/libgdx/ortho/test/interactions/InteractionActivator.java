@@ -13,8 +13,23 @@ public class InteractionActivator extends Interaction{
         super(aDef, x, y, aMapping, aProperties, aMap);
         mType = Type.ACTIVATOR;
     }
+    @Override
     public boolean hasCollisionInteraction(CollisionComponent aEntity) {
         return (aEntity.mType&CollisionComponent.CHARACTER)!=0;
+    }
+    @Override
+    public void onStartCollisionInteraction(CollisionComponent aEntity) {
+        if((aEntity.mType&CollisionComponent.CHARACTER)!=0 && !isClickable())
+        {
+            toggleActivation();
+        }
+    }
+    @Override
+    public void onStopCollisionInteraction(CollisionComponent aEntity) {
+        if((aEntity.mType&CollisionComponent.CHARACTER)!=0  && !isClickable())
+        {
+            toggleActivation();
+        }
     }
     @Override
     protected boolean hasTouchInteraction(float x, float y) {
@@ -23,6 +38,12 @@ public class InteractionActivator extends Interaction{
     }
     @Override
     public void onTouchInteraction() {
+        toggleActivation();
+
+    }
+
+    protected void toggleActivation()
+    {
         if(mCurrentState.name.compareTo(mDef.states.get(0).name)==0)
         {
             setState(mDef.states.get(1).name);
@@ -31,6 +52,5 @@ public class InteractionActivator extends Interaction{
         {
             setState(mDef.states.get(0).name);
         }
-
     }
 }

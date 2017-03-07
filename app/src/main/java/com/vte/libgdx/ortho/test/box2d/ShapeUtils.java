@@ -123,11 +123,11 @@ public class ShapeUtils {
         else {
             for (int i = 0; i < vertices.length; i += 2) {
                 if (i == 0) {
-                    if (Intersector.intersectSegmentCircleDisplace(new Vector2(vertices[vertices.length - 2], vertices[vertices.length - 1]), new Vector2(vertices[i], vertices[i + 1]), center, squareRadius, displacement) != Float.POSITIVE_INFINITY) {
+                    if (Intersector.intersectSegmentCircle(new Vector2(vertices[vertices.length - 2], vertices[vertices.length - 1]), new Vector2(vertices[i], vertices[i + 1]), center, squareRadius)) {
                         ovelaps = true;
                     }
                 } else {
-                    if (Intersector.intersectSegmentCircleDisplace(new Vector2(vertices[i - 2], vertices[i - 1]), new Vector2(vertices[i], vertices[i + 1]), center, squareRadius, displacement) != Float.POSITIVE_INFINITY) {
+                    if (Intersector.intersectSegmentCircle(new Vector2(vertices[i - 2], vertices[i - 1]), new Vector2(vertices[i], vertices[i + 1]), center, squareRadius)) {
                         ovelaps = true;
                     }
                 }

@@ -108,8 +108,8 @@ public class GameMap implements ICollisionHandler {
                     mCamera.position.y = control.getY();
                     MapProperties mapProperties = map.getProperties();
                     int mapWidth = mapProperties.get("width", Integer.class);
-                    int mapTileWidth = mapProperties.get("tileheight", Integer.class);
-                    int mapHeight = mapProperties.get("width", Integer.class);
+                    int mapTileWidth = mapProperties.get("tilewidth", Integer.class);
+                    int mapHeight = mapProperties.get("height", Integer.class);
                     int mapTileHeight = mapProperties.get("tileheight", Integer.class);
                     mapWidth = (int) (mapWidth * mapTileWidth * MyGame.SCALE_FACTOR);
                     mapHeight = (int) (mapHeight * mapTileHeight * MyGame.SCALE_FACTOR);
@@ -179,8 +179,8 @@ public class GameMap implements ICollisionHandler {
             return;
         MapProperties mapProperties = map.getProperties();
         int mapWidth = mapProperties.get("width", Integer.class);
-        int mapTileWidth = mapProperties.get("tileheight", Integer.class);
-        int mapHeight = mapProperties.get("width", Integer.class);
+        int mapTileWidth = mapProperties.get("tilewidth", Integer.class);
+        int mapHeight = mapProperties.get("height", Integer.class);
         int mapTileHeight = mapProperties.get("tileheight", Integer.class);
         mapWidth = (int) (mapWidth * mapTileWidth * MyGame.SCALE_FACTOR);
         mapHeight = (int) (mapHeight * mapTileHeight * MyGame.SCALE_FACTOR);

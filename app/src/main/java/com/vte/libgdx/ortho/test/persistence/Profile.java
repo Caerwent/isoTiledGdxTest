@@ -1,6 +1,7 @@
 package com.vte.libgdx.ortho.test.persistence;
 
 import com.badlogic.gdx.utils.Array;
+import com.vte.libgdx.ortho.test.effects.Effect;
 import com.vte.libgdx.ortho.test.items.Item;
 import com.vte.libgdx.ortho.test.quests.Quest;
 import com.vte.libgdx.ortho.test.quests.QuestTask;
@@ -18,6 +19,7 @@ public class Profile {
     HashMap<String, QuestProfile> quests = new HashMap<>();
     HashMap<String, NPCProfile> npcs = new HashMap<>();
     LocationProfile location = new LocationProfile();
+    Effect.Type mSelectedEffect = null;
 
     static private Profile sProfile;
 
@@ -95,6 +97,18 @@ public class Profile {
     {
         location = aLocation;
         PersistenceProvider.getInstance().saveLocationProfile(location);
+    }
+
+    public Effect.Type getSelectedEffect()
+    {
+        return mSelectedEffect;
+    }
+
+    public void setSelectedEffect(Effect.Type aSelectedEffect)
+    {
+        mSelectedEffect = aSelectedEffect;
+        PersistenceProvider.getInstance().saveSelectedEffect(mSelectedEffect);
+
     }
 
 }

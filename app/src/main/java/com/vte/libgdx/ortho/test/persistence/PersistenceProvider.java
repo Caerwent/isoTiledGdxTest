@@ -7,6 +7,9 @@ import com.badlogic.gdx.utils.Json;
 import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryo.io.Input;
 import com.esotericsoftware.kryo.io.Output;
+import com.esotericsoftware.kryo.serializers.CompatibleFieldSerializer;
+import com.esotericsoftware.kryo.serializers.FieldSerializer;
+import com.vte.libgdx.ortho.test.effects.Effect;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -36,17 +39,19 @@ public class PersistenceProvider {
     private PersistenceProvider() {
         // _json.setIgnoreUnknownFields(true);
         kryo = new Kryo();
+        CompatibleFieldSerializer serializer = new CompatibleFieldSerializer<Profile>(kryo, Profile.class);
+        serializer.setFieldsCanBeNull(true);
+        kryo.setDefaultSerializer(CompatibleFieldSerializer.class);
+        // use `EXTENDED` name strategy, otherwise serialized object can't be deserialized correctly. Attention, `EXTENDED` strategy increases the serialized footprint.
+        kryo.getFieldSerializerConfig().setCachedFieldNameStrategy(FieldSerializer.CachedFieldNameStrategy.EXTENDED);
 
     }
 
-    public static boolean isProfileExist()
-    {
+    public static boolean isProfileExist() {
         String filename = SAVE_FILE;
         if (Gdx.files.isLocalStorageAvailable()) {
             return Gdx.files.local(filename).exists();
-        }
-        else
-        {
+        } else {
             return false;
         }
     }
@@ -147,7 +152,11 @@ public class PersistenceProvider {
         save(Profile.getInstance());
     }
 
-    public void saveLocationProfile(LocationProfile aLocationProfile)
+    public void saveLocationProfile(LocationProfile aLocationProfile) {
+        save(Profile.getInstance());
+    }
+
+    public void saveSelectedEffect(Effect.Type aSelectedEffect)
     {
         save(Profile.getInstance());
     }

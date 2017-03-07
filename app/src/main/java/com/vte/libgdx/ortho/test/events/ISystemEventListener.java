@@ -1,5 +1,6 @@
 package com.vte.libgdx.ortho.test.events;
 
+import com.vte.libgdx.ortho.test.effects.Effect;
 import com.vte.libgdx.ortho.test.map.GameMap;
 
 /**
@@ -9,5 +10,8 @@ import com.vte.libgdx.ortho.test.map.GameMap;
 public interface ISystemEventListener {
 
     public void onNewMapRequested(String aMapId);
+
     public void onMapLoaded(GameMap aMap);
+
+    public void onNewSelectedEffect(Effect.Type aEffectType);
 }

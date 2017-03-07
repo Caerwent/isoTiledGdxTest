@@ -1,13 +1,37 @@
 [{
   "id":"FREEZE",
+  "description":"gele tout a proximité",
   "atlasFile":"freeze.atlas",
   "distance": "1",
   "duration":"5",
   "targetState":"FROZEN",
+  "targetDuration":"5",
   "fps":"10",
+  "icon":"freeze_12",
   "frames": [
-        "freeze_1","freeze_2","freeze_3", "freeze_4"
+        "freeze_1","freeze_2","freeze_3", "freeze_4",
+    "freeze_5","freeze_6","freeze_7", "freeze_8",
+    "freeze_9","freeze_10","freeze_11", "freeze_12",
+    "freeze_13","freeze_14","freeze_15", "freeze_16"
       ]
+
+
+},{
+  "id":"BURN",
+  "description":"brule tout a proximité",
+  "atlasFile":"burn.atlas",
+  "distance": "1",
+  "duration":"5",
+  "targetState":"BURNING",
+  "targetDuration":"-1",
+  "fps":"10",
+  "icon":"burn_12",
+  "frames": [
+    "burn_1","burn_2","burn_3", "burn_4",
+    "burn_5","burn_6","burn_7", "burn_8",
+    "burn_9","burn_10","burn_11", "burn_12",
+    "burn_13","burn_14","burn_15", "burn_16"
+  ]
 
 
 }

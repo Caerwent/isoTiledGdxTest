@@ -1,6 +1,7 @@
 package com.vte.libgdx.ortho.test.events;
 
 import com.vte.libgdx.ortho.test.dialogs.GameDialog;
+import com.vte.libgdx.ortho.test.effects.Effect;
 import com.vte.libgdx.ortho.test.interactions.InteractionEvent;
 import com.vte.libgdx.ortho.test.items.Item;
 import com.vte.libgdx.ortho.test.map.GameMap;
@@ -176,6 +177,13 @@ public class EventDispatcher implements IDialogListener, IItemListener, IQuestLi
     public void onMapLoaded(GameMap aMap) {
         for (ISystemEventListener listener : mSystemEventListeners) {
             listener.onMapLoaded(aMap);
+        }
+    }
+
+    @Override
+    public void onNewSelectedEffect(Effect.Type aEffectType) {
+        for (ISystemEventListener listener : mSystemEventListeners) {
+            listener.onNewSelectedEffect(aEffectType);
         }
     }
 

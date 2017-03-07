@@ -1,114 +1,114 @@
 
-freeze.png
+burn.png
 format: RGBA8888
 filter: Nearest,Nearest
 repeat: none
-freeze_1
+burn_1
   rotate: false
   xy: 20, 20
   size: 88, 88
   orig: 88, 88
   offset: 0, 0
   index: -1
-freeze_2
+burn_2
   rotate: false
   xy: 148, 20
   size: 88, 88
   orig: 88, 88
   offset: 0, 0
   index: -1
-freeze_3
+burn_3
   rotate: false
   xy: 276, 20
   size: 88, 88
   orig: 88, 88
   offset: 0, 0
   index: -1
-freeze_4
+burn_4
   rotate: false
   xy: 404, 20
   size: 88, 88
   orig: 88, 88
   offset: 0, 0
   index: -1
-freeze_5
+burn_5
   rotate: false
   xy: 20, 148
   size: 88, 88
   orig: 88, 88
   offset: 0, 0
   index: -1
-freeze_6
+burn_6
   rotate: false
   xy: 148, 148
   size: 88, 88
   orig: 88, 88
   offset: 0, 0
   index: -1
-freeze_7
+burn_7
   rotate: false
   xy: 276, 148
   size: 88, 88
   orig: 88, 88
   offset: 0, 0
   index: -1
-freeze_8
+burn_8
   rotate: false
   xy: 404, 148
   size: 88, 88
   orig: 88, 88
   offset: 0, 0
   index: -1
-freeze_9
+burn_9
   rotate: false
   xy: 20, 276
   size: 88, 88
   orig: 88, 88
   offset: 0, 0
   index: -1
-freeze_10
+burn_10
   rotate: false
   xy: 148, 276
   size: 88, 88
   orig: 88, 88
   offset: 0, 0
   index: -1
-freeze_11
+burn_11
   rotate: false
   xy: 276, 276
   size: 88, 88
   orig: 88, 88
   offset: 0, 0
   index: -1
-freeze_12
+burn_12
   rotate: false
   xy: 404, 276
   size: 88, 88
   orig: 88, 88
   offset: 0, 0
   index: -1
-freeze_13
+burn_13
   rotate: false
   xy: 20, 404
   size: 88, 88
   orig: 88, 88
   offset: 0, 0
   index: -1
-freeze_14
+burn_14
   rotate: false
   xy: 148, 404
   size: 88, 88
   orig: 88, 88
   offset: 0, 0
   index: -1
-freeze_15
+burn_15
   rotate: false
   xy: 276, 404
   size: 88, 88
   orig: 88, 88
   offset: 0, 0
   index: -1
-freeze_16
+burn_16
   rotate: false
   xy: 404, 404
   size: 88, 88

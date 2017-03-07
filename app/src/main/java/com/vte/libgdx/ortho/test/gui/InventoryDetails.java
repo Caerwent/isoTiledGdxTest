@@ -4,7 +4,6 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.utils.Align;
-import com.vte.libgdx.ortho.test.items.Item;
 
 /**
  * Created by vincent on 16/12/2016.
@@ -39,9 +38,9 @@ public class InventoryDetails extends Table {
 
     }
 
-    public void setItem(Item aItem)
+    public void setText(String aText)
     {
-        mItemDescLabel.setText(aItem.getItemShortDescription());
+        mItemDescLabel.setText(aText);
         //mItemDescLabel.setPrefRows(aItem.getItemShortDescription().split("\n").length);
         mScrollPane.layout();
     }

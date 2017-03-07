@@ -34,7 +34,7 @@ import com.vte.libgdx.ortho.test.entity.systems.InteractionSystem;
 import com.vte.libgdx.ortho.test.entity.systems.MovementSystem;
 import com.vte.libgdx.ortho.test.entity.systems.PathRenderSystem;
 import com.vte.libgdx.ortho.test.events.EventDispatcher;
-import com.vte.libgdx.ortho.test.gui.TestActor;
+import com.vte.libgdx.ortho.test.gui.MainHUD;
 import com.vte.libgdx.ortho.test.gui.UIStage;
 import com.vte.libgdx.ortho.test.map.GameMap;
 import com.vte.libgdx.ortho.test.quests.QuestManager;
@@ -73,6 +73,8 @@ public class GameScreen implements Screen, InputProcessor {
 
     InputMultiplexer mInputMultiplexer = new InputMultiplexer();
 
+    private MainHUD mMainHUD;
+
 
     public GameScreen() {
         Gdx.app.setLogLevel(Application.LOG_DEBUG);
@@ -110,7 +112,9 @@ public class GameScreen implements Screen, InputProcessor {
 
 
         UIStage.createInstance(new ExtendViewport(TARGET_WIDTH, TARGET_HEIGHT, uiCamera));
-        UIStage.getInstance().addActor(new TestActor());
+        mMainHUD = new MainHUD();
+
+        UIStage.getInstance().addActor(mMainHUD);
 
 
         bobController = new ChararcterMoveController2(camera);
@@ -145,7 +149,6 @@ public class GameScreen implements Screen, InputProcessor {
     @Override
     public void show() {
 
-        Gdx.app.debug("DEBUG", "show");
         Gdx.input.setInputProcessor(mInputMultiplexer);
         EntityEngine.getInstance().addSystem(new MovementSystem());
         // EntityEngine.getInstance().addSystem(new VisualRenderSystem(camera));
@@ -157,8 +160,6 @@ public class GameScreen implements Screen, InputProcessor {
 
     @Override
     public void hide() {
-
-        Gdx.app.debug("DEBUG", "hide");
         Gdx.input.setInputProcessor(null);
         EntityEngine.getInstance().removeSystem(EntityEngine.getInstance().getSystem(MovementSystem.class));
         // EntityEngine.getInstance().addSystem(new VisualRenderSystem(camera));
@@ -171,7 +172,6 @@ public class GameScreen implements Screen, InputProcessor {
 
     @Override
     public void render(float delta) {
-        Gdx.app.debug("DEBUG", "render");
        /* double newTime = TimeUtils.millis() / 1000.0;
         double frameTime = Math.min(newTime - currentTime, 0.25);
         float deltaTime = (float) frameTime;
@@ -208,7 +208,6 @@ public class GameScreen implements Screen, InputProcessor {
 
         EntityEngine.getInstance().
                 update(delta/*Time*/);
-        Gdx.app.debug("DEBUG", "end render");
     }
 
     @Override
@@ -258,6 +257,8 @@ public class GameScreen implements Screen, InputProcessor {
 
     @Override
     public void dispose() {
+        EventDispatcher.getInstance().removeSystemEventListener(mMainHUD);
+
         if (map != null) {
             map.destroy();
         }

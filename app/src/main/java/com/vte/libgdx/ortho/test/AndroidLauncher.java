@@ -19,4 +19,10 @@ public class AndroidLauncher extends AndroidApplication {
         initialize(new MyGame(), config);
         Gdx.input.setCatchBackKey(true);
     }
+
+    @Override
+    public void exit () {
+        super.exit();
+        android.os.Process.killProcess(android.os.Process.myPid());
+    }
 }

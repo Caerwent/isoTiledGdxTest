@@ -152,6 +152,7 @@ public class Interaction extends Entity implements ICollisionHandler, IInteracti
         InteractionState state = getState(aStateName);
         if (state != null) {
             mCurrentState = state;
+            mStateTime=0;
             if (mOutputEvents != null) {
                 for (InteractionEvent event : mOutputEvents) {
                     if (InteractionEvent.EventType.STATE == InteractionEvent.EventType.valueOf(event.type)) {
@@ -164,6 +165,7 @@ public class Interaction extends Entity implements ICollisionHandler, IInteracti
 
     public void destroy() {
         EventDispatcher.getInstance().removeInteractionEventListener(this);
+        EntityEngine.getInstance().removeEntity(this);
     }
 
     public void initialize(float x, float y) {
@@ -353,9 +355,14 @@ public class Interaction extends Entity implements ICollisionHandler, IInteracti
     }
 
     protected void updateEffectAction(float dt) {
-        if (mEffectAction != null && mEffectAction.duration>0) {
+        if (mEffectAction != null && mEffectAction.duration > 0) {
             mEffectActionTime += dt;
-            if (mEffectActionTime > mEffectAction.duration) {
+            float timeAction = mEffectAction.targetDuration;
+            if(timeAction<0)
+            {
+                timeAction =  mEffectAction.frames.size()/mEffectAction.fps;
+            }
+            if (mEffectActionTime > timeAction) {
                 stopEffectAction();
             }
         }
@@ -375,7 +382,7 @@ public class Interaction extends Entity implements ICollisionHandler, IInteracti
             boolean ret = hasCollisionInteraction(aEntity);
             if (ret) {
                 mCollisions.add(aEntity);
-                if (mDef.isClickable) {
+                if (isClickable()) {
                     add(new InputComponent(this));
                 }
 
@@ -393,7 +400,7 @@ public class Interaction extends Entity implements ICollisionHandler, IInteracti
             if ((aEntity.mType & CollisionComponent.EFFECT) != 0) {
                 return onStopEffectInteraction(aEntity);
             }
-            if (mDef.isClickable) {
+            if (isClickable()) {
                 remove(InputComponent.class);
             }
             onStopCollisionInteraction(aEntity);
@@ -426,14 +433,14 @@ public class Interaction extends Entity implements ICollisionHandler, IInteracti
             if (effectState != null) {
                 mEffectAction = effect;
                 mEffectActionTime = 0;
+
                 mBeforeEffectActionState = mCurrentState;
                 setState(effect.targetState);
-                if(effectState.name.compareTo(InteractionState.STATE_FROZEN)==0)
-                {
-                    if (mIsMovable) {
-                        remove(VelocityComponent.class);
-                    }
+
+                if (mIsMovable) {
+                    remove(VelocityComponent.class);
                 }
+
                 return true;
             }
         }
@@ -542,7 +549,6 @@ public class Interaction extends Entity implements ICollisionHandler, IInteracti
         mEffectLaunched = aEffect;
         mEffectLaunchedTime = 0;
         mZoneLaunchedEffect = new CircleShape();
-        TransformComponent tfm = this.getComponent(TransformComponent.class);
         mZoneLaunchedEffect.setRadius(mEffectLaunched.distance);
         mZoneLaunchedEffect.setX(getX());
         mZoneLaunchedEffect.setY(getY());
@@ -563,33 +569,37 @@ public class Interaction extends Entity implements ICollisionHandler, IInteracti
     }
 
     protected void stopEffectAction() {
-        mEffectAction=null;
-        mEffectActionTime=0;
+        mEffectAction = null;
+        mEffectActionTime = 0;
         if (mBeforeEffectActionState != null) {
             mCurrentState = mBeforeEffectActionState;
             mBeforeEffectActionState = null;
         }
+
         setMovable(isMovable());
     }
 
     protected void renderEffect(Batch aBatch) {
         if (mEffectLaunched != null) {
             TransformComponent transform = this.getComponent(TransformComponent.class);
-            VisualComponent visual = this.getComponent(VisualComponent.class);
 
             TextureRegion effectRegion = mEffectLaunched.getTextureRegion(mEffectLaunchedTime);
 
 
-            float centerX = mZoneLaunchedEffect.getX();
-            float centerY = transform.position.y + transform.originOffset.y - (visual.region.getRegionHeight()*transform.scale) / 2;
+            float width = effectRegion.getRegionWidth();
+            float height = effectRegion.getRegionHeight();
 
+            //Allow for Offset
+            float originX = -transform.scale * mCurrentFrame.getRegionWidth() / 2;
+            float originY = -transform.scale * mCurrentFrame.getRegionWidth() / 2;
 
             aBatch.draw(effectRegion,
-                    mZoneLaunchedEffect.getX(),  mZoneLaunchedEffect.getY(),
-                    -mZoneLaunchedEffect.getBounds().getWidth(), -mZoneLaunchedEffect.getBounds().getHeight(),
-                    effectRegion.getRegionWidth(), effectRegion.getRegionHeight(),
-                    transform.scale*mEffectLaunched.distance, transform.scale*mEffectLaunched.distance,
+                    transform.position.x + transform.originOffset.x, transform.position.y + transform.originOffset.y,
+                    originX, originY,
+                    width, height,
+                    transform.scale * mEffectLaunched.distance, transform.scale * mEffectLaunched.distance,
                     transform.angle);
+
         }
     }
 }

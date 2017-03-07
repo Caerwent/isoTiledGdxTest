@@ -95,5 +95,23 @@
     "default": {
     },
 
+  },
+  "com.badlogic.gdx.scenes.scene2d.ui.ImageTextButton$ImageTextButtonStyle": {
+    "default": {
+      "font": "smooth-font",
+      "fontColor": "white"
+    },
+
+  },
+  "com.vte.libgdx.ortho.test.gui.TabbedPane$TabbedPaneStyle": {
+  "default": {
+    "font": "smooth-font",
+    "fontColor": "white",
+    "checkedFontColor": "white",
+    "title": "window1",
+    "bodyBackground": "window1",
+    "titleButtonUnselected": "patchThick",
+    "titleButtonSelected": "patchThickDown"
   }
+},
 }

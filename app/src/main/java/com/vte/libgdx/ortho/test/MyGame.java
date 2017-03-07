@@ -4,6 +4,7 @@ import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.vte.libgdx.ortho.test.effects.Effect;
 import com.vte.libgdx.ortho.test.events.EventDispatcher;
 import com.vte.libgdx.ortho.test.events.ISystemEventListener;
 import com.vte.libgdx.ortho.test.map.GameMap;
@@ -32,9 +33,10 @@ public class MyGame extends Game implements ISystemEventListener {
     private boolean mIsGameReadyToBeShown = true;
     private Screen mScreenRequested = null;
     private Screen mCurrentScreen = null;
+
     @Override
     public void onNewMapRequested(String aMapId) {
-        if(mGameScreen!=null) {
+        if (mGameScreen != null) {
             mScreenRequested = mLoadingScreen;
             mIsGameReadyToBeShown = false;
             mGameScreen.loadMap(aMapId, mGameScreen.getMap().getMapName());
@@ -44,6 +46,11 @@ public class MyGame extends Game implements ISystemEventListener {
     @Override
     public void onMapLoaded(GameMap aMap) {
         mScreenRequested = mGameScreen;
+    }
+
+    @Override
+    public void onNewSelectedEffect(Effect.Type aEffectType) {
+        Profile.getInstance().setSelectedEffect(aEffectType);
     }
 
     public static enum ScreenType {
@@ -56,27 +63,25 @@ public class MyGame extends Game implements ISystemEventListener {
 
         switch (screenType) {
             case MainMenu:
-                mScreenRequested= mMainMenuScreen;
+                mScreenRequested = mMainMenuScreen;
                 break;
             case LoadingGame:
-                mScreenRequested=  mLoadingScreen;
+                mScreenRequested = mLoadingScreen;
                 break;
             case MainGame:
 
                 if (mGameScreen == null) {
-                    mScreenRequested=mLoadingScreen;
+                    mScreenRequested = mLoadingScreen;
                     mGameScreen = new GameScreen();
                     loadDefaultMap();
-                }
-                else
-                {
-                    mScreenRequested=mGameScreen;
+                } else {
+                    mScreenRequested = mGameScreen;
 
                 }
                 break;
 
             default: {
-                mScreenRequested= mMainMenuScreen;
+                mScreenRequested = mMainMenuScreen;
 
             }
         }
@@ -117,7 +122,7 @@ public class MyGame extends Game implements ISystemEventListener {
         font = new BitmapFont();
         mMainMenuScreen = new MainMenuScreen();
         mLoadingScreen = new LoadingScreen();
-        mCurrentScreen=mMainMenuScreen;
+        mCurrentScreen = mMainMenuScreen;
         mScreenRequested = mMainMenuScreen;
         setScreen(mMainMenuScreen);
 
@@ -127,8 +132,7 @@ public class MyGame extends Game implements ISystemEventListener {
 
     public void render() {
         super.render(); //important!
-        if(mCurrentScreen!=mScreenRequested)
-        {
+        if (mCurrentScreen != mScreenRequested) {
             mCurrentScreen = mScreenRequested;
             setScreen(mCurrentScreen);
         }
@@ -144,15 +148,11 @@ public class MyGame extends Game implements ISystemEventListener {
         loadDefaultMap();
     }
 
-    private void loadDefaultMap()
-    {
+    private void loadDefaultMap() {
         LocationProfile location = Profile.getInstance().getLocationProfile();
-        if(location==null || location.mMapId == null)
-        {
+        if (location == null || location.mMapId == null) {
             mGameScreen.loadMap(DEFAULT_MAP_NAME, null);
-        }
-        else
-        {
+        } else {
             mGameScreen.loadMap(location.mMapId, location.mFromMapId);
         }
     }

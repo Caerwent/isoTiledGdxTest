@@ -56,6 +56,21 @@
         "move_right_2",
         "move_right_3"
       ]
+    },
+    {
+      "name": "BURNING",
+      "fps":"10",
+      "frames": [
+        "burning_1",
+        "burning_2",
+        "burning_3",
+        "burning_4",
+        "burning_5",
+        "burning_6",
+        "burning_7",
+        "burning_8",
+        "burning_9"
+      ]
     }
 
   ]

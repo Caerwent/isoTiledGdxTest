@@ -42,6 +42,12 @@
   "template":"portal.json",
   "eventsAction":[],
   "outputEvents":[]
-}
+},
+  {
+    "id":"portal2",
+    "template":"portal.json",
+    "eventsAction":[],
+    "outputEvents":[]
+  }
 
 ]

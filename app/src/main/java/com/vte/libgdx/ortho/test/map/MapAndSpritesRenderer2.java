@@ -325,7 +325,7 @@ public class MapAndSpritesRenderer2 extends OrthogonalTiledMapRenderer {
         endRender();
 
         // renderShapes(sortedEntities);
-        //renderCollisionShapes();
+      //  renderCollisionShapes();
 
     }
 

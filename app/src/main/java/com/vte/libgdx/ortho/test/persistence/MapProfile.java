@@ -13,8 +13,7 @@ public class MapProfile {
     public HashMap<String, ArrayList<Vector2>> items;
     public ArrayList<String> openChessList;
 
-    public MapProfile()
-    {
+    public MapProfile() {
         items = new HashMap<>();
         openChessList = new ArrayList<>();
     }

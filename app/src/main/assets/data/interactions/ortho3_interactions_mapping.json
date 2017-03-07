@@ -1,0 +1,9 @@
+[
+  {
+  "id":"portal1",
+  "template":"portal.json",
+  "eventsAction":[],
+  "outputEvents":[]
+}
+
+]

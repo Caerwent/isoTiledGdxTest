@@ -19,7 +19,7 @@ public class InteractionState {
     public final static String STATE_MOVE_DOWN="MOVE_DOWN";
     public final static String STATE_MOVE_UP="MOVE_UP";
     public final static String STATE_FROZEN="FROZEN";
-
+    public final static String STATE_BURNING="BURNING";
     public String name;
     public int fps;
     public ArrayList<String> frames;

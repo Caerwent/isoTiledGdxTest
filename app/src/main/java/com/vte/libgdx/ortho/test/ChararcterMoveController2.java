@@ -132,6 +132,7 @@ public class ChararcterMoveController2 extends InputAdapter {
             if (path != null)
                 path.destroy();
             path = new PathHero();
+            mMap.getPlayer().getHero().setVelocity(0,0);
             Vector2 bobPos = mMap.getPlayer().getHero().getPosition();
             path.addPoint(bobPos.x, bobPos.y);
             mPathSpot.setX(bobPos.x);
