@@ -23,6 +23,7 @@ import com.vte.libgdx.ortho.test.MyGame;
 import com.vte.libgdx.ortho.test.box2d.PathMap;
 import com.vte.libgdx.ortho.test.box2d.PolygonShape;
 import com.vte.libgdx.ortho.test.box2d.Shape;
+import com.vte.libgdx.ortho.test.box2d.ShapeUtils;
 import com.vte.libgdx.ortho.test.entity.EntityEngine;
 import com.vte.libgdx.ortho.test.entity.ICollisionHandler;
 import com.vte.libgdx.ortho.test.entity.components.CollisionComponent;
@@ -71,7 +72,7 @@ public class GameMap implements ICollisionHandler {
     private Player mPlayer;
 
 
-    public GameMap(String aMapName, String aFromMap, OrthographicCamera aCamera) {
+    public GameMap(String aMapName, String aFromMap, OrthographicCamera aCamera, MapTownPortalInfo aTownPortalInfo) {
         mMapName = aMapName;
         MapProfile mapProfile = Profile.getInstance().getMapProfile(mMapName);
         if (mapProfile == null) {
@@ -88,44 +89,49 @@ public class GameMap implements ICollisionHandler {
         }
         mCamera = aCamera;
 
-        mPlayer = new Player();
+        mPlayer = new Player(this);
         mPlayer.getHero().setCamera(mCamera);
         mPlayer.getHero().setPath(null);
-        mPaths =  buildPaths(map,"path");
+        mPaths = buildPaths(map, "path");
         mItems = buildItems(map, "items");
-        mInteractionMappingManager.loadMappingFile("data/interactions/"+aMapName+"_interactions_mapping.json");
-        mInteractions = buildMapInteractions(map,"interactions");
+        mInteractionMappingManager.loadMappingFile("data/interactions/" + aMapName + "_interactions_mapping.json");
+        mInteractions = buildMapInteractions(map, "interactions");
+
+        boolean isMapBackWithTownPortal = aTownPortalInfo != null && aTownPortalInfo.originMap.compareTo(getMapName()) == 0;
+        boolean isCurrentMapIsDefault = getMapName().compareTo(MyGame.DEFAULT_MAP_NAME) == 0;
 
 
-        for(IInteraction control : mInteractions) {
-            if(control.getType()==IInteraction.Type.PORTAL)
-            {
+        LocationProfile locationProfile = new LocationProfile();
+        locationProfile.mMapId = mMapName;
+
+
+        if (isMapBackWithTownPortal) {
+            // set hero at the town portal position
+            mPlayer.getHero().setPosition(aTownPortalInfo.x, aTownPortalInfo.y);
+            tryToSetCameraAtPosition(aTownPortalInfo.x, aTownPortalInfo.y);
+            mPlayer.getHero().launchTownPortalArrivalEffect(aTownPortalInfo);
+        }
+        if(aTownPortalInfo == null)
+        {
+            locationProfile.mFromMapId = aFromMap;
+        }
+        Profile.getInstance().setLocationProfile(locationProfile);
+
+
+        for (IInteraction control : mInteractions) {
+            if (control.getType() == IInteraction.Type.PORTAL) {
                 InteractionPortal portal = (InteractionPortal) control;
-                if ((aFromMap == null && portal.isDefaultStart()) ||
-                        (aFromMap != null && portal.getTargetMapId() != null && portal.getTargetMapId().compareTo(aFromMap) == 0)) {
+
+                boolean isDefaultCase = aFromMap == null && portal.isDefaultStart();
+                boolean isPortalToPortalCase = aTownPortalInfo == null && aFromMap != null && portal.getTargetMapId() != null && portal.getTargetMapId().compareTo(aFromMap) == 0;
+                boolean isDefaultMapArrivalFromTownPortal = aTownPortalInfo != null && isCurrentMapIsDefault && portal.isDefaultStart();
+                if (isDefaultCase || isPortalToPortalCase || isDefaultMapArrivalFromTownPortal) {
                     mPlayer.getHero().setPosition(control.getX(), control.getY());
-                    mCamera.position.x = control.getX();
-                    mCamera.position.y = control.getY();
-                    MapProperties mapProperties = map.getProperties();
-                    int mapWidth = mapProperties.get("width", Integer.class);
-                    int mapTileWidth = mapProperties.get("tilewidth", Integer.class);
-                    int mapHeight = mapProperties.get("height", Integer.class);
-                    int mapTileHeight = mapProperties.get("tileheight", Integer.class);
-                    mapWidth = (int) (mapWidth * mapTileWidth * MyGame.SCALE_FACTOR);
-                    mapHeight = (int) (mapHeight * mapTileHeight * MyGame.SCALE_FACTOR);
-                    if (control.getX() + (mCamera.viewportWidth / 2) > mapWidth) {
-                        mCamera.position.x = mapWidth - (mCamera.viewportWidth / 2);
-                    } else if (control.getX() - (mCamera.viewportWidth / 2) < 0) {
-                        mCamera.position.x = mCamera.viewportWidth / 2;
-                    }
-                    if (control.getY() + (mCamera.viewportHeight / 2) > mapHeight) {
-                        mCamera.position.y = mapHeight - (mCamera.viewportHeight / 2);
-                    } else if (control.getY() - (mCamera.viewportHeight / 2) < 0) {
-                        mCamera.position.y = mCamera.viewportHeight / 2;
+                    tryToSetCameraAtPosition(control.getX(), control.getY());
+                    if (isDefaultMapArrivalFromTownPortal) {
+                        mPlayer.getHero().launchTownPortalArrivalEffect(aTownPortalInfo);
                     }
                     portal.setActivated(false);
-                    mCamera.update();
-                  //  Gdx.app.debug("DEBUG", "init camera pointX=" + mCamera.position.x + " pointY=" + mCamera.position.y);
 
                     if (portal.getQuestId() != null) {
                         Quest theQuest = QuestManager.getInstance().getQuestFromId(portal.getQuestId());
@@ -134,13 +140,26 @@ public class GameMap implements ICollisionHandler {
                             EventDispatcher.getInstance().onQuestActivated(theQuest);
                         }
                     }
+                    //  Gdx.app.debug("DEBUG", "init camera pointX=" + mCamera.position.x + " pointY=" + mCamera.position.y);
 
-                    LocationProfile locationProfile = new LocationProfile();
-                    locationProfile.mMapId = mMapName;
-                    locationProfile.mFromMapId = aFromMap;
-                    Profile.getInstance().setLocationProfile(locationProfile);
+
                 } else {
-                    portal.setActivated(true);
+                    if(aTownPortalInfo!=null)
+                    {
+                        // check hero is not on the portal
+                        if(ShapeUtils.overlaps(mPlayer.getHero().getShape(), portal.getShape()))
+                        {
+                            portal.setActivated(false);
+                        }
+                        else
+                        {
+                            portal.setActivated(true);
+                        }
+                    }
+                    else
+                    {
+                        portal.setActivated(true);
+                    }
                 }
             }
         }
@@ -149,6 +168,29 @@ public class GameMap implements ICollisionHandler {
         mBodiesZindex = buildShapes(map, "zindex");
         mBodiesCollision = buildShapes(map, "collision");
         mIsInitialized = true;
+    }
+
+    protected void tryToSetCameraAtPosition(float x, float y) {
+        mCamera.position.x = x;
+        mCamera.position.y = y;
+        MapProperties mapProperties = map.getProperties();
+        int mapWidth = mapProperties.get("width", Integer.class);
+        int mapTileWidth = mapProperties.get("tilewidth", Integer.class);
+        int mapHeight = mapProperties.get("height", Integer.class);
+        int mapTileHeight = mapProperties.get("tileheight", Integer.class);
+        mapWidth = (int) (mapWidth * mapTileWidth * MyGame.SCALE_FACTOR);
+        mapHeight = (int) (mapHeight * mapTileHeight * MyGame.SCALE_FACTOR);
+        if (x + (mCamera.viewportWidth / 2) > mapWidth) {
+            mCamera.position.x = mapWidth - (mCamera.viewportWidth / 2);
+        } else if (x - (mCamera.viewportWidth / 2) < 0) {
+            mCamera.position.x = mCamera.viewportWidth / 2;
+        }
+        if (y + (mCamera.viewportHeight / 2) > mapHeight) {
+            mCamera.position.y = mapHeight - (mCamera.viewportHeight / 2);
+        } else if (y - (mCamera.viewportHeight / 2) < 0) {
+            mCamera.position.y = mCamera.viewportHeight / 2;
+        }
+        mCamera.update();
     }
 
     public String getMapName() {
@@ -168,8 +210,7 @@ public class GameMap implements ICollisionHandler {
         for (int i = 0; i < entities.size(); ++i) {
             EntityEngine.getInstance().removeEntity(entities.get(i));
         }
-        for(IInteraction it: mInteractions)
-        {
+        for (IInteraction it : mInteractions) {
             it.destroy();
         }
     }
@@ -212,6 +253,7 @@ public class GameMap implements ICollisionHandler {
     public Array<IItemInteraction> getItems() {
         return mItems;
     }
+
     public Array<IInteraction> getInteractions() {
         return mInteractions;
     }
@@ -285,11 +327,9 @@ public class GameMap implements ICollisionHandler {
             @Override
             public int compare(Shape lhs, Shape rhs) {
 
-                if(lhs.getY()==rhs.getY())
-                {
+                if (lhs.getY() == rhs.getY()) {
                     return 0;
-                }
-                else {
+                } else {
                     return lhs.getBounds().getY() < rhs.getBounds().getY() ? 1 : -1;
                 }
             }
@@ -298,10 +338,11 @@ public class GameMap implements ICollisionHandler {
         bodies = new Array<Shape>(sortedShapes);
         return bodies;
     }
+
     private HashMap<String, PathMap> buildPaths(Map map, String layerName) {
         HashMap<String, PathMap> paths = new HashMap<String, PathMap>();
 
-        if(map.getLayers().get(layerName)==null)
+        if (map.getLayers().get(layerName) == null)
             return paths;
         MapObjects objects = map.getLayers().get(layerName).getObjects();
 
@@ -313,8 +354,8 @@ public class GameMap implements ICollisionHandler {
                 float[] mapVertices = ((PolylineMapObject) object).getPolyline().getTransformedVertices();
                 float[] vertices = new float[mapVertices.length];
                 PathMap path = new PathMap();
-                for (int i = 0; i < vertices.length-1; i+=2) {
-                    path.addPoint(mapVertices[i] * MyGame.SCALE_FACTOR, mapVertices[i+1] * MyGame.SCALE_FACTOR);
+                for (int i = 0; i < vertices.length - 1; i += 2) {
+                    path.addPoint(mapVertices[i] * MyGame.SCALE_FACTOR, mapVertices[i + 1] * MyGame.SCALE_FACTOR);
                 }
                 boolean isLoop = false;
                 if (object.getProperties().containsKey("isLoop")) {
@@ -323,14 +364,14 @@ public class GameMap implements ICollisionHandler {
                 path.setLoop(isLoop);
                 paths.put(object.getName(), path);
 
-            }  else {
+            } else {
                 continue;
             }
         }
         return paths;
     }
 
-    private Array<IInteraction> buildMapInteractions(Map map, String layerName){
+    private Array<IInteraction> buildMapInteractions(Map map, String layerName) {
         MapObjects objects = map.getLayers().get(layerName).getObjects();
         Array<IInteraction> interactions = new Array<IInteraction>();
         MapProfile mapProfile = Profile.getInstance().getMapProfile(mMapName);
@@ -341,13 +382,11 @@ public class GameMap implements ICollisionHandler {
                 float x = (textureObject.getX() + textureObject.getTextureRegion().getRegionWidth() / 2) * MyGame.SCALE_FACTOR;
                 float y = (textureObject.getY() + textureObject.getTextureRegion().getRegionHeight() / 2) * MyGame.SCALE_FACTOR;
                 InteractionMapping mapping = mInteractionMappingManager.getInterationMapping(object.getName());
-                if(mapping==null)
-                {
+                if (mapping == null) {
                     continue;
                 }
-                IInteraction interaction = InteractionFactory.getInstance().createInteractionInstance(x,y,mapping, textureObject.getProperties(), this);
-                if(interaction!=null)
-                {
+                IInteraction interaction = InteractionFactory.getInstance().createInteractionInstance(x, y, mapping, textureObject.getProperties(), this);
+                if (interaction != null) {
                     interaction.setCamera(mCamera);
                     interactions.add(interaction);
                 }
@@ -356,6 +395,7 @@ public class GameMap implements ICollisionHandler {
         }
         return interactions;
     }
+
     private Array<IItemInteraction> buildItems(Map map, String layerName) {
         MapObjects objects = map.getLayers().get(layerName).getObjects();
 

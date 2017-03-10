@@ -7,6 +7,7 @@ import com.vte.libgdx.ortho.test.interactions.InteractionFactory;
 import com.vte.libgdx.ortho.test.interactions.InteractionHero;
 import com.vte.libgdx.ortho.test.items.Item;
 import com.vte.libgdx.ortho.test.items.ItemFactory;
+import com.vte.libgdx.ortho.test.map.GameMap;
 import com.vte.libgdx.ortho.test.persistence.Profile;
 
 import java.util.ArrayList;
@@ -24,7 +25,7 @@ public class Player implements IItemListener {
     private Array<Item> mInventory;
     private InteractionHero mHero;
 
-    public Player() {
+    public Player(GameMap aGameMap) {
         mInventory = new Array<Item>();
         ArrayList<String> savedInventory = Profile.getInstance().getInventory();
 
@@ -34,7 +35,7 @@ public class Player implements IItemListener {
             }
         }
         // instantiate the hero
-        mHero = InteractionFactory.getInstance().createInteractionHero();
+        mHero = InteractionFactory.getInstance().createInteractionHero(aGameMap);
         EventDispatcher.getInstance().addItemListener(this);
         EventDispatcher.getInstance().onInventoryChanged(this);
     }

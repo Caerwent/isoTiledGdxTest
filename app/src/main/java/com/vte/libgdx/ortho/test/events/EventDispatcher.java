@@ -5,6 +5,7 @@ import com.vte.libgdx.ortho.test.effects.Effect;
 import com.vte.libgdx.ortho.test.interactions.InteractionEvent;
 import com.vte.libgdx.ortho.test.items.Item;
 import com.vte.libgdx.ortho.test.map.GameMap;
+import com.vte.libgdx.ortho.test.map.MapTownPortalInfo;
 import com.vte.libgdx.ortho.test.player.Player;
 import com.vte.libgdx.ortho.test.quests.Quest;
 import com.vte.libgdx.ortho.test.quests.QuestTask;
@@ -167,9 +168,9 @@ public class EventDispatcher implements IDialogListener, IItemListener, IQuestLi
         }
     }
     @Override
-    public void onNewMapRequested(String aMapId) {
+    public void onNewMapRequested(String aMapId, MapTownPortalInfo aTownPortalInfo) {
         for (ISystemEventListener listener : mSystemEventListeners) {
-            listener.onNewMapRequested(aMapId);
+            listener.onNewMapRequested(aMapId, aTownPortalInfo);
         }
     }
 

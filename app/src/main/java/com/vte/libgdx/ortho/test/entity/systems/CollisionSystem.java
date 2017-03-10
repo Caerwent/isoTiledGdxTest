@@ -4,7 +4,6 @@ import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.Family;
 import com.badlogic.ashley.systems.IteratingSystem;
 import com.badlogic.ashley.utils.ImmutableArray;
-import com.badlogic.gdx.Gdx;
 import com.vte.libgdx.ortho.test.box2d.ShapeUtils;
 import com.vte.libgdx.ortho.test.entity.components.CollisionComponent;
 
@@ -32,10 +31,10 @@ public class CollisionSystem extends IteratingSystem {
 
             otherCollisionComponent = otherEntity.getComponent(CollisionComponent.class);
 
-            if ((otherCollisionComponent.mType & otherCollisionComponent.EFFECT) != 0) {
+           /* if ((otherCollisionComponent.mType & otherCollisionComponent.EFFECT) != 0) {
                 Gdx.app.debug("DEBUG", "check collision entity=" + ShapeUtils.logShape(collisionComponent.mShape) + " with =" + ShapeUtils.logShape(otherCollisionComponent.mShape));
                 Gdx.app.debug("DEBUG", "overlaps =" + ShapeUtils.overlaps(collisionComponent.mShape, otherCollisionComponent.mShape));
-            }
+            }*/
 
             if (ShapeUtils.overlaps(collisionComponent.mShape, otherCollisionComponent.mShape)) {
                 if (!collisionComponent.mHandler.getCollisions().contains(otherCollisionComponent, false)) {

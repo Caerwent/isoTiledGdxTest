@@ -14,7 +14,8 @@ import java.util.ArrayList;
 public class Effect {
     public enum Type {
         FREEZE,
-        BURN
+        BURN,
+        PORTAL
     }
     public Type id;
     public String atlasFile;
@@ -69,6 +70,11 @@ public class Effect {
     public TextureRegion getIcon()
     {
         return mAtlas.findRegion(icon);
+    }
+
+    public Animation getAnimation()
+    {
+        return mAnimation;
     }
 
 

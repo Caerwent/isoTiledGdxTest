@@ -140,6 +140,8 @@ public class Interaction extends Entity implements ICollisionHandler, IInteracti
     }
 
     protected InteractionState getState(String aStateName) {
+        if(aStateName==null)
+            return null;
         for (InteractionState state : mDef.states) {
             if (state.name.compareTo(aStateName) == 0) {
                 return state;
@@ -348,7 +350,12 @@ public class Interaction extends Entity implements ICollisionHandler, IInteracti
             mZoneLaunchedEffect.setX(getX());
             mZoneLaunchedEffect.setY(getY());
             mEffectLaunchedTime += dt;
-            if (mEffectLaunchedTime > mEffectLaunched.duration) {
+            float timeAction = mEffectLaunched.duration;
+            if(timeAction<0)
+            {
+                timeAction =  mEffectLaunched.frames.size()/mEffectLaunched.fps;
+            }
+            if (mEffectLaunchedTime > timeAction) {
                 stopLaunchedEffect();
             }
         }
@@ -592,12 +599,19 @@ public class Interaction extends Entity implements ICollisionHandler, IInteracti
             //Allow for Offset
             float originX = -transform.scale * mCurrentFrame.getRegionWidth() / 2;
             float originY = -transform.scale * mCurrentFrame.getRegionWidth() / 2;
+            float offsetX = transform.scale *(mCurrentFrame.getRegionWidth() / 2 - effectRegion.getRegionWidth()/2);
+            float offsetY = transform.scale *(mCurrentFrame.getRegionHeight() / 2 - effectRegion.getRegionHeight()/2);
 
+            float effectScale =mEffectLaunched.distance;
+            if(effectScale<=0)
+            {
+                effectScale=1;
+            }
             aBatch.draw(effectRegion,
                     transform.position.x + transform.originOffset.x, transform.position.y + transform.originOffset.y,
-                    originX, originY,
+                    offsetX, offsetY,
                     width, height,
-                    transform.scale * mEffectLaunched.distance, transform.scale * mEffectLaunched.distance,
+                    transform.scale * effectScale , transform.scale * effectScale,
                     transform.angle);
 
         }

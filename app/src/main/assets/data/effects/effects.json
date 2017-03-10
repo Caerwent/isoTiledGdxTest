@@ -35,4 +35,21 @@
 
 
 }
+,{
+  "id":"PORTAL",
+  "description":"retourne en ville",
+  "atlasFile":"townportal.atlas",
+  "distance": "0",
+  "duration":"-1",
+  "fps":"10",
+  "icon":"icon",
+  "frames": [
+    "portal_1","portal_2","portal_3", "portal_4",
+    "portal_5","portal_6","portal_7","portal_8",
+    "portal_9","portal_10","portal_11","portal_12",
+   "portal_13","portal_14"
+  ]
+
+
+}
   ]

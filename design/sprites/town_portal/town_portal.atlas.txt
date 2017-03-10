@@ -1,0 +1,110 @@
+town_portal.atlas.png
+size: 645, 64
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+icon
+  rotate: false
+  xy: 0, 0
+  size: 43, 64
+  orig: 43, 64
+  offset: 0, 0
+  index: -1
+portal
+  rotate: false
+  xy: 43, 0
+  size: 43, 64
+  orig: 43, 64
+  offset: 0, 0
+  index: 1
+portal
+  rotate: false
+  xy: 86, 0
+  size: 43, 64
+  orig: 43, 64
+  offset: 0, 0
+  index: 2
+portal
+  rotate: false
+  xy: 129, 0
+  size: 43, 64
+  orig: 43, 64
+  offset: 0, 0
+  index: 3
+portal
+  rotate: false
+  xy: 172, 0
+  size: 43, 64
+  orig: 43, 64
+  offset: 0, 0
+  index: 4
+portal
+  rotate: false
+  xy: 215, 0
+  size: 43, 64
+  orig: 43, 64
+  offset: 0, 0
+  index: 5
+portal
+  rotate: false
+  xy: 258, 0
+  size: 43, 64
+  orig: 43, 64
+  offset: 0, 0
+  index: 6
+portal
+  rotate: false
+  xy: 301, 0
+  size: 43, 64
+  orig: 43, 64
+  offset: 0, 0
+  index: 7
+portal
+  rotate: false
+  xy: 344, 0
+  size: 43, 64
+  orig: 43, 64
+  offset: 0, 0
+  index: 8
+portal
+  rotate: false
+  xy: 387, 0
+  size: 43, 64
+  orig: 43, 64
+  offset: 0, 0
+  index: 9
+portal
+  rotate: false
+  xy: 430, 0
+  size: 43, 64
+  orig: 43, 64
+  offset: 0, 0
+  index: 10
+portal
+  rotate: false
+  xy: 473, 0
+  size: 43, 64
+  orig: 43, 64
+  offset: 0, 0
+  index: 11
+portal
+  rotate: false
+  xy: 516, 0
+  size: 43, 64
+  orig: 43, 64
+  offset: 0, 0
+  index: 12
+portal
+  rotate: false
+  xy: 559, 0
+  size: 43, 64
+  orig: 43, 64
+  offset: 0, 0
+  index: 13
+portal
+  rotate: false
+  xy: 602, 0
+  size: 43, 64
+  orig: 43, 64
+  offset: 0, 0
+  index: 14

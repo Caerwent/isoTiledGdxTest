@@ -25,13 +25,13 @@ public class InteractionFactory {
         mJson.setIgnoreUnknownFields(true);
     }
 
-    public InteractionHero createInteractionHero()
+    public InteractionHero createInteractionHero(GameMap aMap)
     {
         InteractionMapping mapping = new InteractionMapping();
         mapping.template = "hero.json";
         mapping.id="hero";
         InteractionDef def = mJson.fromJson(InteractionDef.class, Gdx.files.internal("data/interactions/" + mapping.template));
-        InteractionHero hero = new InteractionHero(def,0,0,mapping,null,null);
+        InteractionHero hero = new InteractionHero(def,0,0,mapping,null,aMap);
 
         return hero;
 

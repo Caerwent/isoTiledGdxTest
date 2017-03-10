@@ -73,7 +73,7 @@ public class InteractionPortal extends Interaction implements IQuestListener {
     @Override
     public void onStartCollisionInteraction(CollisionComponent aEntity) {
         if (mIsActivated && mTargetMapId!=null)
-            EventDispatcher.getInstance().onNewMapRequested(mTargetMapId);
+            EventDispatcher.getInstance().onNewMapRequested(mTargetMapId, null);
     }
     @Override
     public void onStopCollisionInteraction(CollisionComponent aEntity) {

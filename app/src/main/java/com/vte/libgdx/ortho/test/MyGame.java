@@ -8,6 +8,7 @@ import com.vte.libgdx.ortho.test.effects.Effect;
 import com.vte.libgdx.ortho.test.events.EventDispatcher;
 import com.vte.libgdx.ortho.test.events.ISystemEventListener;
 import com.vte.libgdx.ortho.test.map.GameMap;
+import com.vte.libgdx.ortho.test.map.MapTownPortalInfo;
 import com.vte.libgdx.ortho.test.persistence.LocationProfile;
 import com.vte.libgdx.ortho.test.persistence.Profile;
 import com.vte.libgdx.ortho.test.quests.QuestManager;
@@ -26,7 +27,7 @@ import com.vte.libgdx.ortho.test.screens.MainMenuScreen;
  */
 public class MyGame extends Game implements ISystemEventListener {
     public static float SCALE_FACTOR = 1.0F / 32.0F;
-    private static String DEFAULT_MAP_NAME = "ortho";
+    public static String DEFAULT_MAP_NAME = "ortho";
 
     static private MyGame s_instance;
 
@@ -35,11 +36,11 @@ public class MyGame extends Game implements ISystemEventListener {
     private Screen mCurrentScreen = null;
 
     @Override
-    public void onNewMapRequested(String aMapId) {
+    public void onNewMapRequested(String aMapId, MapTownPortalInfo aTownPortalInfo) {
         if (mGameScreen != null) {
             mScreenRequested = mLoadingScreen;
             mIsGameReadyToBeShown = false;
-            mGameScreen.loadMap(aMapId, mGameScreen.getMap().getMapName());
+            mGameScreen.loadMap(aMapId, mGameScreen.getMap().getMapName(), aTownPortalInfo);
         }
     }
 
@@ -151,9 +152,9 @@ public class MyGame extends Game implements ISystemEventListener {
     private void loadDefaultMap() {
         LocationProfile location = Profile.getInstance().getLocationProfile();
         if (location == null || location.mMapId == null) {
-            mGameScreen.loadMap(DEFAULT_MAP_NAME, null);
+            mGameScreen.loadMap(DEFAULT_MAP_NAME, null, null);
         } else {
-            mGameScreen.loadMap(location.mMapId, location.mFromMapId);
+            mGameScreen.loadMap(location.mMapId, location.mFromMapId, null);
         }
     }
 

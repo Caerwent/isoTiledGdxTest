@@ -21,6 +21,7 @@ import com.vte.libgdx.ortho.test.effects.EffectFactory;
 import com.vte.libgdx.ortho.test.events.EventDispatcher;
 import com.vte.libgdx.ortho.test.events.ISystemEventListener;
 import com.vte.libgdx.ortho.test.map.GameMap;
+import com.vte.libgdx.ortho.test.map.MapTownPortalInfo;
 import com.vte.libgdx.ortho.test.persistence.Profile;
 import com.vte.libgdx.ortho.test.screens.GameScreen;
 
@@ -153,7 +154,7 @@ public class MainHUD extends Group implements ISystemEventListener {
 
 
     @Override
-    public void onNewMapRequested(String aMapId) {
+    public void onNewMapRequested(String aMapId, MapTownPortalInfo aTownPortalInfo) {
 
     }
 

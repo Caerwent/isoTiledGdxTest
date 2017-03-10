@@ -37,6 +37,7 @@ import com.vte.libgdx.ortho.test.events.EventDispatcher;
 import com.vte.libgdx.ortho.test.gui.MainHUD;
 import com.vte.libgdx.ortho.test.gui.UIStage;
 import com.vte.libgdx.ortho.test.map.GameMap;
+import com.vte.libgdx.ortho.test.map.MapTownPortalInfo;
 import com.vte.libgdx.ortho.test.quests.QuestManager;
 
 import static com.vte.libgdx.ortho.test.Settings.TARGET_HEIGHT;
@@ -131,14 +132,14 @@ public class GameScreen implements Screen, InputProcessor {
         mSpot = aSpot;
     }
 
-    public void loadMap(String aTargetMapId, String aFromMapId) {
+    public void loadMap(String aTargetMapId, String aFromMapId, MapTownPortalInfo aTownPortalInfo) {
         if (map != null) {
             map.destroy();
         }
         map = null;
 
 
-        map = new GameMap(aTargetMapId, aFromMapId, camera);
+        map = new GameMap(aTargetMapId, aFromMapId, camera, aTownPortalInfo);
         bobController.setMap(map);
         EventDispatcher.getInstance().onMapLoaded(map);
 

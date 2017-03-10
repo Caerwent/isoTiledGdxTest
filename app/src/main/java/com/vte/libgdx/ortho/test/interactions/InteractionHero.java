@@ -1,16 +1,21 @@
 package com.vte.libgdx.ortho.test.interactions;
 
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.maps.MapProperties;
 import com.badlogic.gdx.math.Vector2;
+import com.vte.libgdx.ortho.test.MyGame;
 import com.vte.libgdx.ortho.test.box2d.PathHero;
+import com.vte.libgdx.ortho.test.effects.Effect;
+import com.vte.libgdx.ortho.test.effects.EffectFactory;
 import com.vte.libgdx.ortho.test.entity.components.BobComponent;
 import com.vte.libgdx.ortho.test.entity.components.CollisionComponent;
 import com.vte.libgdx.ortho.test.entity.components.TransformComponent;
 import com.vte.libgdx.ortho.test.events.EventDispatcher;
 import com.vte.libgdx.ortho.test.map.GameMap;
 import com.vte.libgdx.ortho.test.map.ItemInteraction;
+import com.vte.libgdx.ortho.test.map.MapTownPortalInfo;
 
 /**
  * Created by vincent on 14/02/2017.
@@ -19,6 +24,7 @@ import com.vte.libgdx.ortho.test.map.ItemInteraction;
 public class InteractionHero extends Interaction {
 
     protected float stateTime; // elapsed time
+    MapTownPortalInfo mPortalInfo;
 
     public InteractionHero(InteractionDef aDef, float x, float y, InteractionMapping aMapping, MapProperties aProperties, GameMap aMap) {
         super(aDef, x, y, aMapping, aProperties, aMap);
@@ -109,6 +115,58 @@ public class InteractionHero extends Interaction {
             setVelocity(0, 0);
 
         }
+    }
+
+    @Override
+    protected void stopLaunchedEffect() {
+        Effect stoppedEffect = mEffectLaunched;
+        super.stopLaunchedEffect();
+
+        if(stoppedEffect!=null && stoppedEffect.id== Effect.Type.PORTAL)
+        {
+            // check if it is :
+            // - an arrival into the default map
+            // - a come back to the invoking map
+            // - an invocation into a map
+            // - an invocation into the default map
+            if(mPortalInfo!=null)
+            {
+                if(mPortalInfo.originMap.compareTo(mMap.getMapName())==0)
+                {
+                    // it's a come back to the invoking map
+                    mPortalInfo = null;
+                    stoppedEffect.getAnimation().setPlayMode(Animation.PlayMode.NORMAL);
+                }
+                else if(stoppedEffect.getAnimation().getPlayMode()== Animation.PlayMode.REVERSED) {
+                    // it's an arrival into the default map
+                    stoppedEffect.getAnimation().setPlayMode(Animation.PlayMode.NORMAL);
+                }
+                else
+                {
+                    // it's an invocation into the default map
+                    EventDispatcher.getInstance().onNewMapRequested(mPortalInfo.originMap, mPortalInfo);
+                }
+            }
+            else {
+                // it's an invocation into a map
+                mPortalInfo = new MapTownPortalInfo();
+                mPortalInfo.originMap = mMap.getMapName();
+                mPortalInfo.x = getX();
+                mPortalInfo.y = getY();
+
+                EventDispatcher.getInstance().onNewMapRequested(MyGame.DEFAULT_MAP_NAME, mPortalInfo);
+            }
+        }
+
+    }
+
+    public void launchTownPortalArrivalEffect(MapTownPortalInfo aPortalInfo)
+    {
+        mPortalInfo = aPortalInfo;
+
+        Effect portalBackEffect = EffectFactory.getInstance().getEffect(Effect.Type.PORTAL);
+        portalBackEffect.getAnimation().setPlayMode(Animation.PlayMode.REVERSED);
+        launchEffect(portalBackEffect);
     }
 
 
