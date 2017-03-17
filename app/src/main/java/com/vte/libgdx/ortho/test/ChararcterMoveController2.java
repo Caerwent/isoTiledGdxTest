@@ -4,6 +4,7 @@ import com.badlogic.ashley.core.ComponentMapper;
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.Family;
 import com.badlogic.ashley.utils.ImmutableArray;
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.math.Vector2;
@@ -76,18 +77,19 @@ public class ChararcterMoveController2 extends InputAdapter {
                 for (Entity entity : entities) {
 
                     CollisionComponent collision = entity.getComponent(CollisionComponent.class);
-                //    Gdx.app.debug("DEBUG", "check entity " + entity+ " "+collision.mName);
-                    if ((collision.mType & CollisionComponent.OBSTACLE) != 0 && ShapeUtils.overlaps(collision.mShape, mPathSpot)) {
-                     //   Gdx.app.debug("DEBUG", "overlaps obstacle");
-                        if ( ( (collision.mType & CollisionComponent.MAPINTERACTION) == 0 &&
+                    Gdx.app.debug("DEBUG", "check entity " + entity+ " "+collision.mName);
+                    if ( ( (collision.mType & CollisionComponent.OBSTACLE) != 0 || ( (collision.mType & CollisionComponent.OBSTACLE_MAPINTERACTION) != 0))
+                            && ShapeUtils.overlaps(collision.mShape, mPathSpot)) {
+                        Gdx.app.debug("DEBUG", "overlaps obstacle");
+                       if ( ( (collision.mType & CollisionComponent.OBSTACLE_MAPINTERACTION) == 0 &&
                                 mPathSpot.getBounds().getY() >= collision.mShape.getBounds().getY()) ||
 
                                 (mPathSpot.getBounds().getY() >= collision.mShape.getBounds().getY() &&
-                                        (collision.mType & CollisionComponent.MAPINTERACTION) != 0 &&
-                                        (mPathSpot.getBounds().getY() - collision.mShape.getBounds().getY() <= PathHero.CHECK_RADIUS))
+                                        (collision.mType & CollisionComponent.OBSTACLE_MAPINTERACTION) != 0 &&
+                                        (mPathSpot.getBounds().getY() - collision.mShape.getBounds().getY() <= 0.5))
                                 )
                         {
-                        //    Gdx.app.debug("DEBUG", "collision");
+                            Gdx.app.debug("DEBUG", "collision");
                             hasCollision = true;
                             break;
 

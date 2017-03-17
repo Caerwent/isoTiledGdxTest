@@ -4,6 +4,7 @@ import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.utils.Array;
+import com.vte.libgdx.ortho.test.AssetsUtility;
 
 import java.util.ArrayList;
 
@@ -15,7 +16,8 @@ public class Effect {
     public enum Type {
         FREEZE,
         BURN,
-        PORTAL
+        PORTAL,
+        WAVE
     }
     public Type id;
     public String atlasFile;
@@ -36,6 +38,7 @@ public class Effect {
     }
     public void init()
     {
+        description = AssetsUtility.getString(description);
         mAtlas = new TextureAtlas("data/effects/" + atlasFile);
 
         if(frames==null || frames.size()<=0)

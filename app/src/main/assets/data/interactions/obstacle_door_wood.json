@@ -1,0 +1,36 @@
+{
+  "type":"OBSTACLE",
+  "atlas":"wood_door.atlas",
+  "isPersistent":"false",
+  "defaultState":"CLOSED",
+  "isClickable": "false",
+  "isRendable": "true",
+  "isMovable": "false",
+  "states": [
+    {
+      "name": "CLOSED",
+      "fps":"0",
+      "frames": [
+        "wood_door_closed"
+      ]
+    },
+    {
+      "name": "BURNING",
+      "fps":"10",
+      "frames": [
+        "wood_door_burning_1", "wood_door_burning_2", "wood_door_burning_3",
+        "wood_door_burning_4", "wood_door_burning_5", "wood_door_burning_6",
+        "wood_door_burning_7", "wood_door_burning_8", "wood_door_burning_9"
+      ]
+    },
+    {
+      "name": "OPEN",
+      "fps":"0",
+      "frames": [
+        "wood_door_open"
+      ]
+    }
+
+  ]
+
+}

@@ -7,7 +7,9 @@ import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Align;
+import com.vte.libgdx.ortho.test.AssetsUtility;
 import com.vte.libgdx.ortho.test.dialogs.GameDialog;
+import com.vte.libgdx.ortho.test.dialogs.GameDialogStep;
 import com.vte.libgdx.ortho.test.events.EventDispatcher;
 import com.vte.libgdx.ortho.test.events.IDialogListener;
 import com.vte.libgdx.ortho.test.interactions.InteractionEvent;
@@ -19,7 +21,7 @@ import com.vte.libgdx.ortho.test.interactions.InteractionEvent;
 public class DialogTable extends Table implements IDialogListener {
 
 
-    private Label mLabel;
+    private Label mLabel, mSpeakerLabel;
     private ScrollPane mScrollPane;
     private GameDialog mDialog;
     private int mCurrentDialogIdx;
@@ -27,19 +29,22 @@ public class DialogTable extends Table implements IDialogListener {
 
     public DialogTable(int aWidth, int aHeight) {
         setSize(aWidth, aHeight);
+        mSpeakerLabel=new Label("", UIStage.getInstance().getSkin(), "dialog-speaker");
+        mSpeakerLabel.setAlignment(Align.topLeft);
+        this.add(mSpeakerLabel).top().left();
         mLabel = new Label("", UIStage.getInstance().getSkin(), "dialog-detail");
         mLabel.setWrap(true);
         mLabel.setSize(aWidth, aHeight);
         mLabel.setAlignment(Align.topLeft);
         mScrollPane = new ScrollPane(mLabel, UIStage.getInstance().getSkin(), "dialogPane");
-        this.add(mScrollPane).width(aWidth).top();
+        this.add(mScrollPane).pad(14,14,14,14).expand().fill().top();
        /* mScrollPane.setForceScroll(false, true);
         mScrollPane.setFlickScroll(false);
         mScrollPane.setOverscroll(false, true);*/
         mScrollPane.setScrollingDisabled(true, false);
         //mScrollPane.setFillParent(true);
-        setBackground(UIStage.getInstance().getSkin().getDrawable("window1"));
-        setColor(UIStage.getInstance().getSkin().getColor("lt-blue"));
+        setBackground(UIStage.getInstance().getSkin().getDrawable("dialog"));
+       // setColor(UIStage.getInstance().getSkin().getColor("lt-blue"));
         setSkin(UIStage.getInstance().getSkin());
         setName("Dialog");
         row();
@@ -66,7 +71,17 @@ public class DialogTable extends Table implements IDialogListener {
             mCurrentDialogIdx++;
             if(mDialog.getDialogs().size > mCurrentDialogIdx)
             {
-                mLabel.setText(mDialog.getDialogs().get(mCurrentDialogIdx));
+                GameDialogStep dialogStep = mDialog.getDialogs().get(mCurrentDialogIdx);
+                if(dialogStep.speaker!=null && !dialogStep.speaker.isEmpty())
+                {
+                    mSpeakerLabel.setVisible(true);
+                    mSpeakerLabel.setText(AssetsUtility.getString(dialogStep.speaker));
+                }
+                else
+                {
+                    mSpeakerLabel.setVisible(false);
+                }
+                mLabel.setText(AssetsUtility.getString(dialogStep.step));
                 mScrollPane.layout();
             }
             else

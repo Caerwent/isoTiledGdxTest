@@ -9,6 +9,7 @@ import com.vte.libgdx.ortho.test.events.EventDispatcher;
 import com.vte.libgdx.ortho.test.events.ISystemEventListener;
 import com.vte.libgdx.ortho.test.map.GameMap;
 import com.vte.libgdx.ortho.test.map.MapTownPortalInfo;
+import com.vte.libgdx.ortho.test.persistence.GameSession;
 import com.vte.libgdx.ortho.test.persistence.LocationProfile;
 import com.vte.libgdx.ortho.test.persistence.Profile;
 import com.vte.libgdx.ortho.test.quests.QuestManager;
@@ -52,6 +53,12 @@ public class MyGame extends Game implements ISystemEventListener {
     @Override
     public void onNewSelectedEffect(Effect.Type aEffectType) {
         Profile.getInstance().setSelectedEffect(aEffectType);
+    }
+
+    @Override
+    public void onEffectFound(Effect.Type aEffectType)
+    {
+        Profile.getInstance().getAvailableEffects().add(aEffectType);
     }
 
     public static enum ScreenType {
@@ -141,6 +148,7 @@ public class MyGame extends Game implements ISystemEventListener {
     }
 
     public void newProfile() {
+        GameSession.createNewSession();
         Profile.newProfile();
         QuestManager.getInstance().restoreQuestsFromProfile();
         if (mGameScreen != null)

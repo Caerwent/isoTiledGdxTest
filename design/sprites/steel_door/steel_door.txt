@@ -1,0 +1,61 @@
+steel_door.png
+size: 50, 616
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+steel_door_closed
+  rotate: false
+  xy: 0, 0
+  size: 50, 77
+  orig: 50, 77
+  offset: 0, 0
+  index: -1
+steel_door_explosing
+  rotate: false
+  xy: 0, 77
+  size: 50, 77
+  orig: 50, 77
+  offset: 0, 0
+  index: 1
+steel_door_explosing
+  rotate: false
+  xy: 0, 154
+  size: 50, 77
+  orig: 50, 77
+  offset: 0, 0
+  index: 2
+steel_door_explosing
+  rotate: false
+  xy: 0, 231
+  size: 50, 77
+  orig: 50, 77
+  offset: 0, 0
+  index: 3
+steel_door_explosing
+  rotate: false
+  xy: 0, 308
+  size: 50, 77
+  orig: 50, 77
+  offset: 0, 0
+  index: 4
+steel_door_explosing
+  rotate: false
+  xy: 0, 385
+  size: 50, 77
+  orig: 50, 77
+  offset: 0, 0
+  index: 5
+steel_door_frozen
+  rotate: false
+  xy: 0, 462
+  size: 50, 77
+  orig: 50, 77
+  offset: 0, 0
+  index: -1
+steel_door_open
+  rotate: false
+  xy: 0, 539
+  size: 50, 77
+  orig: 50, 77
+  offset: 0, 0
+  index: -1

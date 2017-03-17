@@ -8,6 +8,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.ui.ButtonGroup;
 import com.badlogic.gdx.scenes.scene2d.ui.HorizontalGroup;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
+import com.badlogic.gdx.scenes.scene2d.ui.Stack;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
@@ -76,13 +77,13 @@ public class MainHUD extends Group implements ISystemEventListener {
 
         mHud.addActor(mSpellButton);
 
-        mMainPanel.setSize(2 * TARGET_WIDTH / 3, TARGET_HEIGHT - 64 - 25);
+        mMainPanel.setSize(TARGET_WIDTH / 2, TARGET_HEIGHT - 64 - 25);
         mMainPanel.setPosition(10, 64);
         mMainPanel.setVisible(false);
         addActor(mMainPanel);
 
-        final Button tab1 = new TextButton("Objets", UIStage.getInstance().getSkin(), "default");
-        final Button tab2 = new TextButton("Pouvoirs", UIStage.getInstance().getSkin(), "default");
+        final Button tab1 = new TextButton("Objets", UIStage.getInstance().getSkin(), "tab");
+        final Button tab2 = new TextButton("Pouvoirs", UIStage.getInstance().getSkin(), "tab");
 
         mTabsPanel.addActor(tab1);
         mTabsPanel.addActor(tab2);
@@ -108,17 +109,20 @@ public class MainHUD extends Group implements ISystemEventListener {
 
         tab1.setChecked(true);
 
-        mMainPanel.add(mTabsPanel).top().left();
+        mMainPanel.add(mTabsPanel).top().left().padBottom(-1).padLeft(15);
         mMainPanel.row();
-        mMainPanel.add(mContentPanel).top().expand().fill().left();
-        mContentPanel.setBackground(UIStage.getInstance().getSkin().getDrawable("window1"));
-        mContentPanel.add(mInventorySlotTable).expand().fill();
-        mContentPanel.add(mEffectsPanel).expand().fill();
+        Stack stack = new Stack();
+        mMainPanel.add(mContentPanel).top().left().fill().expand();
+        mMainPanel.row();
+        mContentPanel.add(stack).top().left().fill().expand();
         mContentPanel.row();
+        mContentPanel.setBackground(UIStage.getInstance().getSkin().getDrawable("window"));
+        stack.add(mInventorySlotTable);
+        mInventorySlotTable.setPosition(0, 0);
+        stack.add(mEffectsPanel);
+        mEffectsPanel.setPosition(0, 0);
 
 
-        mInventorySlotTable.setBackground(UIStage.getInstance().getSkin().getDrawable("window1"));
-        mInventorySlotTable.setColor(UIStage.getInstance().getSkin().getColor("lt-blue"));
         mDialogTable.setPosition((TARGET_WIDTH - DIALOG_W) / 2, 0);
         mDialogTable.setVisible(false);
         addActor(mDialogTable);
@@ -137,8 +141,9 @@ public class MainHUD extends Group implements ISystemEventListener {
         mSpellButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                Effect effect = EffectFactory.getInstance().getEffect(Profile.getInstance().getSelectedEffect());
-                ((GameScreen) MyGame.getInstance().getScreenType(MainGame)).getMap().getPlayer().getHero().launchEffect(effect);
+                if (mCurrentEffectType != null) {
+                    ((GameScreen) MyGame.getInstance().getScreenType(MainGame)).getMap().getPlayer().getHero().launchEffect(EffectFactory.getInstance().getEffect(mCurrentEffectType));
+                }
             }
         });
         mInventoryButton.setTouchable(Touchable.enabled);
@@ -146,8 +151,10 @@ public class MainHUD extends Group implements ISystemEventListener {
         Effect.Type selectedEffect = Profile.getInstance().getSelectedEffect();
         if (selectedEffect != null) {
             onNewSelectedEffect(selectedEffect);
+        } else if (Profile.getInstance().getAvailableEffects().size() > 0) {
+            onNewSelectedEffect(Profile.getInstance().getAvailableEffects().get(0));
         } else {
-            EventDispatcher.getInstance().onNewSelectedEffect(Effect.Type.FREEZE);
+            mEffectsPanel.update();
         }
 
     }
@@ -171,5 +178,10 @@ public class MainHUD extends Group implements ISystemEventListener {
             mEffectsPanel.update();
 
         }
+    }
+
+    @Override
+    public void onEffectFound(Effect.Type aEffectType) {
+        mEffectsPanel.update();
     }
 }

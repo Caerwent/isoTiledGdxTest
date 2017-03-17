@@ -1,6 +1,5 @@
 package com.vte.libgdx.ortho.test.box2d;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector2;
 
 import java.util.ArrayList;
@@ -136,7 +135,7 @@ public class PathMap {
         double vx = Math.cos(angle) * mVelocityCte;
         double vy = Math.sin(angle) * mVelocityCte;
 
-        Gdx.app.debug("DEBUG", "p=("+aCurrentPosition.x+","+aCurrentPosition.y+") n=("+nextPosition.x+","+nextPosition.y+") dx="+dx+" dy="+dy+" D="+D+" angle="+angle +" vx="+vx+" vy"+vy);
+       // Gdx.app.debug("DEBUG", "p=("+aCurrentPosition.x+","+aCurrentPosition.y+") n=("+nextPosition.x+","+nextPosition.y+") dx="+dx+" dy="+dy+" D="+D+" angle="+angle +" vx="+vx+" vy"+vy);
 
         mVelocity.set((float) vx, (float) vy);
 

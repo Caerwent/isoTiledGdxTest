@@ -7,6 +7,7 @@ button_default
   rotate: false
   xy: 90, 29
   size: 142, 28
+  split: 41, 41, 13, 13
   orig: 142, 28
   offset: 0, 0
   index: -1
@@ -14,6 +15,7 @@ button_pressed
   rotate: false
   xy: 90, 57
   size: 142, 28
+  split: 41, 41, 13, 13
   orig: 142, 28
   offset: 0, 0
   index: -1
@@ -21,6 +23,7 @@ button_selected
   rotate: false
   xy: 90, 85
   size: 142, 28
+  split: 41, 41, 13, 13
   orig: 142, 28
   offset: 0, 0
   index: -1
@@ -28,6 +31,7 @@ button_disabled
   rotate: false
   xy: 90, 113
   size: 142, 28
+  split: 41, 41, 13, 13
   orig: 142, 28
   offset: 0, 0
   index: -1
@@ -35,6 +39,8 @@ dialog
   rotate: false
   xy: 16, 29
   size: 74, 64
+  split: 35, 35, 13, 13
+  pad: 14, 14, 14, 14
   orig: 74, 64
   offset: 0, 0
   index: -1
@@ -56,19 +62,21 @@ tab_active
   rotate: false
   xy: 0, 11
   size: 128, 18
+  split: 6, 6, 6, 6
   orig: 128, 18
   offset: 0, 0
   index: -1
 tab_inactive
   rotate: false
   xy: 128, 11
-  size: 128, 18
+  size: 128, 15
+  split: 6, 6, 6, 6
   orig: 128, 18
   offset: 0, 0
   index: -1
 bag
   rotate: false
-  xy: 124, 42
+  xy: 124, 142
   size: 56, 56
   orig: 56, 56
   offset: 0, 0
@@ -87,5 +95,14 @@ window1
   split: 6, 6, 6, 6
   pad: 4, 4, 4, 4
   orig: 64, 64
+  offset: 0, 0
+  index: -1
+window
+  rotate: false
+  xy: 0, 95
+  size: 34, 26
+  split: 16, 16, 12, 12
+  pad: 12, 12, 12, 12
+  orig: 34, 26
   offset: 0, 0
   index: -1

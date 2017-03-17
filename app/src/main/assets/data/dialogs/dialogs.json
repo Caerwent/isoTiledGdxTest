@@ -4,7 +4,11 @@
 
 		"id": "startQuest1",
 		"dialogs" : [
-			"Aller parler à machin !"
+			{
+				"speaker":"",
+				"step":"quest1_phrase1"
+			}
+
 		]
 
 	},
@@ -12,17 +16,14 @@
 
 		"id": "npc1",
 		"dialogs" : [
-			"bonjour",
-			"ça va ?"
-		]
-
-	},
-	{
-
-		"id": "npc2",
-		"dialogs" : [
-			"hello",
-			"ça va ?"
+			{
+				"speaker":"npc1_name",
+				"step":"npc1_phrase1"
+			},
+			{
+				"speaker":"npc1_name",
+				"step":"npc1_phrase1"
+			}
 		]
 
 	}
@@ -31,10 +32,27 @@
 
 		"id": "dquest1",
 		"dialogs" : [
-			"machin: hello",
-			"bidule: ça va ?",
-			"machin: j'ai soif, pourrais tu me trouver 2 gourdes d'eau ?",
-			"bidule: oui"
+
+	{
+		"speaker":"npc1_name",
+		"step":"quest1_npc1_phrase1"
+	},
+
+	{
+		"speaker":"hero_name",
+		"step":"quest1_hero_phrase1"
+	}
+	,
+	{
+		"speaker":"npc1_name",
+		"step":"quest1_npc1_phrase2"
+	}
+	,
+	{
+		"speaker":"hero_name",
+		"step":"quest1_hero_phrase2"
+	}
+
 		]
 
 	}
@@ -43,8 +61,14 @@
 
 		"id": "dquest2",
 		"dialogs" : [
-			"machin: as-tu trouver mes gourdes d'eau ?",
-			"bidule: pas encore"
+			{
+				"speaker":"npc1_name",
+				"step":"quest2_npc1_phrase1"
+			},
+			{
+				"speaker":"hero_name",
+				"step":"quest2_hero_phrase1"
+			}
 		]
 
 	}
@@ -53,8 +77,16 @@
 
 		"id": "dquest2TasksCompleted",
 		"dialogs" : [
-			"machin: ha ça va mieux, je n'ai plus soif ? Merci !",
-			"machin: Pour te remercier, je vais t'apprendre l'existence d'un passage derriere le grand chene."
+
+	{
+		"speaker":"npc1_name",
+		"step":"quest2TasksCompleted_phrase1"
+	}
+	,
+	{
+		"speaker":"npc1_name",
+		"step":"quest2TasksCompleted_phrase2"
+	}
 		]
 
 	}
@@ -62,7 +94,10 @@
 	{
 		"id":"endQuest2",
 		"dialogs" : [
-			"machin: j'espere que tu as trouve ce que tu cherches."
+			{
+				"speaker":"npc1_name",
+				"step":"endQuest2"
+			}
 		]
 	}
 ]

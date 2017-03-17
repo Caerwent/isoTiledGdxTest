@@ -9,14 +9,14 @@ import com.badlogic.gdx.utils.Array;
 public class GameDialog {
 
     protected String id;
-    protected Array<String> dialogs;
+    protected Array<GameDialogStep> dialogs;
 
     public String getId()
     {
         return id;
     }
 
-    public Array<String> getDialogs()
+    public Array<GameDialogStep> getDialogs()
     {
         return dialogs;
     }

@@ -15,4 +15,6 @@ public interface ISystemEventListener {
     public void onMapLoaded(GameMap aMap);
 
     public void onNewSelectedEffect(Effect.Type aEffectType);
+
+    public void onEffectFound(Effect.Type aEffectType);
 }

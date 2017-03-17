@@ -2,17 +2,17 @@
 {
 	
 	itemTypeID: engrenage32x32
-	itemShortDescription: "crouic crouic"
+	itemShortDescription: "item_desc_engrenage32x32"
 },
 {
 	
 	itemTypeID: potionBlue
-	itemShortDescription: "c'est à boire qu'il nous faut \\n hoho hoho"
+	itemShortDescription: "item_desc_potionBlue"
 },
 	{
 
 		itemTypeID: tonneau
-		itemShortDescription: "un gros tonneau"
+		itemShortDescription: "item_desc_tonneau"
 	}
 
 

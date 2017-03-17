@@ -29,6 +29,8 @@ import com.vte.libgdx.ortho.test.map.GameMap;
 
 import java.util.ArrayList;
 
+import static com.vte.libgdx.ortho.test.entity.components.CollisionComponent.OBSTACLE_MAPINTERACTION;
+
 /**
  * Created by vincent on 08/02/2017.
  */
@@ -39,6 +41,8 @@ public class Interaction extends Entity implements ICollisionHandler, IInteracti
     protected Type mType;
     protected InteractionDef mDef;
     protected boolean mIsMovable;
+    protected boolean mIsPersistent;
+
 
     protected float mStateTime; // elapsed time
     protected boolean mIsRended = false;
@@ -79,6 +83,7 @@ public class Interaction extends Entity implements ICollisionHandler, IInteracti
         mDef = aDef;
         mEventsAction = aMapping.eventsAction;
         mOutputEvents = aMapping.outputEvents;
+        mIsPersistent = aMapping.isPersistent;
         mMap = aMap;
         mProperties = aProperties;
         //    mType = IInteraction.Type.valueOf(mDef.type);
@@ -88,10 +93,22 @@ public class Interaction extends Entity implements ICollisionHandler, IInteracti
             }
         }
         mShape = createShape();
-        initialize(x, y);
+        initialize(x, y, aMapping);
+        if(isPersistent())
+        {
+            restoreFromPersistence();
+        }
         if (mEventsAction != null) {
             EventDispatcher.getInstance().addInteractionEventListener(this);
         }
+
+    }
+
+    public void restoreFromPersistence() {
+
+    }
+
+    public void saveInPersistence() {
 
     }
 
@@ -136,7 +153,7 @@ public class Interaction extends Entity implements ICollisionHandler, IInteracti
 
     @Override
     public boolean isPersistent() {
-        return mDef.isPersistent;
+        return mIsPersistent;
     }
 
     protected InteractionState getState(String aStateName) {
@@ -167,10 +184,14 @@ public class Interaction extends Entity implements ICollisionHandler, IInteracti
 
     public void destroy() {
         EventDispatcher.getInstance().removeInteractionEventListener(this);
+        if(isPersistent())
+        {
+            saveInPersistence();
+        }
         EntityEngine.getInstance().removeEntity(this);
     }
 
-    public void initialize(float x, float y) {
+    public void initialize(float x, float y, InteractionMapping aMapping) {
 
         EntityEngine.getInstance().addEntity(this);
 
@@ -197,7 +218,12 @@ public class Interaction extends Entity implements ICollisionHandler, IInteracti
 
         }
         setPosition(x, y);
-        this.add(new CollisionComponent((byte) (CollisionComponent.MAPINTERACTION | CollisionComponent.OBSTACLE), getShape(), mId, this, this));
+        byte type_collision = CollisionComponent.MAPINTERACTION;
+        if(isRendable())
+        {
+            type_collision = (byte) (type_collision | OBSTACLE_MAPINTERACTION);
+        }
+        this.add(new CollisionComponent(type_collision, getShape(), mId, this, this));
 
 
     }
@@ -339,7 +365,9 @@ public class Interaction extends Entity implements ICollisionHandler, IInteracti
     @Override
     public void update(float dt) {
         CollisionComponent collision = this.getComponent(CollisionComponent.class);
-        collision.mShape = getShape();
+        if(collision!=null) {
+            collision.mShape = getShape();
+        }
         updateLaunchedEffect(dt);
         updateEffectAction(dt);
         mStateTime += dt;
@@ -362,7 +390,7 @@ public class Interaction extends Entity implements ICollisionHandler, IInteracti
     }
 
     protected void updateEffectAction(float dt) {
-        if (mEffectAction != null && mEffectAction.duration > 0) {
+        if (mEffectAction != null && mEffectAction.targetDuration != 0) {
             mEffectActionTime += dt;
             float timeAction = mEffectAction.targetDuration;
             if(timeAction<0)
@@ -525,9 +553,9 @@ public class Interaction extends Entity implements ICollisionHandler, IInteracti
                 if (action.inputEvents != null) {
                     boolean performed = false;
                     for (InteractionEvent expectedEvent : action.inputEvents) {
-                        if ((expectedEvent.sourceId == null || expectedEvent.sourceId.isEmpty() || expectedEvent.sourceId.equals(aEvent.sourceId)) && expectedEvent.type.equals(aEvent.type) && expectedEvent.value.equals(aEvent.value)) {
-                            expectedEvent.setPerformed(true);
-                            performed = true;
+                        if ((expectedEvent.sourceId == null || expectedEvent.sourceId.isEmpty() || expectedEvent.sourceId.equals(aEvent.sourceId)) && expectedEvent.type.equals(aEvent.type)) {
+                            expectedEvent.setPerformed(expectedEvent.value.equals(aEvent.value));
+                            performed = expectedEvent.isPerformed();
                             break;
                         }
                     }

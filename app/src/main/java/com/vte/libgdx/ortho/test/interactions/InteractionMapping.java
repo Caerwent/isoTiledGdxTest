@@ -10,6 +10,7 @@ import java.util.HashMap;
 public class InteractionMapping {
     public String id;
     public String template;
+    public boolean isPersistent;
     public ArrayList<InteractionEventAction> eventsAction;
     public ArrayList<InteractionEvent> outputEvents;
     public HashMap properties;

@@ -16,10 +16,11 @@ public class CollisionComponent implements Component {
     public static byte MAPINTERACTION = 8;
     public static byte CHARACTER = 16;
     public static byte EFFECT = 32;
+    public static byte OBSTACLE_MAPINTERACTION = 64;
 
     public Shape mShape;
     public ICollisionHandler mHandler;
-    public Byte mType;
+    public byte mType;
     public String mName;
     public Object mData;
 

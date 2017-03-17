@@ -11,13 +11,17 @@ import com.vte.libgdx.ortho.test.interactions.InteractionDef;
 import com.vte.libgdx.ortho.test.interactions.InteractionEventAction;
 import com.vte.libgdx.ortho.test.interactions.InteractionMapping;
 import com.vte.libgdx.ortho.test.map.GameMap;
+import com.vte.libgdx.ortho.test.persistence.GameSession;
 
 /**
  * Created by vincent on 14/02/2017.
  */
 
 public class InteractionMonster1 extends Interaction {
+    private static final String KEY_IS_DESTROYED = "is_destroyed";
+
     protected PathMap mPath;
+    protected boolean mIsDestroyed = false;
 
     public InteractionMonster1(InteractionDef aDef, float x, float y, InteractionMapping aMapping, MapProperties aProperties, GameMap aMap) {
         super(aDef, x, y, aMapping, aProperties, aMap);
@@ -26,7 +30,21 @@ public class InteractionMonster1 extends Interaction {
         mPath = aMap.getPaths().get(getId());
 
     }
+    public void restoreFromPersistence() {
+        Boolean isDestroyed = (Boolean) GameSession.getInstance().getSessionDataForMapAndEntity(mMap.getMapName(), mId, KEY_IS_DESTROYED);
+        if (isDestroyed != null && isDestroyed.booleanValue()) {
+            mIsDestroyed = true;
+            mMap.getInteractions().removeValue(this, true);
+            destroy();
+        } else {
+            mIsDestroyed = false;
+        }
 
+    }
+
+    public void saveInPersistence() {
+        GameSession.getInstance().putSessionDataForMapAndEntity(mMap.getMapName(), mId, KEY_IS_DESTROYED, mIsDestroyed);
+    }
     @Override
     public void update(float dt) {
         super.update(dt);
@@ -54,12 +72,11 @@ public class InteractionMonster1 extends Interaction {
 
     @Override
     protected void stopEffectAction() {
-        boolean isToBeRemoved = false;
         if (mEffectAction.id== Effect.Type.BURN && mEffectAction.targetDuration < 0) {
-            isToBeRemoved = true;
+            mIsDestroyed = true;
         }
         super.stopEffectAction();
-        if (isToBeRemoved) {
+        if (mIsDestroyed) {
             mMap.getInteractions().removeValue(this, true);
             destroy();
         }

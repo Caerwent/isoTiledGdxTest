@@ -4,6 +4,28 @@
   "template":"portal.json",
   "eventsAction":[],
   "outputEvents":[]
+}, {
+  "id":"door1",
+  "template":"obstacle_door_wood.json",
+  "isPersistent":"true",
+  "properties":{
+    "destroyableEffect":"BURN",
+    "destroyedState":"OPEN"
+  },
+  "eventsAction":[],
+  "outputEvents":[]
+},
+  {
+  "id":"door2",
+    "isPersistent":"true",
+  "template":"obstacle_door_steel.json",
+    "properties":{
+      "destroyableState":"FROZEN",
+      "destroyableEffect":"WAVE",
+      "destroyedState":"OPEN"
+    },
+  "eventsAction":[],
+  "outputEvents":[]
 }
 
 ]

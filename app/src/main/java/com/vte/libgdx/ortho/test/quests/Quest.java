@@ -1,5 +1,8 @@
 package com.vte.libgdx.ortho.test.quests;
 
+import com.vte.libgdx.ortho.test.effects.Effect;
+import com.vte.libgdx.ortho.test.items.Item;
+
 import java.util.ArrayList;
 
 /**
@@ -9,11 +12,14 @@ import java.util.ArrayList;
 public class Quest {
     protected boolean mIsActivated;
     protected boolean mIsCompleted;
+    protected String title;
+    protected String desc;
     protected String id;
     protected ArrayList<String> requiredCompletedQuest;
     protected ArrayList<QuestTask> tasks;
     protected String startQuestDialogId;
-
+    protected ArrayList<Item.ItemTypeID> itemsReward;
+    protected ArrayList<Effect.Type> effectsReward;
 
     public String getId() {
         return id;
@@ -23,6 +29,22 @@ public class Quest {
         id = aId;
     }
 
+    public void setTitle(String aTitle)
+    {
+        title = aTitle;
+    }
+    public String getTitle()
+    {
+        return title;
+    }
+    public void setDescription(String aDesc)
+    {
+        desc = aDesc;
+    }
+    public String getDescription()
+    {
+        return desc;
+    }
     public void setActivated(boolean activated) {
         mIsActivated = activated;
     }
@@ -108,4 +130,13 @@ public class Quest {
 
     }
 
+    public ArrayList<Item.ItemTypeID> getItemsReward()
+    {
+        return itemsReward;
+    }
+
+    public ArrayList<Effect.Type> getEffectsReward()
+    {
+        return effectsReward;
+    }
 }

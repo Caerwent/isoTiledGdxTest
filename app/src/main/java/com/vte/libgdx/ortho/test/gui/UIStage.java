@@ -59,7 +59,7 @@ public class UIStage extends Stage {
     }
 
     protected String atlasPath() {
-        return "data/skins/tex.atlas";
+        return "data/skins/ui.atlas";
     }
 
 

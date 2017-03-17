@@ -1,0 +1,43 @@
+{
+  "type":"OBSTACLE",
+  "atlas":"steel_door.atlas",
+  "isPersistent":"false",
+  "defaultState":"CLOSED",
+  "isClickable": "false",
+  "isRendable": "true",
+  "isMovable": "false",
+  "states": [
+    {
+      "name": "CLOSED",
+      "fps":"0",
+      "frames": [
+        "steel_door_closed"
+      ]
+    },
+    {
+      "name": "EXPLODE",
+      "fps":"10",
+      "frames": [
+        "steel_door_explosing_1", "steel_door_explosing_2", "steel_door_explosing_3",
+        "steel_door_explosing_4", "steel_door_explosing_5"
+      ]
+    },
+    {
+      "name": "OPEN",
+      "fps":"0",
+      "frames": [
+        "steel_door_open"
+      ]
+    },
+
+    {
+      "name": "FROZEN",
+      "fps":"0",
+      "frames": [
+        "steel_door_frozen"
+      ]
+    }
+
+  ]
+
+}

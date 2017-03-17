@@ -20,6 +20,7 @@ public class Profile {
     HashMap<String, NPCProfile> npcs = new HashMap<>();
     LocationProfile location = new LocationProfile();
     Effect.Type mSelectedEffect = null;
+    ArrayList<Effect.Type> mAvailableEffects = new ArrayList();
 
     static private Profile sProfile;
 
@@ -108,6 +109,16 @@ public class Profile {
     {
         mSelectedEffect = aSelectedEffect;
         PersistenceProvider.getInstance().saveSelectedEffect(mSelectedEffect);
+
+    }
+
+    public final ArrayList<Effect.Type> getAvailableEffects() {
+        return mAvailableEffects;
+    }
+
+    public void updateAvailableEffects(ArrayList<Effect.Type> aEffectsList) {
+        mAvailableEffects=aEffectsList;
+        PersistenceProvider.getInstance().saveEffectsList(mAvailableEffects);
 
     }
 

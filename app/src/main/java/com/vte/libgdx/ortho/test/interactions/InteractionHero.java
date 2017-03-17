@@ -109,7 +109,8 @@ public class InteractionHero extends Interaction {
 
     @Override
     public void onStartCollisionInteraction(CollisionComponent aEntity) {
-        if (((aEntity.mType & CollisionComponent.OBSTACLE) != 0) && mPath != null) {
+        if ( (((aEntity.mType & CollisionComponent.OBSTACLE) != 0) || ((aEntity.mType & CollisionComponent.OBSTACLE_MAPINTERACTION) != 0) )
+            && mPath != null) {
             mPath.destroy();
             mPath = null;
             setVelocity(0, 0);

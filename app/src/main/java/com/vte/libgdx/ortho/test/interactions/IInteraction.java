@@ -16,6 +16,7 @@ public interface IInteraction extends IMapRendable {
         PORTAL,
         MONSTER,
         ACTIVATOR,
+        OBSTACLE,
         PATH
     }
 

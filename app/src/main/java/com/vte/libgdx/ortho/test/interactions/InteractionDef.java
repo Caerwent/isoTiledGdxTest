@@ -9,7 +9,6 @@ import java.util.ArrayList;
 public class InteractionDef {
     public String type;
     public String atlas;
-    public boolean isPersistent;
     public String defaultState;
     public boolean isClickable;
     public boolean isRendable;

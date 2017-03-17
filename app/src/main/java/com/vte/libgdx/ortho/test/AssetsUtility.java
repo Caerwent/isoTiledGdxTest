@@ -12,6 +12,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
+import com.badlogic.gdx.utils.I18NBundle;
 
 /**
  * Created by gwalarn on 27/11/16.
@@ -22,14 +23,16 @@ public final class AssetsUtility {
     private static final String TAG = AssetsUtility.class.getSimpleName();
     private static InternalFileHandleResolver _filePathResolver = new InternalFileHandleResolver();
 
-   // private final static String STATUSUI_TEXTURE_ATLAS_PATH = "skins/statusui.atlas";
+    private static I18NBundle sStringsBundle;
+
+    private final static String STRINGS_PATH = "strings/strings";
     public final static String UI_SKIN_PATH = "data/skins/ui.json";
     private final static String ITEMS_TEXTURE_ATLAS_PATH = "data/items/sprite_atlas.txt";
     private final static String ITEMS_SKIN_PATH = "data/items/items.json";
 
-  //  public static TextureAtlas STATUSUI_TEXTUREATLAS = new TextureAtlas(STATUSUI_TEXTURE_ATLAS_PATH);
+    //  public static TextureAtlas STATUSUI_TEXTUREATLAS = new TextureAtlas(STATUSUI_TEXTURE_ATLAS_PATH);
     public static TextureAtlas ITEMS_TEXTUREATLAS = new TextureAtlas(ITEMS_TEXTURE_ATLAS_PATH);
-  //  public static Skin STATUSUI_SKIN = new Skin(Gdx.files.internal(STATUSUI_SKIN_PATH), STATUSUI_TEXTUREATLAS);
+    //  public static Skin STATUSUI_SKIN = new Skin(Gdx.files.internal(STATUSUI_SKIN_PATH), STATUSUI_TEXTUREATLAS);
 
     public static void unloadAsset(String assetFilenamePath) {
         // once the asset manager is done loading
@@ -76,6 +79,45 @@ public final class AssetsUtility {
         } else {
             Gdx.app.debug(TAG, "Map doesn't exist!: " + mapFilenamePath);
         }
+    }
+
+    /**
+     * Gets the string with the specified key from this bundle or one of its parent after replacing the given arguments if they
+     * occur.
+     *
+     * @param key  the key for the desired string
+     * @param args the arguments to be replaced in the string associated to the given key.
+     * @return the string for the given key formatted with the given arguments
+     * @throws NullPointerException     if <code>key</code> is <code>null</code>
+     * @throws MissingResourceException if no string for the given key can be found
+     */
+    public static String getString(String aKey, Object... args) {
+        if (aKey == null || aKey.isEmpty()) {
+            return null;
+        }
+/*
+game=My Super Cool Game
+newMission={0}, you have a new mission. Reach level {1}.
+coveredPath=You covered {0,number}% of the path
+highScoreTime=High score achieved on {0,date} at {0,time}
+
+String game = myBundle.format("game");
+String mission = myBundle.format("newMission", player.getName(), nextLevel.getName());
+String coveredPath = myBundle.format("coveredPath", path.getPerc());
+String highScoreTime = myBundle.format("highScoreTime", highScore.getDate());
+ */
+        if (sStringsBundle != null) {
+            return sStringsBundle.format(aKey, args);
+        } else if (!_assetManager.isLoaded(STRINGS_PATH)) {
+            _assetManager.load(STRINGS_PATH, I18NBundle.class);
+            //Until we add loading screen, just block until we load the map
+            _assetManager.finishLoadingAsset(STRINGS_PATH);
+            Gdx.app.debug(TAG, "Strings loaded!: " + STRINGS_PATH);
+            sStringsBundle = _assetManager.get(STRINGS_PATH, I18NBundle.class);
+            return sStringsBundle.format(aKey, args);
+        }
+        return null;
+
     }
 
 

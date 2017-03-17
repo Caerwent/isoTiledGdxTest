@@ -5,13 +5,16 @@ import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.ObjectMap;
 import com.badlogic.gdx.utils.OrderedMap;
+import com.vte.libgdx.ortho.test.AssetsUtility;
 import com.vte.libgdx.ortho.test.dialogs.DialogsManager;
+import com.vte.libgdx.ortho.test.effects.Effect;
 import com.vte.libgdx.ortho.test.events.EventDispatcher;
 import com.vte.libgdx.ortho.test.events.IItemListener;
 import com.vte.libgdx.ortho.test.events.IPlayerListener;
 import com.vte.libgdx.ortho.test.events.IQuestListener;
 import com.vte.libgdx.ortho.test.interactions.InteractionNPC;
 import com.vte.libgdx.ortho.test.items.Item;
+import com.vte.libgdx.ortho.test.items.ItemFactory;
 import com.vte.libgdx.ortho.test.persistence.Profile;
 import com.vte.libgdx.ortho.test.persistence.QuestProfile;
 import com.vte.libgdx.ortho.test.persistence.QuestTaskProfile;
@@ -50,6 +53,9 @@ public class QuestManager implements IItemListener, IQuestListener, IPlayerListe
         for (String questFileName : list) {
             Quest theQuest = _json.fromJson(Quest.class,
                     Gdx.files.internal("data/quests/" + questFileName + ".json"));
+            // convert strings
+            theQuest.setTitle(AssetsUtility.getString(theQuest.getTitle()));
+            theQuest.setDescription(AssetsUtility.getString(theQuest.getDescription()));
             mQuests.put(theQuest.id, theQuest);
         }
 
@@ -206,6 +212,20 @@ public class QuestManager implements IItemListener, IQuestListener, IPlayerListe
             mCompletedQuests.put(aQuest.getId(), aQuest);
         }
         updateItemsFromFoundTask(aQuest);
+        if(aQuest.getItemsReward()!=null)
+        {
+            for(Item.ItemTypeID itemID : aQuest.getItemsReward())
+            {
+                EventDispatcher.getInstance().onItemFound(ItemFactory.getInstance().getInventoryItem(itemID));
+            }
+        }
+        if(aQuest.getEffectsReward()!=null)
+        {
+            for(Effect.Type effectType : aQuest.getEffectsReward())
+            {
+                EventDispatcher.getInstance().onEffectFound(effectType);
+            }
+        }
         EventDispatcher.getInstance().onGameEvent(aQuest.getId());
 
         for (Quest quest : mQuests.values()) {

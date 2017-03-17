@@ -160,4 +160,8 @@ public class PersistenceProvider {
     {
         save(Profile.getInstance());
     }
+    public void saveEffectsList(ArrayList<Effect.Type> aList)
+    {
+        save(Profile.getInstance());
+    }
 }

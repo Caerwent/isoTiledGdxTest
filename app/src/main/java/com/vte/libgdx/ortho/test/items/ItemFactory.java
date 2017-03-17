@@ -38,6 +38,8 @@ public class ItemFactory {
 
         for (JsonValue jsonVal : list) {
             Item item = _json.readValue(Item.class, jsonVal);
+            // convert string
+            item.setItemShortDescription(AssetsUtility.getString(item.getItemShortDescription()));
             mItemsList.put(item.getItemTypeID(), item);
         }
 

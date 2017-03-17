@@ -187,6 +187,13 @@ public class EventDispatcher implements IDialogListener, IItemListener, IQuestLi
             listener.onNewSelectedEffect(aEffectType);
         }
     }
+    @Override
+    public void onEffectFound(Effect.Type aEffectType)
+    {
+        for (ISystemEventListener listener : mSystemEventListeners) {
+            listener.onEffectFound(aEffectType);
+        }
+    }
 
     public void addInteractionEventListener(IInteractionEventListener aListener) {
         if (!mInteractionEventListeners.contains(aListener)) {

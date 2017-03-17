@@ -17,8 +17,8 @@ import com.vte.libgdx.ortho.test.player.Player;
  */
 
 public class InventoryTable extends Table implements IPlayerListener {
-    private final int mSlotWidth = 66;
-    private final int mSlotHeight = 66;
+    private final int mSlotWidth = 68;
+    private final int mSlotHeight = 68;
     private int mLengthSlotRow = 2;
     private Table mInventoryTable;
     private ArrayMap<Item.ItemTypeID, InventorySlot> mSlots;
@@ -35,6 +35,9 @@ public class InventoryTable extends Table implements IPlayerListener {
 
     private void init()
     {
+        //setBackground(UIStage.getInstance().getSkin().getDrawable("window1"));
+        // setColor(UIStage.getInstance().getSkin().getColor("lt-blue"));
+
         mSlots = new ArrayMap();
         _dragAndDrop = new DragAndDrop();
         mInventoryTable = new Table();
@@ -49,7 +52,7 @@ public class InventoryTable extends Table implements IPlayerListener {
         EventDispatcher.getInstance().addPlayerListener(this);
         mDetails = new InventoryDetails(200, (Settings.TARGET_HEIGHT - 64)/2);
         add(mInventoryTable).fillY().expand().left();
-        add(mDetails).top();
+        add(mDetails).top().left();
         row();
        // mDetails.setPosition(mLengthSlotRow*mSlotWidth+5, (Settings.TARGET_HEIGHT - 64)/2+25);
         mDetails.setVisible(false);

@@ -29,8 +29,8 @@ public class InventoryDetails extends Table {
         mScrollPane.setOverscroll(false, true);*/
         mScrollPane.setScrollingDisabled(true, false);
         //mScrollPane.setFillParent(true);
-        setBackground(UIStage.getInstance().getSkin().getDrawable("window1"));
-        setColor(UIStage.getInstance().getSkin().getColor("lt-blue"));
+        //  setBackground(UIStage.getInstance().getSkin().getDrawable("window1"));
+        //  setColor(UIStage.getInstance().getSkin().getColor("lt-blue"));
         setSkin(UIStage.getInstance().getSkin());
         setName("Inventory_Details");
         row();
@@ -38,11 +38,10 @@ public class InventoryDetails extends Table {
 
     }
 
-    public void setText(String aText)
-    {
+    public void setText(String aText) {
         mItemDescLabel.setText(aText);
         //mItemDescLabel.setPrefRows(aItem.getItemShortDescription().split("\n").length);
         mScrollPane.layout();
     }
 
-    }
+}

@@ -18,6 +18,12 @@
       g: 0,
       r: 1
     },
+    yellow: {
+      a: 1,
+      b: 0,
+      g: 1,
+      r: 1
+    },
     black: {
       a: 1,
       b: 0,
@@ -59,15 +65,20 @@
       "font": "default-font"
     },
     "inventory-item-count": {
-      "font": "small-font"
+      "font": "small-font",
+      "fontColor": "black"
     },
     "inventory-detail": {
-      "font": "small-font",
-      "fontColor": "white"
+      "font": "smooth-font",
+      "fontColor": "black"
     },
     "dialog-detail": {
-      "font": "small-font",
+      "font": "smooth-font",
       "fontColor": "white"
+    },
+    "dialog-speaker": {
+      "font": "default-font",
+      "fontColor": "yellow"
     }
   },
   "com.badlogic.gdx.scenes.scene2d.ui.TextField$TextFieldStyle": {
@@ -84,11 +95,11 @@
   "com.badlogic.gdx.scenes.scene2d.ui.Window$WindowStyle": {
     "default": {
       "titleFont": "default-font",
-      "background": "window1"
+      "background": "window"
     },
     "solidbackground": {
       "titleFont": "default-font",
-      "background": "window1"
+      "background": "window"
     },
   },
   "com.badlogic.gdx.scenes.scene2d.ui.ImageButton$ImageButtonStyle": {
@@ -103,15 +114,4 @@
     },
 
   },
-  "com.vte.libgdx.ortho.test.gui.TabbedPane$TabbedPaneStyle": {
-  "default": {
-    "font": "smooth-font",
-    "fontColor": "white",
-    "checkedFontColor": "white",
-    "title": "window1",
-    "bodyBackground": "window1",
-    "titleButtonUnselected": "patchThick",
-    "titleButtonSelected": "patchThickDown"
-  }
-},
 }

@@ -1,13 +1,13 @@
 
 {
 	"id": "quest1",
-	"title":"quête 1",
+	"title":"quest1_title",
+	"desc":"quest1_desc",
 	"startQuestDialogId":"startQuest1",
 	"requiredCompletedQuest": [],
 	"tasks" : [
 		{
 			"id": "quest1task1",
-			"desc":"parler à npc1",
 			"type":"TALK",
 			"targetId":"npc1",
 			"completedDialogId":"dquest1",

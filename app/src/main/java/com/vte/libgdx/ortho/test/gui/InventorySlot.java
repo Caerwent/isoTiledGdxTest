@@ -27,7 +27,7 @@ public class InventorySlot extends Stack {
     public InventorySlot() {
         _defaultBackground = new Table();
         _defaultBackground.setBackground(UIStage.getInstance().getSkin().getDrawable("window1"));
-        _defaultBackground.setColor(UIStage.getInstance().getSkin().getColor("lt-blue"));
+        _defaultBackground.setColor(UIStage.getInstance().getSkin().getColor("background-color-1"));
         _numItemsLabel = new Label(String.valueOf(_numItemsVal), UIStage.getInstance().getSkin(), "inventory-item-count");
         _numItemsLabel.setAlignment(Align.bottomRight);
         _numItemsLabel.setVisible(false);
@@ -111,7 +111,7 @@ public class InventorySlot extends Stack {
 
     public void setSelected(boolean aIsSelected) {
 
-        _defaultBackground.setColor(UIStage.getInstance().getSkin().getColor(aIsSelected ? "dark-blue" : "lt-blue"));
+        _defaultBackground.setColor(UIStage.getInstance().getSkin().getColor(aIsSelected ? "background-color-2" : "background-color-1"));
     }
 
 

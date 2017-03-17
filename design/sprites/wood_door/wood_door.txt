@@ -1,0 +1,82 @@
+wood_door.png
+size: 57, 902
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+wood_door_burning
+  rotate: false
+  xy: 0, 0
+  size: 57, 82
+  orig: 57, 82
+  offset: 0, 0
+  index: 1
+wood_door_burning
+  rotate: false
+  xy: 0, 82
+  size: 57, 82
+  orig: 57, 82
+  offset: 0, 0
+  index: 2
+wood_door_burning
+  rotate: false
+  xy: 0, 164
+  size: 57, 82
+  orig: 57, 82
+  offset: 0, 0
+  index: 3
+wood_door_burning
+  rotate: false
+  xy: 0, 246
+  size: 57, 82
+  orig: 57, 82
+  offset: 0, 0
+  index: 4
+wood_door_burning
+  rotate: false
+  xy: 0, 328
+  size: 57, 82
+  orig: 57, 82
+  offset: 0, 0
+  index: 5
+wood_door_burning
+  rotate: false
+  xy: 0, 410
+  size: 57, 82
+  orig: 57, 82
+  offset: 0, 0
+  index: 6
+wood_door_burning
+  rotate: false
+  xy: 0, 492
+  size: 57, 82
+  orig: 57, 82
+  offset: 0, 0
+  index: 7
+wood_door_burning
+  rotate: false
+  xy: 0, 574
+  size: 57, 82
+  orig: 57, 82
+  offset: 0, 0
+  index: 8
+wood_door_burning
+  rotate: false
+  xy: 0, 656
+  size: 57, 82
+  orig: 57, 82
+  offset: 0, 0
+  index: 9
+wood_door_closed
+  rotate: false
+  xy: 0, 738
+  size: 57, 82
+  orig: 57, 82
+  offset: 0, 0
+  index: -1
+wood_door_open
+  rotate: false
+  xy: 0, 820
+  size: 57, 82
+  orig: 57, 82
+  offset: 0, 0
+  index: -1
