@@ -11,6 +11,7 @@ import com.vte.libgdx.ortho.test.effects.Effect;
 import com.vte.libgdx.ortho.test.effects.EffectFactory;
 import com.vte.libgdx.ortho.test.events.EventDispatcher;
 import com.vte.libgdx.ortho.test.persistence.Profile;
+import com.vte.libgdx.ortho.test.screens.GenericUI;
 
 import java.util.ArrayList;
 
@@ -33,7 +34,7 @@ public class EffectsPanel extends Table {
 
 
     private void init() {
-        mList.setSkin(UIStage.getInstance().getSkin());
+        mList.setSkin(GenericUI.getInstance().getSkin());
         mList.setName("Effects_Slot_Table");
         ;
         mDetails = new InventoryDetails(200, (Settings.TARGET_HEIGHT - 64) / 2);
@@ -51,9 +52,9 @@ public class EffectsPanel extends Table {
         for (Effect.Type effectType : Effect.Type.values()) {
             Effect effect = EffectFactory.getInstance().getEffect(effectType);
             Table slot = new Table();
-            slot.setBackground(UIStage.getInstance().getSkin().getDrawable("window1"));
+            slot.setBackground(GenericUI.getInstance().getSkin().getDrawable("window1"));
             mSlots.add(slot);
-            slot.setColor(UIStage.getInstance().getSkin().getColor("background-color-1"));
+            slot.setColor(GenericUI.getInstance().getSkin().getColor("background-color-1"));
             slot.setSize(68,68);
 
 
@@ -103,10 +104,10 @@ public class EffectsPanel extends Table {
     private void setSelected(int idx) {
         if (idx >= 0) {
             if (mSelectedItem != null) {
-                mSelectedItem.setColor(UIStage.getInstance().getSkin().getColor("background-color-1"));
+                mSelectedItem.setColor(GenericUI.getInstance().getSkin().getColor("background-color-1"));
             }
             mSelectedItem = mSlots.get(idx);
-            mSelectedItem.setColor(UIStage.getInstance().getSkin().getColor("background-color-2"));
+            mSelectedItem.setColor(GenericUI.getInstance().getSkin().getColor("background-color-2"));
 
             mDetails.setText(EffectFactory.getInstance().getEffect(Effect.Type.values()[idx]).description);
         }

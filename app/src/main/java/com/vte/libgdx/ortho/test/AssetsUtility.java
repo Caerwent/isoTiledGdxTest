@@ -2,6 +2,7 @@ package com.vte.libgdx.ortho.test;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
+import com.badlogic.gdx.assets.loaders.I18NBundleLoader;
 import com.badlogic.gdx.assets.loaders.MusicLoader;
 import com.badlogic.gdx.assets.loaders.SoundLoader;
 import com.badlogic.gdx.assets.loaders.TextureLoader;
@@ -13,6 +14,9 @@ import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.utils.I18NBundle;
+import com.vte.libgdx.ortho.test.persistence.PersistenceProvider;
+
+import java.util.Locale;
 
 /**
  * Created by gwalarn on 27/11/16.
@@ -81,6 +85,38 @@ public final class AssetsUtility {
         }
     }
 
+
+    protected static void loadStrings()
+    {
+        Locale locale;
+        if(PersistenceProvider.getInstance().getSettings().language==null) {
+            locale = Locale.getDefault();
+        }
+        else
+        {
+            if(PersistenceProvider.getInstance().getSettings().countryCode==null)
+            {
+                locale = new Locale(PersistenceProvider.getInstance().getSettings().language);
+            }
+            else
+            {
+                locale = new Locale(PersistenceProvider.getInstance().getSettings().language, PersistenceProvider.getInstance().getSettings().countryCode);
+            }
+
+        }
+        _assetManager.load(STRINGS_PATH, I18NBundle.class, new I18NBundleLoader.I18NBundleParameter(locale));
+        //Until we add loading screen, just block until we load the map
+        _assetManager.finishLoadingAsset(STRINGS_PATH);
+        Gdx.app.debug(TAG, "Strings loaded!: " + STRINGS_PATH);
+    }
+    public static void reloadStrings()
+    {
+        if(_assetManager.isLoaded(STRINGS_PATH))
+        {
+            _assetManager.unload(STRINGS_PATH);
+        }
+
+    }
     /**
      * Gets the string with the specified key from this bundle or one of its parent after replacing the given arguments if they
      * occur.
@@ -95,24 +131,11 @@ public final class AssetsUtility {
         if (aKey == null || aKey.isEmpty()) {
             return null;
         }
-/*
-game=My Super Cool Game
-newMission={0}, you have a new mission. Reach level {1}.
-coveredPath=You covered {0,number}% of the path
-highScoreTime=High score achieved on {0,date} at {0,time}
-
-String game = myBundle.format("game");
-String mission = myBundle.format("newMission", player.getName(), nextLevel.getName());
-String coveredPath = myBundle.format("coveredPath", path.getPerc());
-String highScoreTime = myBundle.format("highScoreTime", highScore.getDate());
- */
         if (sStringsBundle != null) {
             return sStringsBundle.format(aKey, args);
         } else if (!_assetManager.isLoaded(STRINGS_PATH)) {
-            _assetManager.load(STRINGS_PATH, I18NBundle.class);
-            //Until we add loading screen, just block until we load the map
-            _assetManager.finishLoadingAsset(STRINGS_PATH);
-            Gdx.app.debug(TAG, "Strings loaded!: " + STRINGS_PATH);
+            loadStrings();
+
             sStringsBundle = _assetManager.get(STRINGS_PATH, I18NBundle.class);
             return sStringsBundle.format(aKey, args);
         }

@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <map version="1.0" orientation="orthogonal" renderorder="right-up" width="25" height="15" tilewidth="32" tileheight="32" nextobjectid="32">
+ <properties>
+  <property name="music" value="cave_theme.ogg"/>
+ </properties>
  <tileset firstgid="1" name="caves" tilewidth="32" tileheight="32" tilecount="66" columns="11">
   <image source="caves.png" width="352" height="192"/>
  </tileset>

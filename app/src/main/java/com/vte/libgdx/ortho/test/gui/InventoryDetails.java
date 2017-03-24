@@ -4,6 +4,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.utils.Align;
+import com.vte.libgdx.ortho.test.screens.GenericUI;
 
 /**
  * Created by vincent on 16/12/2016.
@@ -18,11 +19,11 @@ public class InventoryDetails extends Table {
 
     public InventoryDetails(int aWidth, int aHeight) {
         setSize(aWidth, aHeight);
-        mItemDescLabel = new Label("", UIStage.getInstance().getSkin(), "inventory-detail");
+        mItemDescLabel = new Label("", GenericUI.getInstance().getSkin(), "inventory-detail");
         mItemDescLabel.setWrap(true);
         mItemDescLabel.setSize(aWidth, aHeight);
         mItemDescLabel.setAlignment(Align.topLeft);
-        mScrollPane = new ScrollPane(mItemDescLabel, UIStage.getInstance().getSkin(), "inventoryPane");
+        mScrollPane = new ScrollPane(mItemDescLabel, GenericUI.getInstance().getSkin(), "inventoryPane");
         this.add(mScrollPane).width(aWidth).top().left().pad(5);
        /* mScrollPane.setForceScroll(false, true);
         mScrollPane.setFlickScroll(false);
@@ -31,7 +32,7 @@ public class InventoryDetails extends Table {
         //mScrollPane.setFillParent(true);
         //  setBackground(UIStage.getInstance().getSkin().getDrawable("window1"));
         //  setColor(UIStage.getInstance().getSkin().getColor("lt-blue"));
-        setSkin(UIStage.getInstance().getSkin());
+        setSkin(GenericUI.getInstance().getSkin());
         setName("Inventory_Details");
         row();
 

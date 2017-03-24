@@ -25,6 +25,7 @@ import com.vte.libgdx.ortho.test.map.GameMap;
 import com.vte.libgdx.ortho.test.map.MapTownPortalInfo;
 import com.vte.libgdx.ortho.test.persistence.Profile;
 import com.vte.libgdx.ortho.test.screens.GameScreen;
+import com.vte.libgdx.ortho.test.screens.GenericUI;
 
 import static com.vte.libgdx.ortho.test.MyGame.ScreenType.MainGame;
 import static com.vte.libgdx.ortho.test.Settings.TARGET_HEIGHT;
@@ -67,7 +68,7 @@ public class MainHUD extends Group implements ISystemEventListener {
         mInventoryButton.setScaling(Scaling.fit);
         mInventoryButton.setAlign(Align.center);
         mInventoryButton.setSize(64, 64);
-        mInventoryButton.setDrawable(new TextureRegionDrawable(UIStage.getInstance().getTextureAtlas().findRegion("bag")));
+        mInventoryButton.setDrawable(new TextureRegionDrawable(GenericUI.getInstance().getTextureAtlas().findRegion("bag")));
         mHud.addActor(mInventoryButton);
 
         mSpellButton = new Image();
@@ -82,8 +83,8 @@ public class MainHUD extends Group implements ISystemEventListener {
         mMainPanel.setVisible(false);
         addActor(mMainPanel);
 
-        final Button tab1 = new TextButton("Objets", UIStage.getInstance().getSkin(), "tab");
-        final Button tab2 = new TextButton("Pouvoirs", UIStage.getInstance().getSkin(), "tab");
+        final Button tab1 = new TextButton("Objets", GenericUI.getInstance().getSkin(), "tab");
+        final Button tab2 = new TextButton("Pouvoirs", GenericUI.getInstance().getSkin(), "tab");
 
         mTabsPanel.addActor(tab1);
         mTabsPanel.addActor(tab2);
@@ -116,7 +117,7 @@ public class MainHUD extends Group implements ISystemEventListener {
         mMainPanel.row();
         mContentPanel.add(stack).top().left().fill().expand();
         mContentPanel.row();
-        mContentPanel.setBackground(UIStage.getInstance().getSkin().getDrawable("window"));
+        mContentPanel.setBackground(GenericUI.getInstance().getSkin().getDrawable("window"));
         stack.add(mInventorySlotTable);
         mInventorySlotTable.setPosition(0, 0);
         stack.add(mEffectsPanel);
@@ -142,7 +143,7 @@ public class MainHUD extends Group implements ISystemEventListener {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 if (mCurrentEffectType != null) {
-                    ((GameScreen) MyGame.getInstance().getScreenType(MainGame)).getMap().getPlayer().getHero().launchEffect(EffectFactory.getInstance().getEffect(mCurrentEffectType));
+                    ((GameScreen) MyGame.getInstance().getScreenType(MainGame)).getMap().getPlayer().getHero().launchEffect(EffectFactory.getInstance().getNewInstanceEffect(mCurrentEffectType));
                 }
             }
         });

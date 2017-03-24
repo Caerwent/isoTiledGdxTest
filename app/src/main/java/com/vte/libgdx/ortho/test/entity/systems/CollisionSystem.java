@@ -23,6 +23,8 @@ public class CollisionSystem extends IteratingSystem {
         ImmutableArray<Entity> entities = getEntities();
 
         CollisionComponent collisionComponent = entity.getComponent(CollisionComponent.class);
+        if(collisionComponent.mHandler==null)
+            return;
         CollisionComponent otherCollisionComponent;
 
         for (Entity otherEntity : entities) {

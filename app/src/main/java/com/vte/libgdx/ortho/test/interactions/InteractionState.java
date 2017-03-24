@@ -57,4 +57,16 @@ public class InteractionState {
         }
         return mAnimation.getKeyFrame(aTime, true);
     }
+
+    public boolean isCompleted(float stateTime)
+    {
+        if(mFixRegion!=null)
+        {
+            return true;
+        }
+        else
+        {
+            return mAnimation.isAnimationFinished(stateTime);
+        }
+    }
 }

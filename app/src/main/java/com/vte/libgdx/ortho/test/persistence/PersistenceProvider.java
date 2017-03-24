@@ -2,13 +2,13 @@ package com.vte.libgdx.ortho.test.persistence;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
-import com.badlogic.gdx.utils.Base64Coder;
 import com.badlogic.gdx.utils.Json;
 import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryo.io.Input;
 import com.esotericsoftware.kryo.io.Output;
 import com.esotericsoftware.kryo.serializers.CompatibleFieldSerializer;
 import com.esotericsoftware.kryo.serializers.FieldSerializer;
+import com.vte.libgdx.ortho.test.Settings;
 import com.vte.libgdx.ortho.test.effects.Effect;
 
 import java.io.FileInputStream;
@@ -23,10 +23,13 @@ import java.util.ArrayList;
 public class PersistenceProvider {
     private Json _json = new Json();
     private static final String SAVE_FILE = "save.json";
+    private static final String SETTINGS_FILE = "settings.json";
     private static PersistenceProvider _instance = null;
 
 
     private Kryo kryo;
+
+    private Settings mSettings;
 
     public static PersistenceProvider getInstance() {
         if (_instance == null) {
@@ -45,6 +48,7 @@ public class PersistenceProvider {
         // use `EXTENDED` name strategy, otherwise serialized object can't be deserialized correctly. Attention, `EXTENDED` strategy increases the serialized footprint.
         kryo.getFieldSerializerConfig().setCachedFieldNameStrategy(FieldSerializer.CachedFieldNameStrategy.EXTENDED);
 
+        loadSettings();
     }
 
     public static boolean isProfileExist() {
@@ -56,23 +60,60 @@ public class PersistenceProvider {
         }
     }
 
-    public void writeProfileToStorage(String fullFilename, String fileData, boolean overwrite) {
 
-        boolean localFileExists = Gdx.files.local(fullFilename).exists();
+    public void saveSettings() {
 
-        //If we cannot overwrite and the file exists, exit
-        if (localFileExists && !overwrite) {
-            return;
+        if(mSettings==null)
+        {
+            loadSettings();
         }
+        FileHandle encodedFile;
+        if (Gdx.files.isLocalStorageAvailable()) {
+            encodedFile = Gdx.files.local(SETTINGS_FILE);
+            Output output = null;
+            try {
+                output = new Output(new FileOutputStream(encodedFile.file().getAbsolutePath()));
+                kryo.writeObject(output, mSettings);
+                output.close();
+            } catch (FileNotFoundException e) {
+                if (output != null) {
+                    output.close();
+                }
+                e.printStackTrace();
+            }
+        }
+    }
 
-        FileHandle file = null;
+    public void loadSettings() {
 
         if (Gdx.files.isLocalStorageAvailable()) {
-            file = Gdx.files.local(fullFilename);
-            String encodedString = Base64Coder.encodeString(fileData);
-            file.writeString(encodedString, !overwrite);
+            boolean doesProfileFileExist = Gdx.files.local(SETTINGS_FILE).exists();
+            if (!doesProfileFileExist) {
+                mSettings = new Settings();
+                saveSettings();
+            } else {
+                FileHandle encodedFile;
+                encodedFile = Gdx.files.local(SETTINGS_FILE);
+                Input input = null;
+                try {
+                    input = new Input(new FileInputStream(encodedFile.file().getAbsolutePath()));
+                    mSettings = kryo.readObject(input, Settings.class);
+                    input.close();
+                } catch (FileNotFoundException e) {
+                    if (input != null) {
+                        input.close();
+                    }
+                    e.printStackTrace();
+                }
+            }
+
         }
 
+    }
+
+    public Settings getSettings()
+    {
+        return mSettings;
     }
 
 

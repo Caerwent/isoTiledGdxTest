@@ -134,6 +134,7 @@ public class GameScreen implements Screen, InputProcessor {
 
     public void loadMap(String aTargetMapId, String aFromMapId, MapTownPortalInfo aTownPortalInfo) {
         if (map != null) {
+            map.playMusic(false);
             map.destroy();
         }
         map = null;
@@ -142,6 +143,7 @@ public class GameScreen implements Screen, InputProcessor {
         map = new GameMap(aTargetMapId, aFromMapId, camera, aTownPortalInfo);
         bobController.setMap(map);
         EventDispatcher.getInstance().onMapLoaded(map);
+        map.playMusic(true);
 
 
     }
@@ -150,6 +152,10 @@ public class GameScreen implements Screen, InputProcessor {
     @Override
     public void show() {
 
+        if(map!=null)
+        {
+            map.playMusic(true);
+        }
         Gdx.input.setInputProcessor(mInputMultiplexer);
         EntityEngine.getInstance().addSystem(new MovementSystem());
         // EntityEngine.getInstance().addSystem(new VisualRenderSystem(camera));
@@ -161,6 +167,10 @@ public class GameScreen implements Screen, InputProcessor {
 
     @Override
     public void hide() {
+        if(map!=null)
+        {
+            map.playMusic(false);
+        }
         Gdx.input.setInputProcessor(null);
         EntityEngine.getInstance().removeSystem(EntityEngine.getInstance().getSystem(MovementSystem.class));
         // EntityEngine.getInstance().addSystem(new VisualRenderSystem(camera));

@@ -20,6 +20,8 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 import com.vte.libgdx.ortho.test.AssetsUtility;
 import com.vte.libgdx.ortho.test.MyGame;
+import com.vte.libgdx.ortho.test.audio.AudioEvent;
+import com.vte.libgdx.ortho.test.audio.AudioManager;
 import com.vte.libgdx.ortho.test.box2d.PathMap;
 import com.vte.libgdx.ortho.test.box2d.PolygonShape;
 import com.vte.libgdx.ortho.test.box2d.Shape;
@@ -35,6 +37,7 @@ import com.vte.libgdx.ortho.test.interactions.InteractionMappingManager;
 import com.vte.libgdx.ortho.test.interactions.InteractionPortal;
 import com.vte.libgdx.ortho.test.persistence.LocationProfile;
 import com.vte.libgdx.ortho.test.persistence.MapProfile;
+import com.vte.libgdx.ortho.test.persistence.PersistenceProvider;
 import com.vte.libgdx.ortho.test.persistence.Profile;
 import com.vte.libgdx.ortho.test.player.Player;
 import com.vte.libgdx.ortho.test.quests.Quest;
@@ -70,6 +73,7 @@ public class GameMap implements ICollisionHandler {
     private boolean mIsInitialized = false;
 
     private Player mPlayer;
+    private String mMusic;
 
 
     public GameMap(String aMapName, String aFromMap, OrthographicCamera aCamera, MapTownPortalInfo aTownPortalInfo) {
@@ -88,6 +92,15 @@ public class GameMap implements ICollisionHandler {
             return;
         }
         mCamera = aCamera;
+
+        if(PersistenceProvider.getInstance().getSettings().musicActivated) {
+            MapProperties mapProperties = map.getProperties();
+            mMusic = mapProperties.get("music", String.class);
+            if(mMusic!=null && !mMusic.isEmpty())
+            {
+                AudioManager.getInstance().onAudioEvent(new AudioEvent(AudioEvent.Type.MUSIC_LOAD, mMusic));
+            }
+        }
 
         mPlayer = new Player(this);
         mPlayer.getHero().setCamera(mCamera);
@@ -203,6 +216,14 @@ public class GameMap implements ICollisionHandler {
 
     public boolean isInitialized() {
         return mIsInitialized;
+    }
+
+    public void playMusic(boolean aPlay)
+    {
+        if(mMusic!=null && !mMusic.isEmpty())
+        {
+            AudioManager.getInstance().onAudioEvent(new AudioEvent(aPlay ? AudioEvent.Type.MUSIC_PLAY_LOOP : AudioEvent.Type.MUSIC_STOP, mMusic));
+        }
     }
 
     public void destroy() {

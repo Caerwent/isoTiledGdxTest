@@ -17,13 +17,11 @@ public class InteractionObstacle extends Interaction {
     protected String mDestroyableState;
     protected String mDestroyableEffect;
     protected String mDestroyedState;
-    protected boolean mIsDestroyed = false;
+    protected boolean mIsDestroyed;
 
     public InteractionObstacle(InteractionDef aDef, float x, float y, InteractionMapping aMapping, MapProperties aProperties, GameMap aMap) {
         super(aDef, x, y, aMapping, aProperties, aMap);
         mType = Type.OBSTACLE;
-
-
     }
 
     @Override
@@ -38,7 +36,7 @@ public class InteractionObstacle extends Interaction {
     }
 
     public void restoreFromPersistence() {
-        Boolean isDestroyed = (Boolean) GameSession.getInstance().getSessionDataForMapAndEntity(mMap.getMapName(), mId, KEY_IS_DESTROYED);
+       Boolean isDestroyed = (Boolean) GameSession.getInstance().getSessionDataForMapAndEntity(mMap.getMapName(), mId, KEY_IS_DESTROYED);
         if (isDestroyed != null && isDestroyed.booleanValue()) {
             mIsDestroyed = true;
             remove(CollisionComponent.class);

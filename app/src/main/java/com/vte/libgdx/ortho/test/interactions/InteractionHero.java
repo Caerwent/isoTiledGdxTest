@@ -6,6 +6,7 @@ import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.maps.MapProperties;
 import com.badlogic.gdx.math.Vector2;
 import com.vte.libgdx.ortho.test.MyGame;
+import com.vte.libgdx.ortho.test.audio.AudioManager;
 import com.vte.libgdx.ortho.test.box2d.PathHero;
 import com.vte.libgdx.ortho.test.effects.Effect;
 import com.vte.libgdx.ortho.test.effects.EffectFactory;
@@ -101,10 +102,28 @@ public class InteractionHero extends Interaction {
     @Override
     public boolean hasCollisionInteraction(CollisionComponent aEntity) {
         if ((aEntity.mType & CollisionComponent.ITEM) != 0) {
+            AudioManager.getInstance().onAudioEvent(AudioManager.ITEM_FOUND_SOUND);
+
             EventDispatcher.getInstance().onItemFound((((ItemInteraction) aEntity.mData).getItem()));
             return false;
         }
-        return aEntity.mShape.getBounds().getY() > getShape().getBounds().getY();
+        if ( ( aEntity.mType & CollisionComponent.OBSTACLE) != 0 || ( (aEntity.mType & CollisionComponent.OBSTACLE_MAPINTERACTION) != 0)) {
+
+            if ( ( (aEntity.mType & CollisionComponent.OBSTACLE_MAPINTERACTION) == 0 &&
+                    getShape().getBounds().getY() >= aEntity.mShape.getBounds().getY()) ||
+
+                    (getShape().getBounds().getY() >= aEntity.mShape.getBounds().getY() &&
+                            (aEntity.mType & CollisionComponent.OBSTACLE_MAPINTERACTION) != 0 &&
+                            (getShape().getBounds().getY() - aEntity.mShape.getBounds().getY() <= 0.5))
+                    )
+            {
+
+                return true;
+
+
+            }
+        }
+        return false;
     }
 
     @Override
@@ -136,11 +155,11 @@ public class InteractionHero extends Interaction {
                 {
                     // it's a come back to the invoking map
                     mPortalInfo = null;
-                    stoppedEffect.getAnimation().setPlayMode(Animation.PlayMode.NORMAL);
+                    stoppedEffect.setPlayMode(Animation.PlayMode.NORMAL);
                 }
-                else if(stoppedEffect.getAnimation().getPlayMode()== Animation.PlayMode.REVERSED) {
+                else if(stoppedEffect.getPlayMode()== Animation.PlayMode.REVERSED) {
                     // it's an arrival into the default map
-                    stoppedEffect.getAnimation().setPlayMode(Animation.PlayMode.NORMAL);
+                    stoppedEffect.setPlayMode(Animation.PlayMode.NORMAL);
                 }
                 else
                 {
@@ -166,7 +185,7 @@ public class InteractionHero extends Interaction {
         mPortalInfo = aPortalInfo;
 
         Effect portalBackEffect = EffectFactory.getInstance().getEffect(Effect.Type.PORTAL);
-        portalBackEffect.getAnimation().setPlayMode(Animation.PlayMode.REVERSED);
+        portalBackEffect.setPlayMode(Animation.PlayMode.REVERSED);
         launchEffect(portalBackEffect);
     }
 

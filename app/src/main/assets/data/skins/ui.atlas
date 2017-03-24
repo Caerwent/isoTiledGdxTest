@@ -106,3 +106,31 @@ window
   orig: 34, 26
   offset: 0, 0
   index: -1
+checkbox_checked
+  rotate: false
+  xy: 227, 62
+  size: 28, 28
+  orig: 28, 28
+  offset: 0, 0
+  index: -1
+checkbox_unchecked
+  rotate: false
+  xy: 227, 91
+  size: 28, 28
+  orig: 28, 28
+  offset: 0, 0
+  index: -1
+flag_en
+  rotate: false
+  xy: 146, 212
+  size: 52, 37
+  orig: 52, 37
+  offset: 0, 0
+  index: -1
+flag_fr
+  rotate: false
+  xy: 201, 212
+  size: 52, 37
+  orig: 52, 37
+  offset: 0, 0
+  index: -1

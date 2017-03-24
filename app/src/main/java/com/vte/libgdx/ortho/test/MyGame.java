@@ -17,6 +17,7 @@ import com.vte.libgdx.ortho.test.screens.GameScreen;
 import com.vte.libgdx.ortho.test.screens.GenericUI;
 import com.vte.libgdx.ortho.test.screens.LoadingScreen;
 import com.vte.libgdx.ortho.test.screens.MainMenuScreen;
+import com.vte.libgdx.ortho.test.screens.SettingsScreen;
 
 /**
  * MyGame class that extends Game, which implements
@@ -28,7 +29,7 @@ import com.vte.libgdx.ortho.test.screens.MainMenuScreen;
  */
 public class MyGame extends Game implements ISystemEventListener {
     public static float SCALE_FACTOR = 1.0F / 32.0F;
-    public static String DEFAULT_MAP_NAME = "ortho";
+    public static String DEFAULT_MAP_NAME = "village";
 
     static private MyGame s_instance;
 
@@ -65,6 +66,7 @@ public class MyGame extends Game implements ISystemEventListener {
         MainMenu,
         MainGame,
         LoadingGame,
+        Settings
     }
 
     public void setScreen(ScreenType screenType) {
@@ -75,6 +77,9 @@ public class MyGame extends Game implements ISystemEventListener {
                 break;
             case LoadingGame:
                 mScreenRequested = mLoadingScreen;
+                break;
+            case Settings:
+                mScreenRequested = mSettingsScreen;
                 break;
             case MainGame:
 
@@ -104,7 +109,8 @@ public class MyGame extends Game implements ISystemEventListener {
                 return mLoadingScreen;
             case MainGame:
                 return mGameScreen;
-
+            case Settings:
+                return mSettingsScreen;
             default: {
                 return mMainMenuScreen;
             }
@@ -121,6 +127,7 @@ public class MyGame extends Game implements ISystemEventListener {
     private MainMenuScreen mMainMenuScreen;
     private LoadingScreen mLoadingScreen;
     private GameScreen mGameScreen;
+    private SettingsScreen mSettingsScreen;
 
     public void create() {
         s_instance = this;
@@ -130,8 +137,10 @@ public class MyGame extends Game implements ISystemEventListener {
         font = new BitmapFont();
         mMainMenuScreen = new MainMenuScreen();
         mLoadingScreen = new LoadingScreen();
+        mSettingsScreen = new SettingsScreen();
         mCurrentScreen = mMainMenuScreen;
         mScreenRequested = mMainMenuScreen;
+
         setScreen(mMainMenuScreen);
 
 
@@ -173,6 +182,7 @@ public class MyGame extends Game implements ISystemEventListener {
         font.dispose();
         mMainMenuScreen.dispose();
         mLoadingScreen.dispose();
+        mSettingsScreen.dispose();
         if (mGameScreen != null) {
             mGameScreen.dispose();
             mGameScreen = null;

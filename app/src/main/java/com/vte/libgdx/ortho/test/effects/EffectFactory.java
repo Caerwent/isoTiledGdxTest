@@ -3,6 +3,8 @@ package com.vte.libgdx.ortho.test.effects;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.JsonValue;
+import com.vte.libgdx.ortho.test.audio.AudioEvent;
+import com.vte.libgdx.ortho.test.audio.AudioManager;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -37,11 +39,18 @@ public class EffectFactory {
             Effect effect = mJson.readValue(Effect.class, v);
             effect.init();
             mEffectList.put(effect.id, effect);
+            if(effect.sound!=null && !effect.sound.isEmpty()) {
+                AudioManager.getInstance().onAudioEvent(new AudioEvent(AudioEvent.Type.SOUND_LOAD, effect.sound));
+            }
         }
     }
 
 
     public Effect getEffect(Effect.Type aId) {
         return mEffectList.get(aId);
+    }
+
+    public Effect getNewInstanceEffect(Effect.Type aId) {
+        return mEffectList.get(aId).clone();
     }
 }

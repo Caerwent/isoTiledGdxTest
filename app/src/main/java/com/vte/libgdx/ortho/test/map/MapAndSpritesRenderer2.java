@@ -157,6 +157,38 @@ public class MapAndSpritesRenderer2 extends OrthogonalTiledMapRenderer {
         for (int row = row2; row >= row1; row--) {
             float x = xStart;
             for (int col = col1; col < col2; col++) {
+                // check if  a zindex object overlaps the tile and if  a rendable should be drawn before above or below zindex object
+                RectangleShape tileShape = new RectangleShape();
+                tileShape.setShape(new Rectangle(x, y, layerTileWidth, layerTileHeight));
+                //     Gdx.app.debug("DEBUG", "------------------------- tile "+ShapeUtils.logShape(tileShape));
+
+                for (int i = 0; i < zindexList.size; i++) {
+                    Shape currentZIndex = zindexList.get(i);
+                    //     Gdx.app.debug("DEBUG", "check zindex "+ShapeUtils.logShape(currentZIndex));
+
+                    if (ShapeUtils.overlaps(currentZIndex, tileShape)) {
+                        //   Gdx.app.debug("DEBUG", "zindex overlaps tile");
+
+                        for (int idx = 0; idx < sortedEntities.length; idx++) {
+                            Entity entity = sortedEntities[idx];
+                            IMapRendable rendable = vm.get(entity).rendable;
+                            if (rendable.isRendable() && !rendable.isRended()) {
+                                //     Gdx.app.debug("DEBUG", "check entity "+entity.getClass().getSimpleName()+" "+ShapeUtils.logShape(rendable.getShape()));
+                                if (ShapeUtils.overlaps(rendable.getShape(), currentZIndex)) {
+                                    //     Gdx.app.debug("DEBUG", "entity overlaps tile");
+                                    if (currentZIndex.getBounds().getY() < rendable.getShape().getBounds().getY()) {
+                                        //     Gdx.app.debug("DEBUG", "render entity "+ entity.getClass().getSimpleName());
+                                        // need to draw all overlaping entities with < Y
+                                        drawPreviousOverlapingEntity(rendable, idx, sortedEntities);
+                                        rendable.render(getBatch());
+                                        rendable.setRended(true);
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                }
                 for (MapLayer layer : map.getLayers()) {
                     if (layer.isVisible() && layer != mDefaultlayer) {
                         if (layer instanceof TiledMapTileLayer) {
@@ -273,38 +305,7 @@ public class MapAndSpritesRenderer2 extends OrthogonalTiledMapRenderer {
                                         }
                                     }
                                 }
-                                RectangleShape tileShape = new RectangleShape();
-                                tileShape.setShape(new Rectangle(x1, y1, layerTileWidth, layerTileHeight));
-                                //     Gdx.app.debug("DEBUG", "------------------------- tile "+ShapeUtils.logShape(tileShape));
 
-                                for (int i = 0; i < zindexList.size; i++) {
-                                    Shape currentZIndex = zindexList.get(i);
-                                    //     Gdx.app.debug("DEBUG", "check zindex "+ShapeUtils.logShape(currentZIndex));
-
-
-                                    if (ShapeUtils.overlaps(currentZIndex, tileShape)) {
-                                        //   Gdx.app.debug("DEBUG", "zindex overlaps tile");
-
-                                        for (int idx = 0; idx < sortedEntities.length; idx++) {
-                                            Entity entity = sortedEntities[idx];
-                                            IMapRendable rendable = vm.get(entity).rendable;
-                                            if (rendable.isRendable() && !rendable.isRended()) {
-                                                //     Gdx.app.debug("DEBUG", "check entity "+entity.getClass().getSimpleName()+" "+ShapeUtils.logShape(rendable.getShape()));
-                                                if (ShapeUtils.overlaps(rendable.getShape(), currentZIndex)) {
-                                                    //     Gdx.app.debug("DEBUG", "entity overlaps tile");
-                                                    if (currentZIndex.getBounds().getY() < rendable.getShape().getBounds().getY()) {
-                                                        //     Gdx.app.debug("DEBUG", "render entity "+ entity.getClass().getSimpleName());
-                                                        // need to draw all overlaping entities with < Y
-                                                        drawPreviousOverlapingEntity(rendable, idx, sortedEntities);
-                                                        rendable.render(getBatch());
-                                                        rendable.setRended(true);
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
-
-                                }
                                 batch.draw(region.getTexture(), vertices, 0, NUM_VERTICES);
 
                             }

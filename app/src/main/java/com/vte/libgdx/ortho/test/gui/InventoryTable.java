@@ -11,6 +11,7 @@ import com.vte.libgdx.ortho.test.events.EventDispatcher;
 import com.vte.libgdx.ortho.test.events.IPlayerListener;
 import com.vte.libgdx.ortho.test.items.Item;
 import com.vte.libgdx.ortho.test.player.Player;
+import com.vte.libgdx.ortho.test.screens.GenericUI;
 
 /**
  * Created by vincent on 09/12/2016.
@@ -27,55 +28,50 @@ public class InventoryTable extends Table implements IPlayerListener {
 
     private DragAndDrop _dragAndDrop;
 
-    public InventoryTable () {
+    public InventoryTable() {
         super();
         init();
     }
 
 
-    private void init()
-    {
+    private void init() {
         //setBackground(UIStage.getInstance().getSkin().getDrawable("window1"));
         // setColor(UIStage.getInstance().getSkin().getColor("lt-blue"));
 
         mSlots = new ArrayMap();
         _dragAndDrop = new DragAndDrop();
         mInventoryTable = new Table();
-  //      mInventoryTable.setBackground(UIStage.getInstance().getSkin().getDrawable("window1"));
-  //     mInventoryTable.setColor(UIStage.getInstance().getSkin().getColor("lt-green"));
+        //      mInventoryTable.setBackground(UIStage.getInstance().getSkin().getDrawable("window1"));
+        //     mInventoryTable.setColor(UIStage.getInstance().getSkin().getColor("lt-green"));
 
-        mInventoryTable.setSkin(UIStage.getInstance().getSkin());
-      //  mInventoryTable.align(Align.topLeft);
+        mInventoryTable.setSkin(GenericUI.getInstance().getSkin());
+        //  mInventoryTable.align(Align.topLeft);
         mInventoryTable.setName("Inventory_Slot_Table");
-      //  mInventoryTable.setPosition(0,25);
-      //  mInventoryTable.setSize(mLengthSlotRow*mSlotWidth+5, Settings.TARGET_HEIGHT - 64);
+        //  mInventoryTable.setPosition(0,25);
+        //  mInventoryTable.setSize(mLengthSlotRow*mSlotWidth+5, Settings.TARGET_HEIGHT - 64);
         EventDispatcher.getInstance().addPlayerListener(this);
-        mDetails = new InventoryDetails(200, (Settings.TARGET_HEIGHT - 64)/2);
+        mDetails = new InventoryDetails(200, (Settings.TARGET_HEIGHT - 64) / 2);
         add(mInventoryTable).fillY().expand().left();
         add(mDetails).top().left();
         row();
-       // mDetails.setPosition(mLengthSlotRow*mSlotWidth+5, (Settings.TARGET_HEIGHT - 64)/2+25);
+        // mDetails.setPosition(mLengthSlotRow*mSlotWidth+5, (Settings.TARGET_HEIGHT - 64)/2+25);
         mDetails.setVisible(false);
 
 
     }
 
-    public void destroy()
-    {
+    public void destroy() {
         EventDispatcher.getInstance().removePlayerListener(this);
     }
 
-    public void update(Player aPlayer)
-    {
-        int nbItemInRow=0;
+    public void update(Player aPlayer) {
+        int nbItemInRow = 0;
         mInventoryTable.clear();
         mSlots.clear();
         _dragAndDrop.clear();
-        for(Item item : aPlayer.getInventory())
-        {
+        for (Item item : aPlayer.getInventory()) {
             InventorySlot inventorySlot = mSlots.get(item.getItemTypeID());
-            if(inventorySlot==null)
-            {
+            if (inventorySlot == null) {
                 inventorySlot = new InventorySlot();
                 _dragAndDrop.addTarget(new InventorySlotTarget(inventorySlot));
                 _dragAndDrop.addSource(new InventorySlotSource(inventorySlot, _dragAndDrop));
@@ -85,26 +81,21 @@ public class InventoryTable extends Table implements IPlayerListener {
                 mInventoryTable.top().add(inventorySlot).size(mSlotWidth, mSlotHeight);
                 inventorySlot.addListener(new ClickListener() {
                     @Override
-                    public void clicked (InputEvent event, float x, float y)
-                    {
+                    public void clicked(InputEvent event, float x, float y) {
                         InventorySlot newSelectedItem = null;
-                        if(event.getListenerActor() instanceof  InventorySlot)
-                        {
+                        if (event.getListenerActor() instanceof InventorySlot) {
                             newSelectedItem = (InventorySlot) event.getListenerActor();
-                            if(mSelectedItem!=newSelectedItem)
-                            {
-                                if(mSelectedItem!=null)
+                            if (mSelectedItem != newSelectedItem) {
+                                if (mSelectedItem != null)
                                     mSelectedItem.setSelected(false);
                                 mSelectedItem = newSelectedItem;
                                 mSelectedItem.setSelected(true);
                                 mDetails.setText(mSelectedItem.getItemOnTop().getItemShortDescription());
                                 mDetails.setVisible(true);
-                            }
-                            else if(mSelectedItem!=null && mSelectedItem==newSelectedItem)
-                            {
+                            } else if (mSelectedItem != null && mSelectedItem == newSelectedItem) {
                                 mDetails.setVisible(false);
                                 mSelectedItem.setSelected(false);
-                                mSelectedItem=null;
+                                mSelectedItem = null;
                             }
 
                         }
@@ -112,7 +103,7 @@ public class InventoryTable extends Table implements IPlayerListener {
                     }
                 });
                 nbItemInRow++;
-                if(nbItemInRow % mLengthSlotRow == 0){
+                if (nbItemInRow % mLengthSlotRow == 0) {
                     mInventoryTable.row();
                 }
 

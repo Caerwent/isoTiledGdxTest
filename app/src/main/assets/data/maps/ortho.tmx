@@ -82,10 +82,10 @@
   </object>
   <object id="36" name="portal1" type="PORTAL" gid="12" x="96" y="477" width="64" height="64">
    <properties>
-    <property name="isDefaultStart" type="bool" value="true"/>
     <property name="questId" value="quest1"/>
+    <property name="targetMapId" value="village"/>
    </properties>
   </object>
-  <object id="44" name="npc1" gid="16" x="190" y="420" width="64" height="64"/>
+  <object id="44" name="npc1" gid="16" x="250" y="450" width="64" height="64"/>
  </objectgroup>
 </map>

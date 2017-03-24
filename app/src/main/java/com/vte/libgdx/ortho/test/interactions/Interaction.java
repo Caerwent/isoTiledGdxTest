@@ -11,6 +11,8 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
 import com.vte.libgdx.ortho.test.MyGame;
+import com.vte.libgdx.ortho.test.audio.AudioEvent;
+import com.vte.libgdx.ortho.test.audio.AudioManager;
 import com.vte.libgdx.ortho.test.box2d.CircleShape;
 import com.vte.libgdx.ortho.test.box2d.PolygonShape;
 import com.vte.libgdx.ortho.test.box2d.Shape;
@@ -393,11 +395,18 @@ public class Interaction extends Entity implements ICollisionHandler, IInteracti
         if (mEffectAction != null && mEffectAction.targetDuration != 0) {
             mEffectActionTime += dt;
             float timeAction = mEffectAction.targetDuration;
+            boolean isTerminated=false;
             if(timeAction<0)
             {
-                timeAction =  mEffectAction.frames.size()/mEffectAction.fps;
+                //timeAction =  mEffectAction.frames.size()/mEffectAction.fps;
+                isTerminated = mCurrentState.isCompleted(mStateTime);
             }
-            if (mEffectActionTime > timeAction) {
+            else if (mEffectActionTime > timeAction) {
+                isTerminated=true;
+
+            }
+            if(isTerminated)
+            {
                 stopEffectAction();
             }
         }
@@ -589,14 +598,20 @@ public class Interaction extends Entity implements ICollisionHandler, IInteracti
         mZoneLaunchedEffect.setY(getY());
         mEffectLaunchedEntity = new Entity();
         EntityEngine.getInstance().addEntity(mEffectLaunchedEntity);
-        mEffectLaunchedEntity.add(new CollisionComponent(CollisionComponent.EFFECT, mZoneLaunchedEffect, mId, mEffectLaunched, this));
+        mEffectLaunchedEntity.add(new CollisionComponent(CollisionComponent.EFFECT, mZoneLaunchedEffect, mId, mEffectLaunched, null));
 
+        if(mEffectLaunched.sound!=null && !mEffectLaunched.sound.isEmpty()) {
+            AudioManager.getInstance().onAudioEvent(new AudioEvent(AudioEvent.Type.SOUND_PLAY_ONCE, mEffectLaunched.sound));
+        }
     }
 
     protected void stopLaunchedEffect() {
         if (mEffectLaunched == null)
             return;
 
+        if(mEffectLaunched.sound!=null && !mEffectLaunched.sound.isEmpty()) {
+            AudioManager.getInstance().onAudioEvent(new AudioEvent(AudioEvent.Type.SOUND_STOP, mEffectLaunched.sound));
+        }
         EntityEngine.getInstance().removeEntity(mEffectLaunchedEntity);
         mEffectLaunched = null;
         mEffectLaunchedTime = 0;
@@ -618,29 +633,14 @@ public class Interaction extends Entity implements ICollisionHandler, IInteracti
         if (mEffectLaunched != null) {
             TransformComponent transform = this.getComponent(TransformComponent.class);
 
-            TextureRegion effectRegion = mEffectLaunched.getTextureRegion(mEffectLaunchedTime);
+            mEffectLaunched.renderEffect(aBatch,
+                    mCurrentFrame.getRegionWidth(),
+                    mCurrentFrame.getRegionHeight(),
+                    transform.position.x + transform.originOffset.x,
+                    transform.position.y + transform.originOffset.y,
+                    transform.scale,
+                    mEffectLaunchedTime);
 
-
-            float width = effectRegion.getRegionWidth();
-            float height = effectRegion.getRegionHeight();
-
-            //Allow for Offset
-            float originX = -transform.scale * mCurrentFrame.getRegionWidth() / 2;
-            float originY = -transform.scale * mCurrentFrame.getRegionWidth() / 2;
-            float offsetX = transform.scale *(mCurrentFrame.getRegionWidth() / 2 - effectRegion.getRegionWidth()/2);
-            float offsetY = transform.scale *(mCurrentFrame.getRegionHeight() / 2 - effectRegion.getRegionHeight()/2);
-
-            float effectScale =mEffectLaunched.distance;
-            if(effectScale<=0)
-            {
-                effectScale=1;
-            }
-            aBatch.draw(effectRegion,
-                    transform.position.x + transform.originOffset.x, transform.position.y + transform.originOffset.y,
-                    offsetX, offsetY,
-                    width, height,
-                    transform.scale * effectScale , transform.scale * effectScale,
-                    transform.angle);
 
         }
     }

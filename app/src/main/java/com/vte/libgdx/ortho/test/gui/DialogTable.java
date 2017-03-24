@@ -13,6 +13,7 @@ import com.vte.libgdx.ortho.test.dialogs.GameDialogStep;
 import com.vte.libgdx.ortho.test.events.EventDispatcher;
 import com.vte.libgdx.ortho.test.events.IDialogListener;
 import com.vte.libgdx.ortho.test.interactions.InteractionEvent;
+import com.vte.libgdx.ortho.test.screens.GenericUI;
 
 /**
  * Created by vincent on 06/01/2017.
@@ -29,23 +30,23 @@ public class DialogTable extends Table implements IDialogListener {
 
     public DialogTable(int aWidth, int aHeight) {
         setSize(aWidth, aHeight);
-        mSpeakerLabel=new Label("", UIStage.getInstance().getSkin(), "dialog-speaker");
+        mSpeakerLabel=new Label("", GenericUI.getInstance().getSkin(), "dialog-speaker");
         mSpeakerLabel.setAlignment(Align.topLeft);
         this.add(mSpeakerLabel).top().left();
-        mLabel = new Label("", UIStage.getInstance().getSkin(), "dialog-detail");
+        mLabel = new Label("", GenericUI.getInstance().getSkin(), "dialog-detail");
         mLabel.setWrap(true);
         mLabel.setSize(aWidth, aHeight);
         mLabel.setAlignment(Align.topLeft);
-        mScrollPane = new ScrollPane(mLabel, UIStage.getInstance().getSkin(), "dialogPane");
+        mScrollPane = new ScrollPane(mLabel, GenericUI.getInstance().getSkin(), "dialogPane");
         this.add(mScrollPane).pad(14,14,14,14).expand().fill().top();
        /* mScrollPane.setForceScroll(false, true);
         mScrollPane.setFlickScroll(false);
         mScrollPane.setOverscroll(false, true);*/
         mScrollPane.setScrollingDisabled(true, false);
         //mScrollPane.setFillParent(true);
-        setBackground(UIStage.getInstance().getSkin().getDrawable("dialog"));
+        setBackground(GenericUI.getInstance().getSkin().getDrawable("dialog"));
        // setColor(UIStage.getInstance().getSkin().getColor("lt-blue"));
-        setSkin(UIStage.getInstance().getSkin());
+        setSkin(GenericUI.getInstance().getSkin());
         setName("Dialog");
         row();
         addListener(new ClickListener() {

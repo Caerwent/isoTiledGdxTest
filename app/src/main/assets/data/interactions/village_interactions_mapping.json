@@ -1,0 +1,14 @@
+[
+  {
+    "id":"portal1",
+    "template":"portal.json",
+    "eventsAction":[],
+    "outputEvents":[]
+  },
+  {
+    "id":"defaultPortal",
+    "template":"portal.json",
+    "eventsAction":[],
+    "outputEvents":[]
+  }
+]

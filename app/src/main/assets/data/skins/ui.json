@@ -95,11 +95,15 @@
   "com.badlogic.gdx.scenes.scene2d.ui.Window$WindowStyle": {
     "default": {
       "titleFont": "default-font",
-      "background": "window"
+      "background": "dialog"
     },
     "solidbackground": {
       "titleFont": "default-font",
-      "background": "window"
+      "background": "dialog"
+    },
+    "dialog": {
+      "titleFont": "default-font",
+      "background": "dialog"
     },
   },
   "com.badlogic.gdx.scenes.scene2d.ui.ImageButton$ImageButtonStyle": {
@@ -114,4 +118,17 @@
     },
 
   },
+  "com.badlogic.gdx.scenes.scene2d.ui.Slider$SliderStyle": {
+  "default-horizontal": {
+    "background": "slider1",
+    "knob": "slider2" }
+},
+  "com.badlogic.gdx.scenes.scene2d.ui.CheckBox$CheckBoxStyle": {
+  "default": {
+    "checkboxOn": "checkbox_checked",
+    "checkboxOff": "checkbox_unchecked",
+    "font": "default-font",
+    "fontColor": "white"
+  }
+},
 }
