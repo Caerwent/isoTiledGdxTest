@@ -9,6 +9,7 @@
   "states": [
     {
       "name": "IDLE",
+      "isLooping":"true",
       "fps":"0",
       "frames": [
         "idle"
@@ -16,6 +17,7 @@
     },
     {
       "name": "FROZEN",
+      "isLooping":"true",
       "fps":"0",
       "frames": [
         "frozen"
@@ -23,6 +25,7 @@
     },
     {
       "name": "MOVE_DOWN",
+      "isLooping":"true",
       "fps":"10",
       "frames": [
         "move_down_1",
@@ -32,6 +35,7 @@
     },
     {
       "name": "MOVE_UP",
+      "isLooping":"true",
       "fps":"10",
       "frames": [
         "move_up_1",
@@ -41,6 +45,7 @@
     },
     {
       "name": "MOVE_LEFT",
+      "isLooping":"true",
       "fps":"10",
       "frames": [
         "move_left_1",
@@ -50,6 +55,7 @@
     },
     {
       "name": "MOVE_RIGHT",
+      "isLooping":"true",
       "fps":"10",
       "frames": [
         "move_right_1",
@@ -59,6 +65,7 @@
     },
     {
       "name": "BURNING",
+      "isLooping":"false",
       "fps":"10",
       "frames": [
         "burning_1",

@@ -3,7 +3,6 @@ package com.vte.libgdx.ortho.test.interactions.monsters;
 import com.badlogic.gdx.maps.MapProperties;
 import com.badlogic.gdx.math.Vector2;
 import com.vte.libgdx.ortho.test.box2d.PathMap;
-import com.vte.libgdx.ortho.test.effects.Effect;
 import com.vte.libgdx.ortho.test.entity.components.TransformComponent;
 import com.vte.libgdx.ortho.test.entity.components.VelocityComponent;
 import com.vte.libgdx.ortho.test.interactions.Interaction;
@@ -63,23 +62,18 @@ public class InteractionMonster1 extends Interaction {
 
     @Override
     protected void doActionOnEvent(InteractionEventAction aAction) {
-        if (aAction != null && "WAKEUP".equals(aAction.id)) {
+        super.doActionOnEvent(aAction);
+        if (aAction != null && InteractionEventAction.ActionType.WAKEUP.name().equals(aAction.id)) {
             if (mPath != null) {
                 setMovable(true);
             }
         }
-    }
-
-    @Override
-    protected void stopEffectAction() {
-        if (mEffectAction.id== Effect.Type.BURN && mEffectAction.targetDuration < 0) {
-            mIsDestroyed = true;
-        }
-        super.stopEffectAction();
-        if (mIsDestroyed) {
+        else if(aAction != null && InteractionEventAction.ActionType.REMOVED.name().equals(aAction.id)) {
+            mIsDestroyed=true;
             mMap.getInteractions().removeValue(this, true);
             destroy();
         }
     }
+
 
 }

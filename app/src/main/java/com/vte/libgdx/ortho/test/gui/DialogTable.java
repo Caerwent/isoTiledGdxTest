@@ -87,9 +87,7 @@ public class DialogTable extends Table implements IDialogListener {
             }
             else
             {
-                InteractionEvent event = new InteractionEvent();
-                event.type = InteractionEvent.EventType.DIALOG.name();
-                event.value = mDialog.getId();
+                InteractionEvent event = new InteractionEvent(null, InteractionEvent.EventType.DIALOG.name(), mDialog.getId());
                 EventDispatcher.getInstance().onInteractionEvent(event);
                 onStopDialog(mDialog);
             }

@@ -21,6 +21,7 @@ public class InteractionState {
     public final static String STATE_FROZEN="FROZEN";
     public final static String STATE_BURNING="BURNING";
     public String name;
+    public boolean isLooping;
     public int fps;
     public ArrayList<String> frames;
 
@@ -45,7 +46,7 @@ public class InteractionState {
             }
 
             mAnimation = new Animation((1F / (float)fps), regions);
-            mAnimation.setPlayMode(Animation.PlayMode.LOOP);
+            mAnimation.setPlayMode(isLooping ? Animation.PlayMode.LOOP : Animation.PlayMode.NORMAL);
         }
     }
 
@@ -55,18 +56,22 @@ public class InteractionState {
         {
             return mFixRegion;
         }
-        return mAnimation.getKeyFrame(aTime, true);
+        else if(mAnimation!=null) {
+            return mAnimation.getKeyFrame(aTime, true);
+        }
+        return null;
     }
 
     public boolean isCompleted(float stateTime)
     {
-        if(mFixRegion!=null)
+        if(mFixRegion!=null && isLooping)
         {
-            return true;
+            return false;
         }
-        else
+        else if(mAnimation!=null)
         {
             return mAnimation.isAnimationFinished(stateTime);
         }
+        return true;
     }
 }

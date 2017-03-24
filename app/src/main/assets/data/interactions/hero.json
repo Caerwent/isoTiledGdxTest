@@ -10,12 +10,14 @@
     {
       "name": "IDLE",
       "fps":"0",
+      "isLooping":"true",
       "frames": [
         "idle"
       ]
     },
     {
       "name": "MOVE_DOWN",
+      "isLooping":"true",
       "fps":"6",
       "frames": [
         "move_down_1",
@@ -25,6 +27,7 @@
     },
     {
       "name": "MOVE_UP",
+      "isLooping":"true",
       "fps":"6",
       "frames": [
         "move_up_1",
@@ -34,6 +37,7 @@
     },
     {
       "name": "MOVE_LEFT",
+      "isLooping":"true",
       "fps":"6",
       "frames": [
         "move_left_1",
@@ -43,6 +47,7 @@
     },
     {
       "name": "MOVE_RIGHT",
+      "isLooping":"true",
       "fps":"6",
       "frames": [
         "move_right_1",

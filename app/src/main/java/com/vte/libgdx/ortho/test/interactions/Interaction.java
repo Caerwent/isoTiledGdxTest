@@ -171,15 +171,20 @@ public class Interaction extends Entity implements ICollisionHandler, IInteracti
 
     protected void setState(String aStateName) {
         InteractionState state = getState(aStateName);
-        if (state != null) {
+        if (state != null && state!=mCurrentState) {
             mCurrentState = state;
             mStateTime=0;
             if (mOutputEvents != null) {
                 for (InteractionEvent event : mOutputEvents) {
-                    if (InteractionEvent.EventType.STATE == InteractionEvent.EventType.valueOf(event.type)) {
+                    if (InteractionEvent.EventType.STATE == InteractionEvent.EventType.valueOf(event.type) &&
+                            mCurrentState.name.equals(event.value)) {
                         EventDispatcher.getInstance().onInteractionEvent(event);
                     }
                 }
+            }
+            if(mCurrentState.name.compareTo(InteractionState.STATE_FROZEN)==0)
+            {
+                setMovable(false);
             }
         }
     }
@@ -285,11 +290,11 @@ public class Interaction extends Entity implements ICollisionHandler, IInteracti
 
         if (velocity != null) {
             if (velocity.y == 0 && velocity.x == 0) {
-                mCurrentState = getState(mDef.defaultState);
+                setState(mDef.defaultState);
                 mStateTime = 0;
             } else {
                 if (velocity.y == 0) {
-                    mCurrentState = getState(velocity.x < 0 ? InteractionState.STATE_MOVE_LEFT : InteractionState.STATE_MOVE_RIGHT);
+                    setState(velocity.x < 0 ? InteractionState.STATE_MOVE_LEFT : InteractionState.STATE_MOVE_RIGHT);
                 } else {
                     double angle = Math.atan2(velocity.y, velocity.x);
                     double PI4 = Math.PI / 4;
@@ -298,13 +303,13 @@ public class Interaction extends Entity implements ICollisionHandler, IInteracti
                     }
 
                     if (angle > 7 * PI4 || angle <= PI4) {
-                        mCurrentState = getState(InteractionState.STATE_MOVE_RIGHT);
+                        setState(InteractionState.STATE_MOVE_RIGHT);
                     } else if (angle > PI4 && angle <= 3 * PI4) {
-                        mCurrentState = getState(InteractionState.STATE_MOVE_UP);
+                        setState(InteractionState.STATE_MOVE_UP);
                     } else if (angle > 3 * PI4 && angle <= 5 * PI4) {
-                        mCurrentState = getState(InteractionState.STATE_MOVE_LEFT);
+                        setState(InteractionState.STATE_MOVE_LEFT);
                     } else if (angle > 5 * PI4 && angle <= 7 * PI4) {
-                        mCurrentState = getState(InteractionState.STATE_MOVE_DOWN);
+                        setState(InteractionState.STATE_MOVE_DOWN);
                     }
                 }
             }
@@ -373,6 +378,18 @@ public class Interaction extends Entity implements ICollisionHandler, IInteracti
         updateLaunchedEffect(dt);
         updateEffectAction(dt);
         mStateTime += dt;
+        if(mCurrentState.isCompleted(mStateTime))
+        {
+
+            if (mOutputEvents != null) {
+                for (InteractionEvent event : mOutputEvents) {
+                    if (InteractionEvent.EventType.END_STATE == InteractionEvent.EventType.valueOf(event.type) &&
+                            mCurrentState.name.equals(event.value)) {
+                        EventDispatcher.getInstance().onInteractionEvent(event);
+                    }
+                }
+            }
+        }
     }
 
     protected void updateLaunchedEffect(float dt) {
@@ -473,20 +490,8 @@ public class Interaction extends Entity implements ICollisionHandler, IInteracti
     public boolean onStartEffectInteraction(CollisionComponent aEntity) {
         Effect effect = (Effect) aEntity.mData;
         if (effect != null) {
-            InteractionState effectState = getState(effect.targetState);
-            if (effectState != null) {
-                mEffectAction = effect;
-                mEffectActionTime = 0;
-
-                mBeforeEffectActionState = mCurrentState;
-                setState(effect.targetState);
-
-                if (mIsMovable) {
-                    remove(VelocityComponent.class);
-                }
-
-                return true;
-            }
+            mEffectAction = effect;
+            EventDispatcher.getInstance().onInteractionEvent(new InteractionEvent(getId(), InteractionEvent.EventType.EFFECT_START.name(),effect.id.name()));
         }
         return false;
     }
@@ -586,7 +591,12 @@ public class Interaction extends Entity implements ICollisionHandler, IInteracti
     }
 
     protected void doActionOnEvent(InteractionEventAction aAction) {
-
+        if (aAction != null && InteractionEventAction.ActionType.SET_STATE.name().equals(aAction.id)) {
+            if(getState(aAction.value)!=null)
+            {
+                setState(aAction.value);
+            }
+        }
     }
 
     public void launchEffect(Effect aEffect) {
@@ -619,14 +629,9 @@ public class Interaction extends Entity implements ICollisionHandler, IInteracti
     }
 
     protected void stopEffectAction() {
+        EventDispatcher.getInstance().onInteractionEvent(new InteractionEvent(getId(), InteractionEvent.EventType.EFFECT_STOP.name(),mEffectAction.id.name()));
         mEffectAction = null;
         mEffectActionTime = 0;
-        if (mBeforeEffectActionState != null) {
-            mCurrentState = mBeforeEffectActionState;
-            mBeforeEffectActionState = null;
-        }
-
-        setMovable(isMovable());
     }
 
     protected void renderEffect(Batch aBatch) {

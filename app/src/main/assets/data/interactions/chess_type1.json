@@ -9,6 +9,7 @@
   "states": [
     {
       "name": "CLOSED",
+      "isLooping":"true",
       "fps":"0",
       "frames": [
         "closed"
@@ -16,6 +17,7 @@
     },
     {
       "name": "OPEN",
+      "isLooping":"true",
       "fps":"0",
       "frames": [
         "open"

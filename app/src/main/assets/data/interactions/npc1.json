@@ -9,6 +9,7 @@
   "states": [
     {
       "name": "IDLE",
+      "isLooping":"true",
       "fps":"0",
       "frames": [
         "idle"

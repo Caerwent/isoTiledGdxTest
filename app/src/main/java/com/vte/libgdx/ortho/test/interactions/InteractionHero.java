@@ -37,7 +37,14 @@ public class InteractionHero extends Interaction {
     }
 
     PathHero mPath;
-
+    @Override
+    public void setMovable(boolean isMovable) {
+        super.setMovable(isMovable);
+        if(mPath!=null && !isMovable())
+        {
+            setPath(null);
+        }
+    }
     public void setPath(PathHero p) {
         mPath = p;
         if (mPath == null) {

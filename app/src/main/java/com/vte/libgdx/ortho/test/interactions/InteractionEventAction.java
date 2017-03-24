@@ -7,6 +7,13 @@ import java.util.ArrayList;
  */
 
 public class InteractionEventAction {
+    public static enum ActionType {
+        SET_STATE,
+        WAKEUP,
+        OPEN,
+        CLOSE,
+        REMOVED;
+    }
     public String id;
     public String value;
     public ArrayList<InteractionEvent> inputEvents;

@@ -14,9 +14,61 @@
             "value":"ACTIVATED"
           }
         ]
+      },
+      {
+      "id":"REMOVED",
+      "value":"",
+      "inputEvents":[
+      {
+      "sourceId":"monster1",
+      "type":"END_STATE",
+      "value":"BURNING"
+      }
+      ]
+    },
+      {
+        "id":"SET_STATE",
+        "value":"BURNING",
+        "inputEvents":[
+          {
+            "sourceId":"monster1",
+            "type":"EFFECT_START",
+            "value":"BURN"
+          }
+        ]
+      },
+      {
+        "id":"SET_STATE",
+        "value":"FROZEN",
+        "inputEvents":[
+          {
+            "sourceId":"monster1",
+            "type":"EFFECT_START",
+            "value":"FREEZE"
+          }
+        ]
+      }
+    ,
+      {
+        "id":"SET_STATE",
+        "value":"IDLE",
+        "inputEvents":[
+          {
+            "sourceId":"monster1",
+            "type":"EFFECT_STOP",
+            "value":"FREEZE"
+          }
+        ]
       }
     ],
-    "outputEvents":[]
+    "outputEvents":[{
+      "type":"END_STATE",
+      "value":"BURNING"
+    },
+      {
+        "type":"END_STATE",
+        "value":"FROZEN"
+      }]
   },
   {
     "id":"activator1",

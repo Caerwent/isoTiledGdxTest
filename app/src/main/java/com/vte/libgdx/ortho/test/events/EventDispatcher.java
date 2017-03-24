@@ -196,20 +196,28 @@ public class EventDispatcher implements IDialogListener, IItemListener, IQuestLi
     }
 
     public void addInteractionEventListener(IInteractionEventListener aListener) {
-        if (!mInteractionEventListeners.contains(aListener)) {
-            mInteractionEventListeners.add(aListener);
+        synchronized (mInteractionEventListeners) {
+            if (!mInteractionEventListeners.contains(aListener)) {
+                mInteractionEventListeners.add(aListener);
+            }
         }
     }
 
     public void removeInteractionEventListener(IInteractionEventListener aListener) {
-        if (mInteractionEventListeners.contains(aListener)) {
-            mInteractionEventListeners.remove(aListener);
+        synchronized (mInteractionEventListeners) {
+            if (mInteractionEventListeners.contains(aListener)) {
+                mInteractionEventListeners.remove(aListener);
+            }
         }
     }
     @Override
     public void onInteractionEvent(InteractionEvent aEvent) {
-        for (IInteractionEventListener listener : mInteractionEventListeners) {
-            listener.onInteractionEvent(aEvent);
+        synchronized (mInteractionEventListeners) {
+            for (int i = 0; i < mInteractionEventListeners.size(); i++)
+            {
+                mInteractionEventListeners.get(i).onInteractionEvent(aEvent);
+
+            }
         }
     }
 }

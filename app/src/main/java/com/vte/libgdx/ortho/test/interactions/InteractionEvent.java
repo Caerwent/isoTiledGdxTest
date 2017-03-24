@@ -7,7 +7,10 @@ package com.vte.libgdx.ortho.test.interactions;
 public class InteractionEvent {
     public static enum EventType {
         STATE,
-        DIALOG;
+        END_STATE,
+        DIALOG,
+        EFFECT_START,
+        EFFECT_STOP;
     }
     public String sourceId;
     public String type;
@@ -23,5 +26,14 @@ public class InteractionEvent {
     public void setPerformed(boolean isPerformed)
     {
         mIsPerformed=isPerformed;
+    }
+
+    public InteractionEvent(){}
+
+    public InteractionEvent(String aSourceId, String aType, String aValue)
+    {
+        sourceId = aSourceId;
+        type=aType;
+        value=aValue;
     }
  }

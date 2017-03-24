@@ -9,11 +9,13 @@
   "states": [
     {
       "name": "IDLE",
+      "isLooping":"true",
       "fps":"0",
       "frames": []
     },
     {
       "name": "ACTIVATED",
+      "isLooping":"true",
       "fps":"0",
       "frames": []
     }
