@@ -28,7 +28,6 @@ import com.vte.libgdx.ortho.test.Settings;
 import com.vte.libgdx.ortho.test.box2d.Shape;
 import com.vte.libgdx.ortho.test.entity.EntityEngine;
 import com.vte.libgdx.ortho.test.entity.components.InputComponent;
-import com.vte.libgdx.ortho.test.entity.systems.BobSystem;
 import com.vte.libgdx.ortho.test.entity.systems.CollisionSystem;
 import com.vte.libgdx.ortho.test.entity.systems.InteractionSystem;
 import com.vte.libgdx.ortho.test.entity.systems.MovementSystem;
@@ -158,8 +157,6 @@ public class GameScreen implements Screen, InputProcessor {
         }
         Gdx.input.setInputProcessor(mInputMultiplexer);
         EntityEngine.getInstance().addSystem(new MovementSystem());
-        // EntityEngine.getInstance().addSystem(new VisualRenderSystem(camera));
-        EntityEngine.getInstance().addSystem(new BobSystem());
         EntityEngine.getInstance().addSystem(new CollisionSystem());
         EntityEngine.getInstance().addSystem(new InteractionSystem());
         EntityEngine.getInstance().addSystem(new PathRenderSystem(pathRenderer));
@@ -173,8 +170,6 @@ public class GameScreen implements Screen, InputProcessor {
         }
         Gdx.input.setInputProcessor(null);
         EntityEngine.getInstance().removeSystem(EntityEngine.getInstance().getSystem(MovementSystem.class));
-        // EntityEngine.getInstance().addSystem(new VisualRenderSystem(camera));
-        EntityEngine.getInstance().removeSystem(EntityEngine.getInstance().getSystem(BobSystem.class));
         EntityEngine.getInstance().removeSystem(EntityEngine.getInstance().getSystem(CollisionSystem.class));
         EntityEngine.getInstance().removeSystem(EntityEngine.getInstance().getSystem(InteractionSystem.class));
         EntityEngine.getInstance().removeSystem(EntityEngine.getInstance().getSystem(PathRenderSystem.class));

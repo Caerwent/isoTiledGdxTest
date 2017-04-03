@@ -18,7 +18,7 @@
     {
       "name": "MOVE_DOWN",
       "isLooping":"true",
-      "fps":"6",
+      "fps":"10",
       "frames": [
         "move_down_1",
         "move_down_2",
@@ -28,7 +28,7 @@
     {
       "name": "MOVE_UP",
       "isLooping":"true",
-      "fps":"6",
+      "fps":"10",
       "frames": [
         "move_up_1",
         "move_up_2",
@@ -38,7 +38,7 @@
     {
       "name": "MOVE_LEFT",
       "isLooping":"true",
-      "fps":"6",
+      "fps":"10",
       "frames": [
         "move_left_1",
         "move_left_2",
@@ -48,7 +48,7 @@
     {
       "name": "MOVE_RIGHT",
       "isLooping":"true",
-      "fps":"6",
+      "fps":"10",
       "frames": [
         "move_right_1",
         "move_right_2",

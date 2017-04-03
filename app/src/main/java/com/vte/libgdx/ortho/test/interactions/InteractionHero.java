@@ -10,7 +10,6 @@ import com.vte.libgdx.ortho.test.audio.AudioManager;
 import com.vte.libgdx.ortho.test.box2d.PathHero;
 import com.vte.libgdx.ortho.test.effects.Effect;
 import com.vte.libgdx.ortho.test.effects.EffectFactory;
-import com.vte.libgdx.ortho.test.entity.components.BobComponent;
 import com.vte.libgdx.ortho.test.entity.components.CollisionComponent;
 import com.vte.libgdx.ortho.test.entity.components.TransformComponent;
 import com.vte.libgdx.ortho.test.events.EventDispatcher;
@@ -32,7 +31,6 @@ public class InteractionHero extends Interaction {
         mType = Type.HERO;
         CollisionComponent collisionComponent = this.getComponent(CollisionComponent.class);
         collisionComponent.mType = CollisionComponent.CHARACTER;
-        this.add(new BobComponent(this));
 
     }
 
