@@ -2,12 +2,20 @@
   {
     "id":"portal1",
     "template":"portal.json",
+    "properties": {
+      "targetMapId":"village",
+      "isDefaultStart":"true"
+    },
     "eventsAction":[],
     "outputEvents":[]
   },
   {
     "id":"portal2",
     "template":"portal.json",
+    "properties": {
+      "targetMapId":"ortho2",
+      "activatedByQuestId":"quest_malo"
+    },
     "eventsAction":[],
     "outputEvents":[]
   },
@@ -17,22 +25,45 @@
     "properties":{
       "dialogId":"npc1"
     },
+    "questActions":[
+      {
+        "questId":"quest_talk_malo",
+        "questState":"NOT_COMPLETED",
+        "actionId":"DIALOG",
+        "actionValue":"quest_malo_activated"
+      },
+      {
+        "questId":"quest_malo",
+        "questState":"NOT_COMPLETED",
+        "actionId":"DIALOG",
+        "actionValue":"quest_malo_notCompleted"
+      },
+      {
+        "questId":"quest_malo",
+        "questState":"COMPLETED",
+        "actionId":"DIALOG",
+        "actionValue":"quest_malo_completed"
+      },
+      {
+        "questId":"quest_malo",
+        "questState":"FINISHED",
+        "actionId":"DIALOG",
+        "actionValue":"quest_malo_finished"
+      }
+    ],
     "eventsAction":[
       {
         "id":"DIALOG",
-        "value":"endQuest2",
+        "value":"quest_malo_finished",
         "inputEvents":[
           {
             "sourceId":"",
             "type":"DIALOG",
-            "value":"dquest2TasksCompleted"
+            "value":"quest_malo_completed"
           }
         ]
       }
     ],
-    "outputEvents":[{
-      "type":"TALK",
-      "value":""
-    }]
+    "outputEvents":[]
   }
 ]

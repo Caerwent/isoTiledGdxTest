@@ -1,6 +1,6 @@
 {
   "type":"NPC",
-  "atlas":"malo.atlas",
+  "atlas":"lapin_jaune.atlas",
   "isPersistent":"true",
   "defaultState":"IDLE",
   "isClickable": "true",
@@ -18,17 +18,8 @@
 
   ],
   "eventsAction":[
-    {
-      "id":"DIALOG",
-      "inputEvents":[
-        {
-          "sourceId":"",
-          "type":"END_DIALOG",
-          "value":"dquest2TasksCompleted"
-        }
-      ]
-    }
-  ],
+
+  ]
 
 
 

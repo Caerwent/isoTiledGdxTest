@@ -1,0 +1,20 @@
+
+{
+	"id": "quest_start",
+	"title":"quest_start_title",
+	"desc":"quest_start_desc",
+	"itemsReward":["key"],
+	"requiredCompletedQuest": [],
+	"tasks" : [
+		{
+			"id": "quest_start_task1",
+			"type":"DIALOG",
+			"targetId":"quest_lapin_jaune",
+			"value":"",
+			"requiredCompletedTask":[]
+		}
+	]
+
+
+}
+

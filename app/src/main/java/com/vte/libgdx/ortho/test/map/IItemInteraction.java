@@ -16,4 +16,6 @@ public interface IItemInteraction {
 
     public Type getInteractionType();
 
+    public void destroy();
+
 }

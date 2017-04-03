@@ -1,10 +1,14 @@
 package com.vte.libgdx.ortho.test.box2d;
 
+import android.graphics.Rect;
+
 import com.badlogic.gdx.math.Circle;
 import com.badlogic.gdx.math.Intersector;
 import com.badlogic.gdx.math.Polygon;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
+
+import java.util.ArrayList;
 
 /**
  * Created by gwalarn on 20/11/16.
@@ -111,7 +115,6 @@ public class ShapeUtils {
     static public boolean overlaps(Polygon polygon, Circle circle) {
         float[] vertices = polygon.getTransformedVertices();
         Vector2 center = new Vector2(circle.x, circle.y);
-        Vector2 displacement = new Vector2();
         float squareRadius = circle.radius * circle.radius;
         boolean ovelaps = false;
 
@@ -140,8 +143,7 @@ public class ShapeUtils {
         rectPolygon.setPosition(rect.x , rect.y );
         boolean ovelaps = false;
 
-
-        if(Intersector.overlapConvexPolygons(polygon, rectPolygon, null))
+        if(intersectPolygons(polygon, rectPolygon))
         {
             ovelaps = true;
         }
@@ -166,15 +168,63 @@ public class ShapeUtils {
         }
         else if(aShape.getType()== Shape.Type.RECT)
         {
-            logStr="(X="+((RectangleShape) aShape).getX()+", Y="+((RectangleShape) aShape).getY()+", WxH="+((RectangleShape) aShape).getShape().getWidth()+"x"+((RectangleShape) aShape).getShape().getHeight()+")";
+            Rectangle rect = aShape.getBounds();
+            logStr="("+rect.x+", "+rect.y+") ("+(rect.x+rect.getWidth())+", "+rect.y+") ("+(rect.x+rect.getWidth())+", "+(rect.y+rect.getHeight())+") ("+rect.x+", "+(rect.y+rect.getHeight())+")";
         }
         return logStr;
+    }
+    /** Returns true if the specified point is in the polygon.
+     * @param offset Starting polygon index.
+     * @param count Number of array indices to use after offset. */
+    public static boolean isPointInPolygon (float[] polygon, int offset, int count, float x, float y) {
+        boolean oddNodes = false;
+        int j = offset + count - 2;
+        for (int i = offset, n = j; i <= n; i += 2) {
+            float yi = polygon[i + 1];
+            float yj = polygon[j + 1];
+            if ((yi < y && yj > y) || (yj < y && yi > y)) {
+                float xi = polygon[i];
+                if (xi + (y - yi) / (yj - yi) * (polygon[j] - xi) < x) oddNodes = !oddNodes;
+            }
+            j = i;
+        }
+        return oddNodes;
+    }
+    /** Intersects the two closed polygons and returns the polygon resulting from the intersection.
+     *  Follows the Sutherland-Hodgman algorithm.
+     *
+     * @param p1 The polygon that is being clipped
+     * @param p2 The clip polygon
+     * @param overlap The intersection of the two polygons (optional)
+     * @return Whether the two polygons intersect.
+     */
+    public static boolean intersectPolygons (Polygon p1, Polygon p2) {
+        //Convert polygons into more practical format
+        ArrayList<Vector2> p1Points = new ArrayList<Vector2>();
+        ArrayList<Vector2> p2Points = new ArrayList<Vector2>();
+        float[] vertices1, vertices2;
+        vertices1 = p1.getTransformedVertices();
+        vertices2 = p2.getTransformedVertices();
+
+        for (int i = 0; i < vertices1.length; i += 2) {
+            if(isPointInPolygon(vertices2,0,vertices2.length,vertices1[i], vertices1[i + 1] )) {
+                return true;
+            }
+        }
+        for (int i = 0; i < vertices2.length; i += 2) {
+            if(isPointInPolygon(vertices1,0,vertices1.length,vertices2[i], vertices2[i + 1] )) {
+                return true;
+            }
+        }
+        return false;
+
     }
 
     static public boolean overlaps(Shape aShape, Shape aOtherShape)
     {
+
         if(aShape.getType()==Shape.Type.POLYGON && aOtherShape.getType()==Shape.Type.POLYGON) {
-            if (Intersector.overlapConvexPolygons(((PolygonShape) aShape).getShape(), ((PolygonShape) aOtherShape).getShape(), null)) {
+            if (intersectPolygons(((PolygonShape) aShape).getShape(), ((PolygonShape) aOtherShape).getShape())) {
                 return true;
             }
         }

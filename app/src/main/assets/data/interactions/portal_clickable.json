@@ -3,7 +3,7 @@
   "atlas":"",
   "isPersistent":"true",
   "defaultState":"IDLE",
-  "isClickable": "false",
+  "isClickable": "true",
   "isRendable": "false",
   "isMovable": "false",
   "states": [

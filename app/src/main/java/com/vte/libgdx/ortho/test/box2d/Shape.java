@@ -28,4 +28,5 @@ public abstract class Shape<T> {
     abstract public void setY(float y);
     abstract public Rectangle getBounds();
     abstract public Shape clone();
+    abstract public float getYAtX(float x);
 }

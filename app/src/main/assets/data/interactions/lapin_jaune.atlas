@@ -1,0 +1,75 @@
+lapin_jaune.png
+size: 234, 73
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+idle
+  rotate: false
+  xy: 26, 0
+  size: 23, 73
+  orig: 23, 73
+  offset: 0, 0
+  index: -1
+move_down1
+  rotate: false
+  xy: 0, 0
+  size: 23, 73
+  orig: 23, 73
+  offset: 0, 0
+  index: -1
+move_down2
+  rotate: false
+  xy: 26, 0
+  size: 23, 73
+  orig: 23, 73
+  offset: 0, 0
+  index: -1
+move_down3
+  rotate: false
+  xy: 52, 0
+  size: 22, 73
+  orig: 22, 73
+  offset: 0, 0
+  index: -1
+move_left1
+  rotate: false
+  xy: 78, 0
+  size: 20, 73
+  orig: 20, 73
+  offset: 0, 0
+  index: -1
+move_left2
+  rotate: false
+  xy: 102, 0
+  size: 22, 73
+  orig: 22, 73
+  offset: 0, 0
+  index: -1
+move_left3
+  rotate: false
+  xy: 130, 0
+  size: 20, 73
+  orig: 20, 73
+  offset: 0, 0
+  index: -1
+move_up1
+  rotate: false
+  xy: 155, 0
+  size: 23, 73
+  orig: 23, 73
+  offset: 0, 0
+  index: -1
+move_up2
+  rotate: false
+  xy: 185, 0
+  size: 23, 73
+  orig: 23, 73
+  offset: 0, 0
+  index: -1
+move_up3
+  rotate: false
+  xy: 210, 0
+  size: 24, 73
+  orig: 24, 73
+  offset: 0, 0
+  index: -1

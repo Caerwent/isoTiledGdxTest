@@ -26,7 +26,7 @@ public class ChararcterMoveController2 extends InputAdapter {
     final Vector3 last = new Vector3(-1, -1, -1);
     final Vector3 delta = new Vector3();
     Shape mPathSpot;
-    int mPointer=-1;
+    int mPointer = -1;
 
     Vector2 mLastPoint = new Vector2();
 
@@ -51,17 +51,17 @@ public class ChararcterMoveController2 extends InputAdapter {
 
     @Override
     public boolean touchDragged(int x, int y, int pointer) {
-        if(mPointer!=pointer)
+        if (mPointer != pointer)
             return false;
         if (!isActive)
             return false;
         camera.unproject(mCursorPoint.set(x, y, 0));
-     //   Gdx.app.debug("DEBUG", "segment (last, mCursorPoint)=[(" + last.x + "," + last.y + ")" + "(" + mCursorPoint.x + "," + mCursorPoint.y + ")]");
+        //   Gdx.app.debug("DEBUG", "segment (last, mCursorPoint)=[(" + last.x + "," + last.y + ")" + "(" + mCursorPoint.x + "," + mCursorPoint.y + ")]");
 
         if (mMap != null && !(last.x == -1 && last.y == -1 && last.z == -1) && !(last.x == mCursorPoint.x && last.y == mCursorPoint.y)) {
             delta.set(mCursorPoint);
             delta.sub(last);
-        //    Gdx.app.debug("DEBUG", "delta=(" + delta.x + "," + delta.y + ")");
+            //    Gdx.app.debug("DEBUG", "delta=(" + delta.x + "," + delta.y + ")");
 
             if (delta.x * delta.x + delta.y * delta.y < PathHero.CHECK_RADIUS)
                 return true;
@@ -76,19 +76,43 @@ public class ChararcterMoveController2 extends InputAdapter {
                 for (Entity entity : entities) {
 
                     CollisionComponent collision = entity.getComponent(CollisionComponent.class);
-                //    Gdx.app.debug("DEBUG", "check entity " + entity+ " "+collision.mName);
-                    if ( ( (collision.mType & CollisionComponent.OBSTACLE) != 0 || ( (collision.mType & CollisionComponent.OBSTACLE_MAPINTERACTION) != 0))
-                            && ShapeUtils.overlaps(collision.mShape, mPathSpot)) {
-                      //  Gdx.app.debug("DEBUG", "overlaps obstacle");
-                       if ( ( (collision.mType & CollisionComponent.OBSTACLE_MAPINTERACTION) == 0 &&
-                                mPathSpot.getBounds().getY() >= collision.mShape.getBounds().getY()) ||
+                    //    Gdx.app.debug("DEBUG", "check entity " + entity+ " "+collision.mName);
+                    if (((collision.mType & CollisionComponent.OBSTACLE) != 0 || ((collision.mType & CollisionComponent.OBSTACLE_MAPINTERACTION) != 0))
+                            && ShapeUtils.overlaps(mPathSpot, collision.mShape)) {
+                        //  Gdx.app.debug("DEBUG", "overlaps obstacle");
+                        float Ycollision = collision.mShape.getYAtX(mPathSpot.getX());
+                        float Ytmp = collision.mShape.getYAtX(mPathSpot.getX() + mPathSpot.getBounds().getWidth());
+                        if (Ycollision == -1 || (Ytmp!=-1 && Ytmp < Ycollision)) {
+                            Ycollision = Ytmp;
+                        }
+                        Ytmp = collision.mShape.getYAtX(mPathSpot.getX() + mPathSpot.getBounds().getWidth() / 2);
+                        if (Ycollision == -1 || (Ytmp!=-1 && Ytmp < Ycollision)) {
+                            Ycollision = Ytmp;
+                        }
+                        if (Ycollision == -1) {
+                            Ycollision = collision.mShape.getBounds().getY();
+                        }
+                        float Yspot = mPathSpot.getYAtX(mPathSpot.getX());
+                        Ytmp = mPathSpot.getYAtX(mPathSpot.getX() + mPathSpot.getBounds().getWidth());
+                        if (Yspot == -1 || (Ytmp!=-1 && Ytmp < Yspot)) {
+                            Yspot = Ytmp;
+                        }
+                        Ytmp = mPathSpot.getYAtX(mPathSpot.getX() + mPathSpot.getBounds().getWidth() / 2);
+                        if (Yspot == -1 || (Ytmp!=-1 && Ytmp<Yspot))  {
+                            Yspot = Ytmp;
+                        }
+                        if (Yspot == -1) {
+                            Yspot = mPathSpot.getBounds().getY();
+                        }
+                        if (((collision.mType & CollisionComponent.OBSTACLE_MAPINTERACTION) == 0 &&
+                                Yspot >= Ycollision) ||
 
-                                (mPathSpot.getBounds().getY() >= collision.mShape.getBounds().getY() &&
+                                (Yspot >= Ycollision &&
                                         (collision.mType & CollisionComponent.OBSTACLE_MAPINTERACTION) != 0 &&
-                                        (mPathSpot.getBounds().getY() - collision.mShape.getBounds().getY() <= 0.5))
+                                        ((Yspot - Ycollision) <= 0.5)
                                 )
-                        {
-                        //    Gdx.app.debug("DEBUG", "collision");
+                                ) {
+                            //Gdx.app.debug("DEBUG", "collision");
                             hasCollision = true;
                             break;
 
@@ -97,13 +121,13 @@ public class ChararcterMoveController2 extends InputAdapter {
                 }
 
             }
-        //    Gdx.app.debug("DEBUG", "hasCollision=" + hasCollision);
+            //    Gdx.app.debug("DEBUG", "hasCollision=" + hasCollision);
 
             if (!hasCollision) {
 
                 double dx = mPathSpot.getX() - mLastPoint.x;
                 double dy = mPathSpot.getY() - mLastPoint.y;
-            //    Gdx.app.debug("DEBUG", "D=" + (x * dx + dy * dy));
+                //    Gdx.app.debug("DEBUG", "D=" + (x * dx + dy * dy));
                 if ((dx * dx + dy * dy) >= PathHero.CHECK_RADIUS) {
                     path.addPoint(mPathSpot.getX(), mPathSpot.getY());
                     mLastPoint.set(mPathSpot.getX(), mPathSpot.getY());
@@ -120,8 +144,7 @@ public class ChararcterMoveController2 extends InputAdapter {
     @Override
     public boolean touchDown(int x, int y, int pointer, int button) {
 
-        if(mPointer!=-1 && mPointer!=pointer)
-        {
+        if (mPointer != -1 && mPointer != pointer) {
             return false;
         }
         mPointer = pointer;
@@ -133,7 +156,7 @@ public class ChararcterMoveController2 extends InputAdapter {
             if (path != null)
                 path.destroy();
             path = new PathHero();
-            mMap.getPlayer().getHero().setVelocity(0,0);
+            mMap.getPlayer().getHero().setVelocity(0, 0);
             Vector2 bobPos = mMap.getPlayer().getHero().getPosition();
             path.addPoint(bobPos.x, bobPos.y);
             mPathSpot.setX(bobPos.x);
@@ -148,7 +171,7 @@ public class ChararcterMoveController2 extends InputAdapter {
 
     @Override
     public boolean touchUp(int x, int y, int pointer, int button) {
-        if(mPointer!=pointer)
+        if (mPointer != pointer)
             return false;
         last.set(-1, -1, -1);
         if (mMap != null && mMap.getPlayer() != null && mMap.getPlayer().getHero() != null && isActive) {

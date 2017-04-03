@@ -8,6 +8,16 @@
 
     "id":"chess2",
     "items": []
+  },
+  {
+
+    "id":"house2_chess2",
+    "items": ["engrenage32x32"]
+  },
+  {
+
+    "id":"house2_chess1",
+    "items": ["potionBlue"]
   }
 
 

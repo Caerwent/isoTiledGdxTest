@@ -3,27 +3,28 @@
     "id":"portal1",
     "template":"portal.json",
     "properties": {
-      "targetMapId":"ortho"
+      "targetMapId":"house1",
+      "isDefaultStart":"true"
     },
     "eventsAction":[],
     "outputEvents":[]
   },
   {
-    "id":"portal3",
-    "template":"portal_clickable.json",
+    "id":"house2_chess1",
+    "template":"chess_type1.json",
     "properties": {
-      "targetMapId":"house1"
+      "requiredItem":"key"
     },
+
     "eventsAction":[],
     "outputEvents":[]
   },
   {
-    "id":"defaultPortal",
-    "template":"portal.json",
+    "id":"house2_chess2",
+    "template":"chess_invisible.json",
     "properties": {
-      "isDefaultStart":"true",
-      "questId":"quest_start"
     },
+
     "eventsAction":[],
     "outputEvents":[]
   }

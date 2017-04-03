@@ -12,6 +12,7 @@ public class Item {
     public enum ItemTypeID {
         engrenage32x32,
         potionBlue,
+        key,
         tonneau;
     }
 

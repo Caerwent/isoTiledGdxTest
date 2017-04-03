@@ -11,32 +11,15 @@ public class QuestTask {
         FIND_ITEM,
         RETURN_ITEM,
         FIND_AREA,
-        TALK
+        DIALOG
     };
 
     protected boolean mIsCompleted;
     protected String id;
     protected TypeTask type;
     protected String targetId;
-    protected String dialogId;
-    protected int count;
-    protected String completedDialogId;
+    protected String value;
 
-    public String getCompletedDialogId() {
-        return completedDialogId;
-    }
-
-    public void setCompletedDialogId(String aCompletedDialogId) {
-        completedDialogId = aCompletedDialogId;
-    }
-
-    public String getDialogId() {
-        return dialogId;
-    }
-
-    public void setDialogId(String aDialogId) {
-       dialogId = aDialogId;
-    }
 
     public String getId() {
         return id;
@@ -80,12 +63,12 @@ public class QuestTask {
 
     protected ArrayList<String> requiredCompletedTask;
 
-    public int getCount()
+    public String getValue()
     {
-        return count;
+        return value;
     }
-    public void setCount(int aCount)
+    public void setValue(String aValue)
     {
-        count = aCount;
+        value = aValue;
     }
 }

@@ -25,21 +25,25 @@ public class InteractionPortal extends Interaction implements IQuestListener {
     public InteractionPortal(InteractionDef aDef, float x, float y, InteractionMapping aMapping, MapProperties aProperties, GameMap aMap) {
         super(aDef, x, y, aMapping, aProperties, aMap);
         mType = Type.PORTAL;
-        if(mProperties.containsKey("questId"))
+        if(aMapping.properties!=null)
         {
-            mQuestId=mProperties.get("questId", String.class);
+            if(aMapping.properties.containsKey("questId"))
+            {
+                mQuestId=(String) aMapping.properties.get("questId");
+            }
+            if(aMapping.properties.containsKey("targetMapId"))
+            {
+                mTargetMapId=(String) aMapping.properties.get("targetMapId");
+            }
+            if (aMapping.properties.containsKey("isDefaultStart")) {
+                mIsDefaultStart = Boolean.parseBoolean((String)aMapping.properties.get("isDefaultStart"));
+            }
+            if(aMapping.properties.containsKey("activatedByQuestId"))
+            {
+                mActivatedByQuestId = (String) aMapping.properties.get("activatedByQuestId");
+            }
         }
-        if(mProperties.containsKey("targetMapId"))
-        {
-            mTargetMapId=mProperties.get("targetMapId", String.class);
-        }
-        if (mProperties.containsKey("isDefaultStart")) {
-            mIsDefaultStart = Boolean.parseBoolean(mProperties.get("isDefaultStart", String.class));
-        }
-        if(mProperties.containsKey("activatedByQuestId"))
-        {
-            mActivatedByQuestId = mProperties.get("activatedByQuestId", String.class);
-        }
+
         if (mActivatedByQuestId != null) {
             Quest quest = QuestManager.getInstance().getQuestFromId(mActivatedByQuestId);
             if (quest.isCompleted()) {
@@ -50,13 +54,18 @@ public class InteractionPortal extends Interaction implements IQuestListener {
         }
     }
 
+    @Override
+    public void initialize(float x, float y, InteractionMapping aMapping) {
+        super.initialize(x, y, aMapping);
 
+    }
     @Override
     public Shape createShape() {
         mShape = new CircleShape();
         mShape.setY(0);
         mShape.setX(0);
-        ((CircleShape) mShape).getShape().setRadius(1);
+        float radius = /*isClickable() ? 1F :*/ 0.5F;
+        ((CircleShape) mShape).setRadius(radius);
         return mShape;
     }
     public boolean hasCollisionInteraction(CollisionComponent aEntity) {
@@ -64,16 +73,28 @@ public class InteractionPortal extends Interaction implements IQuestListener {
                 mActivatedByQuestId == null;
     }
 
+
+    protected void teleport()
+    {
+        if (mIsActivated && mTargetMapId!=null)
+            EventDispatcher.getInstance().onNewMapRequested(mTargetMapId, null);
+    }
+
+    @Override
+    public void onTouchInteraction() {
+        teleport();
+    }
     @Override
     protected boolean hasTouchInteraction(float x, float y) {
 
-        return false;
+        return mDef.isClickable;
     }
 
     @Override
     public void onStartCollisionInteraction(CollisionComponent aEntity) {
-        if (mIsActivated && mTargetMapId!=null)
-            EventDispatcher.getInstance().onNewMapRequested(mTargetMapId, null);
+        if(!mDef.isClickable) {
+            teleport();
+        }
     }
     @Override
     public void onStopCollisionInteraction(CollisionComponent aEntity) {

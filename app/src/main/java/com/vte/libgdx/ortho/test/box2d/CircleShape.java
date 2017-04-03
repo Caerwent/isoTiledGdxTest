@@ -71,4 +71,14 @@ public class CircleShape extends Shape<Circle> {
         clone.setY(getY());
         return clone;
     }
+
+    @Override
+    public float getYAtX(float x)
+    {
+        if(x>=mBounds.x && x<=(mBounds.x+mBounds.getWidth()))
+        {
+            return (float) (getY()+Math.sqrt((mCircle.radius * mCircle.radius)-(x*x)));
+        }
+        return -1;
+    }
 }

@@ -1,23 +1,25 @@
 {
-  "type":"PORTAL",
+  "type":"CHESS",
   "atlas":"",
   "isPersistent":"true",
-  "defaultState":"IDLE",
-  "isClickable": "false",
+  "defaultState":"CLOSED",
+  "isClickable": "true",
   "isRendable": "false",
   "isMovable": "false",
   "states": [
     {
-      "name": "IDLE",
+      "name": "CLOSED",
       "isLooping":"true",
       "fps":"0",
-      "frames": []
+      "frames": [
+      ]
     },
     {
-      "name": "ACTIVATED",
+      "name": "OPEN",
       "isLooping":"true",
       "fps":"0",
-      "frames": []
+      "frames": [
+      ]
     }
 
   ]

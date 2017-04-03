@@ -114,6 +114,12 @@ public class ItemInteraction extends Entity implements IItemInteraction, IMapRen
     }
 
     @Override
+    public void destroy()
+    {
+        EntityEngine.getInstance().removeEntity(this);
+    }
+
+    @Override
     public boolean onCollisionStop(CollisionComponent aEntity) {
         return false;
     }

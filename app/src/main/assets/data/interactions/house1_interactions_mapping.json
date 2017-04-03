@@ -1,0 +1,50 @@
+[
+  {
+    "id":"portal1",
+    "template":"portal.json",
+    "properties": {
+      "targetMapId":"village",
+      "isDefaultStart":"true"
+    },
+    "eventsAction":[],
+    "outputEvents":[]
+  },
+  {
+    "id":"portal2",
+    "template":"portal.json",
+    "properties": {
+      "targetMapId":"house2"
+    },
+    "eventsAction":[],
+    "outputEvents":[]
+  },
+  {
+    "id":"lapin_jaune",
+    "template":"npc_lapin_jaune.json",
+    "properties":{
+    },
+    "questActions": [
+      {
+        "questId": "quest_start",
+        "questState": "NOT_COMPLETED",
+        "actionId": "DIALOG",
+        "actionValue": "quest_lapin_jaune"
+      },
+      {
+        "questId": "quest_start",
+        "questState": "COMPLETED",
+        "actionId": "DIALOG",
+        "actionValue": "npc_lapin_jaune"
+      },
+      {
+        "questId": "quest_start",
+        "questState": "FINISHED",
+        "actionId": "DIALOG",
+        "actionValue": "npc_lapin_jaune"
+      }
+    ],
+    "eventsAction":[
+    ],
+    "outputEvents":[]
+  }
+]

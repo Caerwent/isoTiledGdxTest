@@ -1,12 +1,45 @@
 
 [
+
 	{
 
-		"id": "startQuest1",
+		"id": "npc_lapin_jaune",
+		"dialogs" : [
+			{
+				"speaker":"npc_lapin_jaune_name",
+				"step":"lapin_jaune_phrase1"
+			}
+
+		]
+
+	},
+	{
+
+		"id": "quest_lapin_jaune",
+		"dialogs" : [
+			{
+				"speaker":"npc_lapin_jaune_name",
+				"step":"quest_start_phrase1"
+			},
+			{
+				"speaker":"npc_lapin_jaune_name",
+				"step":"quest_start_phrase2"
+			},
+			{
+				"speaker":"npc_lapin_jaune_name",
+				"step":"quest_start_phrase3"
+			}
+
+		]
+
+	},
+	{
+
+		"id": "needKey",
 		"dialogs" : [
 			{
 				"speaker":"",
-				"step":"quest1_phrase1"
+				"step":"dialog_need_key"
 			}
 
 		]
@@ -22,35 +55,35 @@
 			},
 			{
 				"speaker":"npc1_name",
-				"step":"npc1_phrase1"
+				"step":"npc1_phrase2"
 			}
 		]
 
 	}
 ,
-	{
+		{
 
-		"id": "dquest1",
+		"id": "quest_malo_activated",
 		"dialogs" : [
 
 	{
 		"speaker":"npc1_name",
-		"step":"quest1_npc1_phrase1"
+		"step":"quest_malo_phrase1"
 	},
 
 	{
 		"speaker":"hero_name",
-		"step":"quest1_hero_phrase1"
+		"step":"quest_malo_hero_phrase1"
 	}
 	,
 	{
 		"speaker":"npc1_name",
-		"step":"quest1_npc1_phrase2"
+		"step":"quest_malo_phrase2"
 	}
 	,
 	{
 		"speaker":"hero_name",
-		"step":"quest1_hero_phrase2"
+		"step":"quest_malo_hero_phrase2"
 	}
 
 		]
@@ -59,15 +92,15 @@
 ,
 	{
 
-		"id": "dquest2",
+		"id": "quest_malo_notCompleted",
 		"dialogs" : [
 			{
 				"speaker":"npc1_name",
-				"step":"quest2_npc1_phrase1"
+				"step":"quest_malo_activated_phrase1"
 			},
 			{
 				"speaker":"hero_name",
-				"step":"quest2_hero_phrase1"
+				"step":"quest_malo_activated_hero_phrase1"
 			}
 		]
 
@@ -75,30 +108,35 @@
 ,
 	{
 
-		"id": "dquest2TasksCompleted",
+		"id": "quest_malo_completed",
 		"dialogs" : [
 
 	{
 		"speaker":"npc1_name",
-		"step":"quest2TasksCompleted_phrase1"
+		"step":"quest_malo_completed_phrase1"
 	}
 	,
 	{
 		"speaker":"npc1_name",
-		"step":"quest2TasksCompleted_phrase2"
+		"step":"quest_malo_completed_phrase2"
 	}
 		]
 
-	}
-,
+	},
 	{
-		"id":"endQuest2",
+
+		"id": "quest_malo_finished",
 		"dialogs" : [
+
 			{
 				"speaker":"npc1_name",
-				"step":"endQuest2"
+				"step":"quest_malo_finished"
 			}
+
 		]
+
 	}
+
+
 ]
 

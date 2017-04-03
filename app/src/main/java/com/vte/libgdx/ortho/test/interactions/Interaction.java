@@ -1,6 +1,7 @@
 package com.vte.libgdx.ortho.test.interactions;
 
 import com.badlogic.ashley.core.Entity;
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.g2d.Batch;
@@ -27,7 +28,11 @@ import com.vte.libgdx.ortho.test.entity.components.VelocityComponent;
 import com.vte.libgdx.ortho.test.entity.components.VisualComponent;
 import com.vte.libgdx.ortho.test.events.EventDispatcher;
 import com.vte.libgdx.ortho.test.events.IInteractionEventListener;
+import com.vte.libgdx.ortho.test.events.IQuestListener;
 import com.vte.libgdx.ortho.test.map.GameMap;
+import com.vte.libgdx.ortho.test.quests.Quest;
+import com.vte.libgdx.ortho.test.quests.QuestManager;
+import com.vte.libgdx.ortho.test.quests.QuestTask;
 
 import java.util.ArrayList;
 
@@ -37,7 +42,7 @@ import static com.vte.libgdx.ortho.test.entity.components.CollisionComponent.OBS
  * Created by vincent on 08/02/2017.
  */
 
-public class Interaction extends Entity implements ICollisionHandler, IInteraction, InputProcessor, IInteractionEventListener {
+public class Interaction extends Entity implements ICollisionHandler, IInteraction, InputProcessor, IInteractionEventListener, IQuestListener {
 
     protected String mId;
     protected Type mType;
@@ -63,6 +68,8 @@ public class Interaction extends Entity implements ICollisionHandler, IInteracti
     public ArrayList<InteractionEventAction> mEventsAction;
     public ArrayList<InteractionEvent> mOutputEvents;
 
+    public ArrayList<InteractionQuestAction> mQuestsActions;
+
     protected MapProperties mProperties;
     protected GameMap mMap;
 
@@ -73,7 +80,6 @@ public class Interaction extends Entity implements ICollisionHandler, IInteracti
 
     protected Effect mEffectAction;
     protected float mEffectActionTime;
-    protected InteractionState mBeforeEffectActionState;
 
     @Override
     public void setCamera(Camera aCamera) {
@@ -85,9 +91,16 @@ public class Interaction extends Entity implements ICollisionHandler, IInteracti
         mDef = aDef;
         mEventsAction = aMapping.eventsAction;
         mOutputEvents = aMapping.outputEvents;
+        mQuestsActions = aMapping.questActions;
         mIsPersistent = aMapping.isPersistent;
         mMap = aMap;
         mProperties = aProperties;
+        EntityEngine.getInstance().addEntity(this);
+
+        add(new InteractionComponent(this));
+
+        this.add(new TransformComponent());
+
         //    mType = IInteraction.Type.valueOf(mDef.type);
         if (mOutputEvents != null) {
             for (InteractionEvent event : mOutputEvents) {
@@ -102,6 +115,10 @@ public class Interaction extends Entity implements ICollisionHandler, IInteracti
         }
         if (mEventsAction != null) {
             EventDispatcher.getInstance().addInteractionEventListener(this);
+        }
+        if(mQuestsActions !=null)
+        {
+            EventDispatcher.getInstance().addQuestListener(this);
         }
 
     }
@@ -200,11 +217,7 @@ public class Interaction extends Entity implements ICollisionHandler, IInteracti
 
     public void initialize(float x, float y, InteractionMapping aMapping) {
 
-        EntityEngine.getInstance().addEntity(this);
 
-        add(new InteractionComponent(this));
-
-        this.add(new TransformComponent());
         setMovable(mDef.isMovable);
 
         mCurrentState = getState(mDef.defaultState);
@@ -225,6 +238,13 @@ public class Interaction extends Entity implements ICollisionHandler, IInteracti
 
         }
         setPosition(x, y);
+
+        if (mQuestsActions != null) {
+            for (InteractionQuestAction action : mQuestsActions) {
+                onQuestEvent(QuestManager.getInstance().getQuestFromId(action.questId));
+            }
+        }
+
         byte type_collision = CollisionComponent.MAPINTERACTION;
         if(isRendable())
         {
@@ -342,8 +362,8 @@ public class Interaction extends Entity implements ICollisionHandler, IInteracti
     @Override
     public Shape getShape() {
         TransformComponent tfm = this.getComponent(TransformComponent.class);
-        mShape.setX(tfm.position.x + tfm.originOffset.x);
-        mShape.setY(tfm.position.y + tfm.originOffset.y);
+        mShape.setX(tfm.position.x );
+        mShape.setY(tfm.position.y);
 
         if (isRendable()) {
             float width = mCurrentFrame.getRegionWidth() * tfm.scale;
@@ -352,18 +372,18 @@ public class Interaction extends Entity implements ICollisionHandler, IInteracti
 
             mVertices[0] = tfm.originOffset.x;
             mVertices[1] = tfm.originOffset.y;
-            mVertices[2] = width + tfm.originOffset.x;
-            mVertices[3] = tfm.originOffset.y;
+            mVertices[2] = tfm.originOffset.x;
+            mVertices[3] = height + tfm.originOffset.y;
             mVertices[4] = width + tfm.originOffset.x;
             mVertices[5] = height + tfm.originOffset.y;
-            mVertices[6] = tfm.originOffset.x;
-            mVertices[7] = height + tfm.originOffset.y;
+            mVertices[6] = width + tfm.originOffset.x;
+            mVertices[7] = tfm.originOffset.y;
+
+
             if (mShape.getType() == Shape.Type.POLYGON) {
                 ((PolygonShape) mShape).getShape().setVertices(mVertices);
             }
 
-            mShape.setX(tfm.position.x);
-            mShape.setY(tfm.position.y);
         }
         return mShape;
     }
@@ -648,5 +668,65 @@ public class Interaction extends Entity implements ICollisionHandler, IInteracti
 
 
         }
+    }
+
+
+    protected void doQuestAction(InteractionQuestAction aAction) {
+    }
+    protected void onQuestEvent(Quest aQuest) {
+        if (mQuestsActions != null && aQuest != null) {
+            Gdx.app.debug("DEBUG", "onQuestEvent questID=" + aQuest.getId() + " isActivated=" + aQuest.isActivated() + " isCompleted=" + aQuest.isCompleted());
+            for (InteractionQuestAction action : mQuestsActions) {
+                if ((aQuest.getId() != null && action.questId!=null && aQuest.getId().equals(action.questId))) {
+                    boolean doAction = false;
+                    if(action.questState==InteractionQuestAction.QuestState.FINISHED && aQuest.isCompleted() && QuestManager.getInstance().getLivingQuestFromId(aQuest.getId())==null)
+                    {
+                        doAction=true;
+                    }
+                    else if(action.questState==InteractionQuestAction.QuestState.COMPLETED && aQuest.isCompleted()&& QuestManager.getInstance().getLivingQuestFromId(aQuest.getId())!=null)
+                    {
+                        doQuestAction(action);
+                        return;
+                    }
+                    else if(action.questState==InteractionQuestAction.QuestState.NOT_COMPLETED &&
+                            QuestManager.getInstance().getLivingQuestFromId(aQuest.getId())!=null &&
+                            aQuest.isActivated()  &&
+                            !aQuest.isCompleted())
+                    {
+                        doQuestAction(action);
+                        return;
+                    }
+                    else if(action.questState==InteractionQuestAction.QuestState.NOT_ACTIVATED &&
+                            QuestManager.getInstance().getLivingQuestFromId(aQuest.getId())!=null &&
+                            !aQuest.isActivated())
+                    {
+                        doQuestAction(action);
+                        return;
+                    }
+
+                    if(doAction)
+                    {
+                        doQuestAction(action);
+                        return;
+                    }
+
+
+                }
+            }
+        }
+    };
+
+    @Override
+    public void onQuestActivated(Quest aQuest) {
+        onQuestEvent(aQuest);
+    }
+
+    @Override
+    public void onQuestCompleted(Quest aQuest) {
+        onQuestEvent(aQuest);
+    }
+
+    @Override
+    public void onQuestTaskCompleted(Quest aQuest, QuestTask aTask) {
     }
 }

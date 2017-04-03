@@ -13,6 +13,7 @@ import com.vte.libgdx.ortho.test.dialogs.GameDialogStep;
 import com.vte.libgdx.ortho.test.events.EventDispatcher;
 import com.vte.libgdx.ortho.test.events.IDialogListener;
 import com.vte.libgdx.ortho.test.interactions.InteractionEvent;
+import com.vte.libgdx.ortho.test.quests.QuestManager;
 import com.vte.libgdx.ortho.test.screens.GenericUI;
 
 /**
@@ -87,6 +88,7 @@ public class DialogTable extends Table implements IDialogListener {
             }
             else
             {
+                QuestManager.getInstance().onDialogEnd(mDialog);
                 InteractionEvent event = new InteractionEvent(null, InteractionEvent.EventType.DIALOG.name(), mDialog.getId());
                 EventDispatcher.getInstance().onInteractionEvent(event);
                 onStopDialog(mDialog);

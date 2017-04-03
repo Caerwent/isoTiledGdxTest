@@ -1,0 +1,26 @@
+
+{
+	"id": "quest_malo",
+	"title":"quest_malo_title",
+	"desc": "quest_malo_desc",
+	"requiredCompletedQuest":["quest_talk_malo"],
+	"itemsReward":[],
+	"effectsReward":["FREEZE","PORTAL", "BURN", "WAVE"],
+	"tasks" : [
+		{
+			"id": "quest_malo_task1",
+			"value":"2",
+			"type":"FIND_ITEM",
+			"targetId":"potionBlue",
+			"requiredCompletedTask":[""]
+		},
+		{
+			"id": "quest_malo_task2",
+			"type":"RETURN_ITEM",
+			"targetId":"npc1",
+			"requiredCompletedTask":["quest_malo_task1"]
+		}
+	]
+
+}
+

@@ -1,5 +1,6 @@
 package com.vte.libgdx.ortho.test.interactions;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.maps.MapProperties;
@@ -19,7 +20,7 @@ import com.vte.libgdx.ortho.test.quests.QuestManager;
  * Created by vincent on 14/02/2017.
  */
 
-public class InteractionNPC extends Interaction{
+public class InteractionNPC extends Interaction {
     private boolean mIsInteractionShown = false;
     private RectangleShape mMarkShape;
     private TextureRegion mInteractionTextureRegion;
@@ -35,8 +36,7 @@ public class InteractionNPC extends Interaction{
 
         mMarkShape = new RectangleShape();
         updateInteractionMarkShape();
-        if(aMapping.properties!=null)
-        {
+        if (aMapping.properties != null) {
             mDialogId = (String) aMapping.properties.get("dialogId");
         }
         NPCProfile profile = Profile.getInstance().getNPCProfile(getId());
@@ -45,6 +45,7 @@ public class InteractionNPC extends Interaction{
         }
 
     }
+
     public void updateInteractionMarkShape() {
         if (mMarkShape == null)
             return;
@@ -65,17 +66,20 @@ public class InteractionNPC extends Interaction{
         mMarkShape.setY(transform.position.y + transform.originOffset.y + originY);
 
     }
+
     @Override
     public void setPosition(float x, float y) {
         super.setPosition(x, y);
         updateInteractionMarkShape();
 
     }
+
     @Override
     public void setPosition(Vector2 pos) {
         super.setPosition(pos);
         updateInteractionMarkShape();
     }
+
     @Override
     public void render(Batch batch) {
         super.render(batch);
@@ -100,31 +104,37 @@ public class InteractionNPC extends Interaction{
                     transform.angle);
         }
     }
+
     @Override
     public boolean hasCollisionInteraction(CollisionComponent aEntity) {
-        return (aEntity.mType&CollisionComponent.CHARACTER)!=0;
+        return (aEntity.mType & CollisionComponent.CHARACTER) != 0;
     }
 
     @Override
     public void onStartCollisionInteraction(CollisionComponent aEntity) {
         mIsInteractionShown = true;
     }
+
     @Override
     public void onStopCollisionInteraction(CollisionComponent aEntity) {
         mIsInteractionShown = false;
-        if(getDialogId()!=null) {
+        if (getDialogId() != null) {
             EventDispatcher.getInstance().onStopDialog(DialogsManager.getInstance().getDialog(getDialogId()));
         }
     }
+
     @Override
     protected boolean hasTouchInteraction(float x, float y) {
 
         return mIsInteractionShown && (mMarkShape.getBounds().contains(x, y) || getShape().getBounds().contains(x, y));
     }
+
     @Override
     public void onTouchInteraction() {
         QuestManager.getInstance().onNPC(this);
-        if(getDialogId()!=null) {
+        if (getDialogId() != null) {
+            Gdx.app.debug("DEBUG", "start dialog "+getDialogId());
+
             EventDispatcher.getInstance().onStartDialog(DialogsManager.getInstance().getDialog(getDialogId()));
         }
     }
@@ -156,10 +166,20 @@ public class InteractionNPC extends Interaction{
     }
 
     @Override
-    protected void doActionOnEvent(InteractionEventAction aAction)
-    {
-        if(aAction!=null && "DIALOG".equals(aAction.id)){
+    protected void doActionOnEvent(InteractionEventAction aAction) {
+        if (aAction != null && "DIALOG".equals(aAction.id)) {
             setDialogId(aAction.value);
+        }
+    }
+
+    @Override
+    protected void doQuestAction(InteractionQuestAction aAction) {
+        if (aAction != null) {
+            Gdx.app.debug("DEBUG", "doQuestAction aAction="+aAction.actionId.name()+" value="+aAction.actionValue);
+
+            if (aAction.actionId == InteractionQuestAction.ActionType.DIALOG) {
+                setDialogId(aAction.actionValue);
+            }
         }
     }
 }

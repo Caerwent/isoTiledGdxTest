@@ -71,21 +71,10 @@
  <objectgroup name="items">
   <object id="38" name="engrenage32x32" type="ITEM" gid="20" x="512" y="321" width="64" height="64"/>
   <object id="39" name="potionBlue" type="ITEM" gid="20" x="128" y="128" width="64" height="64"/>
-  <object id="42" name="potionBlue" type="ITEM" gid="20" x="320" y="128" width="64" height="64"/>
  </objectgroup>
  <objectgroup name="interactions">
-  <object id="54" name="portal2" type="PORTAL" gid="16" x="672" y="128" width="61" height="64">
-   <properties>
-    <property name="activatedByQuestId" value="quest2"/>
-    <property name="targetMapId" value="ortho2"/>
-   </properties>
-  </object>
-  <object id="36" name="portal1" type="PORTAL" gid="12" x="96" y="477" width="64" height="64">
-   <properties>
-    <property name="questId" value="quest1"/>
-    <property name="targetMapId" value="village"/>
-   </properties>
-  </object>
+  <object id="54" name="portal2" type="PORTAL" gid="16" x="672" y="128" width="61" height="64"/>
+  <object id="36" name="portal1" type="PORTAL" gid="12" x="96" y="477" width="64" height="64"/>
   <object id="44" name="npc1" gid="16" x="250" y="450" width="64" height="64"/>
  </objectgroup>
 </map>

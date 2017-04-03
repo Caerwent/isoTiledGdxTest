@@ -13,6 +13,7 @@ public class InteractionMapping {
     public boolean isPersistent;
     public ArrayList<InteractionEventAction> eventsAction;
     public ArrayList<InteractionEvent> outputEvents;
+    public ArrayList<InteractionQuestAction> questActions;
     public HashMap properties;
 
 }

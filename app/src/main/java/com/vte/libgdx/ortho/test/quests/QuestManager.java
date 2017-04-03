@@ -3,10 +3,9 @@ package com.vte.libgdx.ortho.test.quests;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Json;
-import com.badlogic.gdx.utils.ObjectMap;
-import com.badlogic.gdx.utils.OrderedMap;
 import com.vte.libgdx.ortho.test.AssetsUtility;
 import com.vte.libgdx.ortho.test.dialogs.DialogsManager;
+import com.vte.libgdx.ortho.test.dialogs.GameDialog;
 import com.vte.libgdx.ortho.test.effects.Effect;
 import com.vte.libgdx.ortho.test.events.EventDispatcher;
 import com.vte.libgdx.ortho.test.events.IItemListener;
@@ -21,6 +20,7 @@ import com.vte.libgdx.ortho.test.persistence.QuestTaskProfile;
 import com.vte.libgdx.ortho.test.player.Player;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  * Created by vincent on 13/01/2017.
@@ -31,10 +31,10 @@ public class QuestManager implements IItemListener, IQuestListener, IPlayerListe
     private final String QUEST_LIST = "data/quests/quests.json";
     private static QuestManager _instance = null;
 
-    private OrderedMap<String, Quest> mQuests = new OrderedMap<String, Quest>();
+    private HashMap<String, Quest> mQuests = new HashMap<String, Quest>();
 
-    private OrderedMap<String, Quest> mLivingQuests = new OrderedMap<String, Quest>();
-    private OrderedMap<String, Quest> mCompletedQuests = new OrderedMap<String, Quest>();
+    private HashMap<String, Quest> mLivingQuests = new HashMap<String, Quest>();
+    private HashMap<String, Quest> mCompletedQuests = new HashMap<String, Quest>();
 
     private Player mCurrentPlayer;
 
@@ -66,9 +66,9 @@ public class QuestManager implements IItemListener, IQuestListener, IPlayerListe
     }
 
     public void restoreQuestsFromProfile() {
-        for (ObjectMap.Entry<String, Quest> entry : mQuests.entries()) {
-            QuestProfile questProfile = Profile.getInstance().getQuestProfile(entry.key);
-            Quest theQuest = mQuests.get(entry.key);
+        for (String entry : mQuests.keySet()) {
+            QuestProfile questProfile = Profile.getInstance().getQuestProfile(entry);
+            Quest theQuest = mQuests.get(entry);
             if (questProfile != null && theQuest != null) {
                 for (QuestTaskProfile taskProfile : questProfile.tasks) {
                     QuestTask theTask = theQuest.getTaskById(taskProfile.id);
@@ -94,6 +94,31 @@ public class QuestManager implements IItemListener, IQuestListener, IPlayerListe
         return mQuests.get(aId);
     }
 
+    public Quest getLivingQuestFromId(String aId) {
+        return mLivingQuests.get(aId);
+    }
+
+
+    public void onDialogEnd(GameDialog aDialog) {
+        for (Quest quest : mLivingQuests.values()) {
+            if (quest.isActivated() && !quest.isCompleted()) {
+                for (QuestTask task : quest.getTasks()) {
+                    if (!task.isCompleted()) {
+                        if (task.getType() == QuestTask.TypeTask.DIALOG) {
+                            if (task.getTargetId() != null && task.getTargetId().equals(aDialog.getId())) {
+                                if (quest.isTaskDependenciesCompleted(task)) {
+                                    task.setCompleted(true);
+                                    EventDispatcher.getInstance().onQuestTaskCompleted(quest, task);
+                                }
+                            }
+
+                        }
+
+                    }
+                }
+            }
+        }
+    }
 
     public void onNPC(InteractionNPC aNPC) {
 
@@ -107,23 +132,12 @@ public class QuestManager implements IItemListener, IQuestListener, IPlayerListe
                                 checkItemFoundTask(quest);
                                 if (quest.isTaskDependenciesCompleted(task)) {
                                     task.setCompleted(true);
-                                    if (task.getCompletedDialogId() != null) {
-                                        aNPC.setDialogId(task.getCompletedDialogId());
-                                    }
+
 
                                     EventDispatcher.getInstance().onQuestTaskCompleted(quest, task);
-                                } else if (task.getDialogId() != null) {
-                                    aNPC.setDialogId(task.getDialogId());
                                 }
                             }
-                            else if (task.getType() == QuestTask.TypeTask.TALK) {
-                                if (quest.isTaskDependenciesCompleted(task)) {
-                                    task.setCompleted(true);
-                                    aNPC.setDialogId(task.getCompletedDialogId());
-                                    EventDispatcher.getInstance().onQuestTaskCompleted(quest, task);
-                                }
 
-                            }
                         }
                     }
                 }
@@ -133,7 +147,7 @@ public class QuestManager implements IItemListener, IQuestListener, IPlayerListe
 
     @Override
     public void onItemFound(Item aItem) {
-        if(mCurrentPlayer==null)
+        if (mCurrentPlayer == null)
             return;
         for (Quest quest : mLivingQuests.values()) {
             if (quest.isActivated() && !quest.isCompleted()) {
@@ -142,7 +156,11 @@ public class QuestManager implements IItemListener, IQuestListener, IPlayerListe
                         if (task.getTargetId() != null && task.getTargetId().equals(aItem.getItemTypeID().name())) {
                             if (task.getType() == QuestTask.TypeTask.FIND_ITEM) {
                                 Array<Item> foundItems = mCurrentPlayer.getItemsInventoryById(task.getTargetId());
-                                if (foundItems.size >= task.getCount()) {
+                                int nbItem = 1;
+                                if (task.getValue() != null) {
+                                    nbItem = Integer.valueOf(task.getValue());
+                                }
+                                if (foundItems.size >= nbItem) {
                                     if (quest.isTaskDependenciesCompleted(task)) {
                                         task.setCompleted(true);
                                         EventDispatcher.getInstance().onQuestTaskCompleted(quest, task);
@@ -157,12 +175,16 @@ public class QuestManager implements IItemListener, IQuestListener, IPlayerListe
     }
 
     private void checkItemFoundTask(Quest aQuest) {
-        if(mCurrentPlayer==null)
+        if (mCurrentPlayer == null)
             return;
         for (QuestTask task : aQuest.getTasks()) {
             if (!task.isCompleted() && task.getType() == QuestTask.TypeTask.FIND_ITEM) {
                 Array<Item> foundItems = mCurrentPlayer.getItemsInventoryById(task.getTargetId());
-                if (foundItems.size >= task.getCount()) {
+                int nbItem = 1;
+                if (task.getValue() != null) {
+                    nbItem = Integer.valueOf(task.getValue());
+                }
+                if (foundItems.size >= nbItem) {
                     if (aQuest.isTaskDependenciesCompleted(task)) {
                         task.setCompleted(true);
                         Profile.getInstance().updateQuestProfile(aQuest.getId(), aQuest);
@@ -174,7 +196,7 @@ public class QuestManager implements IItemListener, IQuestListener, IPlayerListe
     }
 
     private void updateItemsFromFoundTask(Quest aQuest) {
-        if(mCurrentPlayer==null)
+        if (mCurrentPlayer == null)
             return;
         for (QuestTask task : aQuest.getTasks()) {
             if (task.isCompleted() && task.getType() == QuestTask.TypeTask.FIND_ITEM) {
@@ -203,26 +225,15 @@ public class QuestManager implements IItemListener, IQuestListener, IPlayerListe
         Profile.getInstance().updateQuestProfile(aQuest.getId(), aQuest);
     }
 
-    @Override
-    public void onQuestCompleted(Quest aQuest) {
-        if (mLivingQuests.containsKey(aQuest.getId())) {
-            mLivingQuests.remove(aQuest.getId());
-        }
-        if (!mCompletedQuests.containsKey(aQuest.getId())) {
-            mCompletedQuests.put(aQuest.getId(), aQuest);
-        }
+    private void internalQuestcompleted(Quest aQuest) {
         updateItemsFromFoundTask(aQuest);
-        if(aQuest.getItemsReward()!=null)
-        {
-            for(Item.ItemTypeID itemID : aQuest.getItemsReward())
-            {
+        if (aQuest.getItemsReward() != null) {
+            for (Item.ItemTypeID itemID : aQuest.getItemsReward()) {
                 EventDispatcher.getInstance().onItemFound(ItemFactory.getInstance().getInventoryItem(itemID));
             }
         }
-        if(aQuest.getEffectsReward()!=null)
-        {
-            for(Effect.Type effectType : aQuest.getEffectsReward())
-            {
+        if (aQuest.getEffectsReward() != null) {
+            for (Effect.Type effectType : aQuest.getEffectsReward()) {
                 EventDispatcher.getInstance().onEffectFound(effectType);
             }
         }
@@ -235,28 +246,44 @@ public class QuestManager implements IItemListener, IQuestListener, IPlayerListe
 
                 boolean isAllDependenciesCompleted = true;
                 for (String requiredId : quest.getRequiredCompletedQuest()) {
-                    Quest dependenciyQuest = mCompletedQuests.get(requiredId);
-                    if (mCompletedQuests.containsKey(requiredId)) {
+                    Quest dependenciyQuest = mQuests.get(requiredId);
+                    if (!dependenciyQuest.isCompleted()) {
                         isAllDependenciesCompleted = false;
                         break;
                     }
                 }
-                quest.setActivated(true);
-                EventDispatcher.getInstance().onQuestActivated(quest);
+                if(isAllDependenciesCompleted) {
+                    quest.setActivated(true);
+                    EventDispatcher.getInstance().onQuestActivated(quest);
+                }
+
             }
         }
+
+        EventDispatcher.getInstance().onQuestCompleted(aQuest);
+        if (mLivingQuests.containsKey(aQuest.getId())) {
+            mLivingQuests.remove(aQuest.getId());
+        }
+        if (!mCompletedQuests.containsKey(aQuest.getId())) {
+            mCompletedQuests.put(aQuest.getId(), aQuest);
+        }
+        aQuest.setActivated(false);
         Profile.getInstance().updateQuestProfile(aQuest.getId(), aQuest);
+
+    }
+
+    @Override
+    public void onQuestCompleted(Quest aQuest) {
+
     }
 
     @Override
     public void onQuestTaskCompleted(Quest aQuest, QuestTask aTask) {
-        if (aTask.getCompletedDialogId() != null && aTask.getType() != QuestTask.TypeTask.RETURN_ITEM && aTask.getType() != QuestTask.TypeTask.TALK) {
-            EventDispatcher.getInstance().onStartDialog(DialogsManager.getInstance().getDialog(aTask.getCompletedDialogId()));
-        }
+
         //check if quest is completed
         aQuest.computeCompleted();
         if (aQuest.isCompleted()) {
-            EventDispatcher.getInstance().onQuestCompleted(aQuest);
+            internalQuestcompleted(aQuest);
         }
 
 

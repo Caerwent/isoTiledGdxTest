@@ -1,0 +1,12 @@
+malo.png
+size: 30, 48
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+idle
+  rotate: false
+  xy: 0,0
+  size: 30, 48
+  orig: 30, 48
+  offset: 0, 0
+  index: -1

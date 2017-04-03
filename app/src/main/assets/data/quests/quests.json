@@ -1,6 +1,7 @@
 
 [
-	"quest1",
-	"quest2"
+	"quest_start",
+	"quest_talk_malo",
+	"quest_malo"
 ]
 

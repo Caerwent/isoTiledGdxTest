@@ -1,0 +1,20 @@
+
+{
+	"id": "quest_talk_malo",
+	"title":"quest_talk_malo_title",
+	"desc":"quest_talk_malo_desc",
+	"itemsReward":[],
+	"requiredCompletedQuest": ["quest_start"],
+	"tasks" : [
+		{
+			"id": "quest_talk_malo_task1",
+			"type":"DIALOG",
+			"targetId":"quest_malo_activated",
+			"value":"",
+			"requiredCompletedTask":[]
+		}
+	]
+
+
+}
+

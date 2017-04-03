@@ -59,4 +59,12 @@ public class RectangleShape extends Shape<Rectangle> {
         return clone;
     }
 
+    @Override
+    public float getYAtX(float x) {
+        if (x >= mRect.x && x <= (mRect.x + mRect.getWidth())) {
+            return mRect.y;
+        }
+        return -1;
+    }
+
 }

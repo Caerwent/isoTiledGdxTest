@@ -87,18 +87,29 @@
   {
     "id":"chess1",
     "template":"chess_type1.json",
+    "properties": {
+      "requiredItem":"key"
+    },
+
     "eventsAction":[],
     "outputEvents":[]
   },
   {
   "id":"portal1",
   "template":"portal.json",
+    "properties": {
+      "targetMapId": "ortho",
+      "isDefaultStart": "true"
+    },
   "eventsAction":[],
   "outputEvents":[]
 },
   {
     "id":"portal2",
     "template":"portal.json",
+    "properties": {
+      "targetMapId":"ortho3"
+    },
     "eventsAction":[],
     "outputEvents":[]
   }

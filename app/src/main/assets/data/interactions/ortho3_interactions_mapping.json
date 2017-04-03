@@ -2,6 +2,10 @@
   {
     "id": "portal1",
     "template": "portal.json",
+    "properties": {
+      "targetMapId":"ortho2",
+      "isDefaultStart":"true"
+    },
     "eventsAction": [],
     "outputEvents": []
   },

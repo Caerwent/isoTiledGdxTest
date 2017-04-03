@@ -47,9 +47,9 @@ envelope64x64
   index: -1
 potionBlue
   rotate: false
-  xy: 0, 192
-  size: 64, 64
-  orig: 64, 64
+  xy: 30, 200
+  size: 34, 34
+  orig: 34, 34
   offset: 0, 0
   index: -1
 tonneau
@@ -57,5 +57,12 @@ tonneau
   xy: 0, 256
   size: 30, 40
   orig: 30, 40
+  offset: 0, 0
+  index: -1
+key
+  rotate: false
+  xy: 36, 245
+  size: 24, 24
+  orig: 24, 24
   offset: 0, 0
   index: -1

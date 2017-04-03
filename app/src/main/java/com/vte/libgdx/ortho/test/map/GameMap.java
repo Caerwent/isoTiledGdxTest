@@ -228,12 +228,22 @@ public class GameMap implements ICollisionHandler {
 
     public void destroy() {
         ImmutableArray<Entity> entities = EntityEngine.getInstance().getEntitiesFor(Family.all(CollisionComponent.class).get());
-        for (int i = 0; i < entities.size(); ++i) {
+        int size = entities.size();
+        for(int i=size-1;i>=0;i--) {
             EntityEngine.getInstance().removeEntity(entities.get(i));
         }
         for (IInteraction it : mInteractions) {
             it.destroy();
         }
+        for (IItemInteraction it : mItems) {
+            it.destroy();
+        }
+        mBodiesCollision.clear();
+        mItems.clear();
+        mBodiesZindex.clear();
+        mInteractions.clear();
+        String filename = "data/maps/" + mMapName + ".tmx";
+        AssetsUtility.unloadAsset(filename);
     }
 
     public void render() {
@@ -348,10 +358,12 @@ public class GameMap implements ICollisionHandler {
             @Override
             public int compare(Shape lhs, Shape rhs) {
 
-                if (lhs.getY() == rhs.getY()) {
+                float lhsY = lhs.getBounds().getY();
+                float rhsY = rhs.getBounds().getY();
+                if (lhsY == rhsY) {
                     return 0;
                 } else {
-                    return lhs.getBounds().getY() < rhs.getBounds().getY() ? 1 : -1;
+                    return lhsY < rhsY ? 1 : -1;
                 }
             }
         });
