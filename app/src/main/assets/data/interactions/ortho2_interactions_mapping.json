@@ -2,7 +2,6 @@
   {
     "id":"monster1",
     "template":"monster_type1.json",
-    "isPersistent":"true",
     "eventsAction":[
       {
         "id":"WAKEUP",

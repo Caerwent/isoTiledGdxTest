@@ -1,7 +1,7 @@
 {
   "type":"OBSTACLE",
   "atlas":"wood_door.atlas",
-  "isPersistent":"false",
+  "persistence":"SESSION",
   "defaultState":"CLOSED",
   "isClickable": "false",
   "isRendable": "true",

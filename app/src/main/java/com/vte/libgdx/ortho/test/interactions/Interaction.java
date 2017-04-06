@@ -30,6 +30,8 @@ import com.vte.libgdx.ortho.test.events.EventDispatcher;
 import com.vte.libgdx.ortho.test.events.IInteractionEventListener;
 import com.vte.libgdx.ortho.test.events.IQuestListener;
 import com.vte.libgdx.ortho.test.map.GameMap;
+import com.vte.libgdx.ortho.test.persistence.GameSession;
+import com.vte.libgdx.ortho.test.persistence.Profile;
 import com.vte.libgdx.ortho.test.quests.Quest;
 import com.vte.libgdx.ortho.test.quests.QuestManager;
 import com.vte.libgdx.ortho.test.quests.QuestTask;
@@ -48,8 +50,6 @@ public class Interaction extends Entity implements ICollisionHandler, IInteracti
     protected Type mType;
     protected InteractionDef mDef;
     protected boolean mIsMovable;
-    protected boolean mIsPersistent;
-
 
     protected float mStateTime; // elapsed time
     protected boolean mIsRended = false;
@@ -92,7 +92,6 @@ public class Interaction extends Entity implements ICollisionHandler, IInteracti
         mEventsAction = aMapping.eventsAction;
         mOutputEvents = aMapping.outputEvents;
         mQuestsActions = aMapping.questActions;
-        mIsPersistent = aMapping.isPersistent;
         mMap = aMap;
         mProperties = aProperties;
         EntityEngine.getInstance().addEntity(this);
@@ -109,10 +108,8 @@ public class Interaction extends Entity implements ICollisionHandler, IInteracti
         }
         mShape = createShape();
         initialize(x, y, aMapping);
-        if(isPersistent())
-        {
-            restoreFromPersistence();
-        }
+        restoreFromPersistence();
+
         if (mEventsAction != null) {
             EventDispatcher.getInstance().addInteractionEventListener(this);
         }
@@ -123,13 +120,38 @@ public class Interaction extends Entity implements ICollisionHandler, IInteracti
 
     }
 
+    protected void restoreFromPersistence(GameSession aGameSession) {
+
+    }
+
+    protected GameSession saveInPersistence(GameSession aGameSession) {
+        return aGameSession;
+    }
+
     public void restoreFromPersistence() {
+        if(getPersistence()==Persistence.GAME )
+        {
+            restoreFromPersistence(Profile.getInstance().getPersistentGameSession());
+        }
+        else if(getPersistence() == Persistence.SESSION)
+        {
+            restoreFromPersistence(GameSession.getInstance());
 
+        }
     }
 
-    public void saveInPersistence() {
+    protected void saveInPersistence() {
+        if(getPersistence()==Persistence.GAME )
+        {
+            Profile.getInstance().updatePersistentGameSession(saveInPersistence(Profile.getInstance().getPersistentGameSession()));
+        }
+        else if(getPersistence() == Persistence.SESSION)
+        {
+            saveInPersistence(GameSession.getInstance());
 
+        }
     }
+
 
     @Override
     public float getX() {
@@ -171,9 +193,10 @@ public class Interaction extends Entity implements ICollisionHandler, IInteracti
     }
 
     @Override
-    public boolean isPersistent() {
-        return mIsPersistent;
+    public Persistence getPersistence() {
+        return mDef.persistence;
     }
+
 
     protected InteractionState getState(String aStateName) {
         if(aStateName==null)
@@ -208,10 +231,8 @@ public class Interaction extends Entity implements ICollisionHandler, IInteracti
 
     public void destroy() {
         EventDispatcher.getInstance().removeInteractionEventListener(this);
-        if(isPersistent())
-        {
-            saveInPersistence();
-        }
+        saveInPersistence();
+
         EntityEngine.getInstance().removeEntity(this);
     }
 

@@ -1,7 +1,7 @@
 {
   "type":"MONSTER1",
   "atlas":"monster1.atlas",
-  "isPersistent":"false",
+  "persistence":"NONE",
   "defaultState":"IDLE",
   "isClickable": "false",
   "isRendable": "true",

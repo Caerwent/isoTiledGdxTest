@@ -12,14 +12,14 @@ import com.vte.libgdx.ortho.test.items.Chess;
 import com.vte.libgdx.ortho.test.items.Item;
 import com.vte.libgdx.ortho.test.items.ItemFactory;
 import com.vte.libgdx.ortho.test.map.GameMap;
-import com.vte.libgdx.ortho.test.persistence.MapProfile;
-import com.vte.libgdx.ortho.test.persistence.Profile;
+import com.vte.libgdx.ortho.test.persistence.GameSession;
 
 /**
  * Created by vincent on 14/02/2017.
  */
 
 public class InteractionChess extends Interaction{
+    private static final String KEY_IS_OPEN = "is_open";
     protected boolean mIsOpen;
     protected Chess mChess;
     protected String mRequiredItem;
@@ -28,14 +28,7 @@ public class InteractionChess extends Interaction{
         super(aDef, x, y, aMapping, aProperties, aMap);
         mType = Type.CHESS;
         mChess = ItemFactory.getInstance().getChess(getId());
-        MapProfile profile = Profile.getInstance().getMapProfile(aMap.getMapName());
-        if (profile != null && profile.openChessList.contains(mChess.getId())) {
-            mIsOpen = true;
-            setState("OPEN");
-        } else {
-            mIsOpen = false;
-            setState("CLOSED");
-        }
+
     }
 
     @Override
@@ -45,6 +38,25 @@ public class InteractionChess extends Interaction{
             mRequiredItem = (String) aMapping.properties.get("requiredItem");
         }
 
+    }
+
+    @Override
+    public void restoreFromPersistence(GameSession aGameSession) {
+        Boolean isOpen = (Boolean) aGameSession.getSessionDataForMapAndEntity(mMap.getMapName(), getId(), KEY_IS_OPEN);
+        if (isOpen != null && isOpen.booleanValue()) {
+            mIsOpen = true;
+            setState("OPEN");
+        } else {
+            mIsOpen = false;
+            setState("CLOSED");
+        }
+
+    }
+
+    @Override
+    public GameSession saveInPersistence(GameSession aGameSession) {
+        aGameSession.putSessionDataForMapAndEntity(mMap.getMapName(), mId, KEY_IS_OPEN, mIsOpen);
+        return aGameSession;
     }
 
     @Override
@@ -95,9 +107,11 @@ public class InteractionChess extends Interaction{
             AudioManager.getInstance().onAudioEvent(AudioManager.ITEM_FOUND_SOUND);
 
         }
-        MapProfile profile = Profile.getInstance().getMapProfile(mMap.getMapName());
-        profile.openChessList.add(mChess.getId());
-        Profile.getInstance().updateMapProfile(mMap.getMapName(), profile);
+
+        if(getPersistence()!=Persistence.NONE)
+        {
+            saveInPersistence();
+        }
 
     }
 }

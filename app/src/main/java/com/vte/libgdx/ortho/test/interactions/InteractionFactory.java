@@ -67,6 +67,10 @@ public class InteractionFactory {
             InteractionObstacle interaction = new InteractionObstacle(def, x, y, aMapping, aProperties, aMap);
             return interaction;
         }
+        else if (def.type.compareTo("CHALLENGE") == 0) {
+            InteractionChallenge interaction = new InteractionChallenge(def, x, y, aMapping, aProperties, aMap);
+            return interaction;
+        }
         return null;
     }
 }

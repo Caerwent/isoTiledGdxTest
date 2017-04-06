@@ -189,9 +189,6 @@ public class PersistenceProvider {
         save(Profile.getInstance());
     }
 
-    public void saveNPCProfile(String aNPCId, NPCProfile aNPCProfile) {
-        save(Profile.getInstance());
-    }
 
     public void saveLocationProfile(LocationProfile aLocationProfile) {
         save(Profile.getInstance());
@@ -202,6 +199,11 @@ public class PersistenceProvider {
         save(Profile.getInstance());
     }
     public void saveEffectsList(ArrayList<Effect.Type> aList)
+    {
+        save(Profile.getInstance());
+    }
+
+    public void saveGameSession(GameSession aGameSession)
     {
         save(Profile.getInstance());
     }

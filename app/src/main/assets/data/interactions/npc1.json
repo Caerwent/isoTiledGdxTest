@@ -1,7 +1,7 @@
 {
   "type":"NPC",
   "atlas":"malo.atlas",
-  "isPersistent":"true",
+  "persistence":"GAME",
   "defaultState":"IDLE",
   "isClickable": "true",
   "isRendable": "true",

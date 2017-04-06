@@ -22,12 +22,13 @@ public class InteractionObstacle extends Interaction {
 
 
 
-    public void restoreFromPersistence() {
-       Boolean isDestroyed = (Boolean) GameSession.getInstance().getSessionDataForMapAndEntity(mMap.getMapName(), mId, KEY_IS_OPEN);
+    @Override
+    public void restoreFromPersistence(GameSession aGameSession) {
+       Boolean isDestroyed = (Boolean) aGameSession.getSessionDataForMapAndEntity(mMap.getMapName(), mId, KEY_IS_OPEN);
         if (isDestroyed != null && isDestroyed.booleanValue()) {
             mIsOpen = true;
             remove(CollisionComponent.class);
-            String state = (String) GameSession.getInstance().getSessionDataForMapAndEntity(mMap.getMapName(), mId, KEY_OPEN_STATE);
+            String state = (String) aGameSession.getSessionDataForMapAndEntity(mMap.getMapName(), mId, KEY_OPEN_STATE);
             mCurrentState = getState(state==null ? mDef.defaultState : state);
         } else {
             mIsOpen = false;
@@ -35,9 +36,10 @@ public class InteractionObstacle extends Interaction {
 
     }
 
-    public void saveInPersistence() {
-        GameSession.getInstance().putSessionDataForMapAndEntity(mMap.getMapName(), mId, KEY_IS_OPEN, mIsOpen);
-        GameSession.getInstance().putSessionDataForMapAndEntity(mMap.getMapName(), mId, KEY_OPEN_STATE, mCurrentState.name);
+    public GameSession saveInPersistence(GameSession aGameSession) {
+        aGameSession.putSessionDataForMapAndEntity(mMap.getMapName(), mId, KEY_IS_OPEN, mIsOpen);
+        aGameSession.putSessionDataForMapAndEntity(mMap.getMapName(), mId, KEY_OPEN_STATE, mCurrentState.name);
+        return aGameSession;
     }
 
     @Override

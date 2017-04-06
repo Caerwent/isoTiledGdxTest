@@ -12,8 +12,7 @@ import com.vte.libgdx.ortho.test.entity.components.CollisionComponent;
 import com.vte.libgdx.ortho.test.entity.components.TransformComponent;
 import com.vte.libgdx.ortho.test.events.EventDispatcher;
 import com.vte.libgdx.ortho.test.map.GameMap;
-import com.vte.libgdx.ortho.test.persistence.NPCProfile;
-import com.vte.libgdx.ortho.test.persistence.Profile;
+import com.vte.libgdx.ortho.test.persistence.GameSession;
 import com.vte.libgdx.ortho.test.quests.QuestManager;
 
 /**
@@ -21,6 +20,8 @@ import com.vte.libgdx.ortho.test.quests.QuestManager;
  */
 
 public class InteractionNPC extends Interaction {
+    private static final String KEY_DIALOG_ID = "dialog_id";
+
     private boolean mIsInteractionShown = false;
     private RectangleShape mMarkShape;
     private TextureRegion mInteractionTextureRegion;
@@ -36,14 +37,30 @@ public class InteractionNPC extends Interaction {
 
         mMarkShape = new RectangleShape();
         updateInteractionMarkShape();
+
+    }
+
+    @Override
+    public void initialize(float x, float y, InteractionMapping aMapping) {
+        super.initialize(x,y,aMapping);
         if (aMapping.properties != null) {
             mDialogId = (String) aMapping.properties.get("dialogId");
         }
-        NPCProfile profile = Profile.getInstance().getNPCProfile(getId());
-        if (profile != null && profile.dialogId != null) {
-            mDialogId = profile.dialogId;
+    }
+
+        @Override
+    public void restoreFromPersistence(GameSession aGameSession) {
+        String dialogId = (String) aGameSession.getSessionDataForMapAndEntity(mMap.getMapName(), getId(), KEY_DIALOG_ID);
+        if (dialogId != null) {
+            mDialogId=dialogId;
         }
 
+    }
+
+    @Override
+    public GameSession saveInPersistence(GameSession aGameSession) {
+        aGameSession.putSessionDataForMapAndEntity(mMap.getMapName(), mId, KEY_DIALOG_ID, getDialogId());
+        return aGameSession;
     }
 
     public void updateInteractionMarkShape() {
@@ -146,13 +163,11 @@ public class InteractionNPC extends Interaction {
 
     public void setDialogId(String aDialogId) {
         mDialogId = aDialogId;
-        NPCProfile profile = Profile.getInstance().getNPCProfile(getId());
-        if (profile == null) {
-            profile = new NPCProfile();
+        if(getPersistence()!=Persistence.NONE)
+        {
+            saveInPersistence();
         }
 
-        profile.dialogId = mDialogId;
-        Profile.getInstance().updateNPCProfile(getId(), profile);
 
 
     }

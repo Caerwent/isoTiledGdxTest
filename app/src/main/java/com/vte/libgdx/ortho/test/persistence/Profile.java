@@ -17,10 +17,10 @@ public class Profile {
     HashMap<String, MapProfile> maps = new HashMap<>();
     ArrayList<String> inventory = new ArrayList<>();
     HashMap<String, QuestProfile> quests = new HashMap<>();
-    HashMap<String, NPCProfile> npcs = new HashMap<>();
     LocationProfile location = new LocationProfile();
     Effect.Type mSelectedEffect = null;
     ArrayList<Effect.Type> mAvailableEffects = new ArrayList();
+    GameSession mPersistentGameSession = new GameSession();
 
     static private Profile sProfile;
 
@@ -28,6 +28,7 @@ public class Profile {
 
         if (sProfile == null) {
             sProfile = PersistenceProvider.getInstance().loadProfile();
+            GameSession.createNewSession();
         }
         return sProfile;
     }
@@ -43,6 +44,7 @@ public class Profile {
 
     public static synchronized void newProfile() {
         sProfile = new Profile();
+        GameSession.createNewSession();
         PersistenceProvider.getInstance().save(sProfile);
     }
 
@@ -78,17 +80,6 @@ public class Profile {
 
     }
 
-    public final NPCProfile getNPCProfile(String aNPCId) {
-        return npcs.get(aNPCId);
-    }
-
-    public void updateNPCProfile(String aNPCId, NPCProfile aNPC) {
-
-        npcs.put(aNPCId, aNPC);
-        PersistenceProvider.getInstance().saveNPCProfile(aNPCId, aNPC);
-
-    }
-
     public LocationProfile getLocationProfile()
     {
         return location;
@@ -120,6 +111,17 @@ public class Profile {
         mAvailableEffects=aEffectsList;
         PersistenceProvider.getInstance().saveEffectsList(mAvailableEffects);
 
+    }
+
+    public GameSession getPersistentGameSession()
+    {
+        return mPersistentGameSession;
+    }
+
+    public void updatePersistentGameSession(GameSession aGameSession)
+    {
+        mPersistentGameSession = aGameSession;
+        PersistenceProvider.getInstance().saveGameSession(mPersistentGameSession);
     }
 
 }

@@ -1,7 +1,7 @@
 {
   "type":"PORTAL",
   "atlas":"",
-  "isPersistent":"true",
+  "persistence":"GAME",
   "defaultState":"IDLE",
   "isClickable": "true",
   "isRendable": "false",

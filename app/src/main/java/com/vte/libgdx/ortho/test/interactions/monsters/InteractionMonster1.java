@@ -29,7 +29,7 @@ public class InteractionMonster1 extends Interaction {
         mPath = aMap.getPaths().get(getId());
 
     }
-    public void restoreFromPersistence() {
+    public void restoreFromSessionPersistence() {
         Boolean isDestroyed = (Boolean) GameSession.getInstance().getSessionDataForMapAndEntity(mMap.getMapName(), mId, KEY_IS_DESTROYED);
         if (isDestroyed != null && isDestroyed.booleanValue()) {
             mIsDestroyed = true;
@@ -41,7 +41,7 @@ public class InteractionMonster1 extends Interaction {
 
     }
 
-    public void saveInPersistence() {
+    public void saveInSessionPersistence() {
         GameSession.getInstance().putSessionDataForMapAndEntity(mMap.getMapName(), mId, KEY_IS_DESTROYED, mIsDestroyed);
     }
     @Override

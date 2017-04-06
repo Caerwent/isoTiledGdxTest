@@ -1,6 +1,6 @@
 {
-  "type":"ACTIVATOR1",
-  "atlas":"activator1.atlas",
+  "type":"CHALLENGE",
+  "atlas":"chess1.atlas",
   "persistence":"NONE",
   "defaultState":"IDLE",
   "isClickable": "true",
@@ -9,18 +9,26 @@
   "states": [
     {
       "name": "IDLE",
-      "fps":"0",
       "isLooping":"true",
+      "fps":"10",
       "frames": [
-        "idle"
+        "closed", "open"
       ]
     },
     {
-      "name": "ACTIVATED",
-      "fps":"0",
+      "name": "CLOSED",
       "isLooping":"true",
+      "fps":"0",
       "frames": [
-        "activated"
+        "closed"
+      ]
+    },
+    {
+      "name": "OPEN",
+      "isLooping":"true",
+      "fps":"0",
+      "frames": [
+        "open"
       ]
     }
 

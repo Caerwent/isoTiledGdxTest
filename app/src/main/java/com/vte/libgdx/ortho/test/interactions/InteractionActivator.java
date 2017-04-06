@@ -17,7 +17,7 @@ public class InteractionActivator extends Interaction{
         mType = Type.ACTIVATOR;
     }
 
-    public void restoreFromPersistence() {
+    public void restoreFromSessionPersistence() {
         String state  = (String) GameSession.getInstance().getSessionDataForMapAndEntity(mMap.getMapName(), mId, KEY_STATE);
         if (state != null) {
             mCurrentState = getState(state);
@@ -25,7 +25,7 @@ public class InteractionActivator extends Interaction{
 
     }
 
-    public void saveInPersistence() {
+    public void saveInSessionPersistence() {
         GameSession.getInstance().putSessionDataForMapAndEntity(mMap.getMapName(), mId, KEY_STATE, mCurrentState);
     }
 

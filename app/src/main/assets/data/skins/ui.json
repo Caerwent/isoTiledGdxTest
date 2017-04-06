@@ -99,7 +99,7 @@
     },
     "solidbackground": {
       "titleFont": "default-font",
-      "background": "dialog"
+      "background": "window"
     },
     "dialog": {
       "titleFont": "default-font",

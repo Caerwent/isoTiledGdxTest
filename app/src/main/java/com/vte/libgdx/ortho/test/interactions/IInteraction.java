@@ -8,6 +8,12 @@ import com.vte.libgdx.ortho.test.map.IMapRendable;
  */
 
 public interface IInteraction extends IMapRendable {
+    public static enum Persistence {
+        NONE,
+        SESSION,
+        GAME
+    }
+
     public enum Type {
         ITEM,
         HERO,
@@ -17,7 +23,8 @@ public interface IInteraction extends IMapRendable {
         MONSTER,
         ACTIVATOR,
         OBSTACLE,
-        PATH
+        PATH,
+        CHALLENGE
     }
 
 
@@ -33,7 +40,7 @@ public interface IInteraction extends IMapRendable {
 
     public boolean isMovable();
 
-    public boolean isPersistent();
+    public Persistence getPersistence();
 
     public void destroy();
 
