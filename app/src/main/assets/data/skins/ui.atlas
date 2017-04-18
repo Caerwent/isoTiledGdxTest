@@ -1,27 +1,54 @@
+
 ui.png
-size: 256, 141
+size: 1024,128
 format: RGBA8888
-filter: Linear,Linear
+filter: Nearest,Nearest
 repeat: none
+Mark
+  rotate: false
+  xy: 779, 94
+  size: 31, 32
+  orig: 31, 32
+  offset: 0, 0
+  index: -1
+SpellBurn
+  rotate: false
+  xy: 481, 68
+  size: 64, 58
+  orig: 64, 58
+  offset: 0, 0
+  index: -1
+SpellFreeze
+  rotate: false
+  xy: 547, 79
+  size: 64, 47
+  orig: 64, 47
+  offset: 0, 0
+  index: -1
+SpellPortal
+  rotate: false
+  xy: 679, 62
+  size: 44, 64
+  orig: 44, 64
+  offset: 0, 0
+  index: -1
+SpellWave
+  rotate: false
+  xy: 613, 79
+  size: 64, 47
+  orig: 64, 47
+  offset: 0, 0
+  index: -1
+bag
+  rotate: false
+  xy: 146, 58
+  size: 56, 56
+  orig: 56, 56
+  offset: 0, 0
+  index: -1
 button_default
   rotate: false
-  xy: 90, 29
-  size: 142, 28
-  split: 41, 41, 13, 13
-  orig: 142, 28
-  offset: 0, 0
-  index: -1
-button_pressed
-  rotate: false
-  xy: 90, 57
-  size: 142, 28
-  split: 41, 41, 13, 13
-  orig: 142, 28
-  offset: 0, 0
-  index: -1
-button_selected
-  rotate: false
-  xy: 90, 85
+  xy: 2, 86
   size: 142, 28
   split: 41, 41, 13, 13
   orig: 142, 28
@@ -29,38 +56,89 @@ button_selected
   index: -1
 button_disabled
   rotate: false
-  xy: 90, 113
+  xy: 2, 56
   size: 142, 28
   split: 41, 41, 13, 13
   orig: 142, 28
   offset: 0, 0
   index: -1
+button_pressed
+  rotate: false
+  xy: 2, 26
+  size: 142, 28
+  split: 41, 41, 13, 13
+  orig: 142, 28
+  offset: 0, 0
+  index: -1
+button_selected
+  rotate: false
+  xy: 207, 98
+  size: 142, 28
+  split: 41, 41, 13, 13
+  orig: 142, 28
+  offset: 0, 0
+  index: -1
+checkbox_checked
+  rotate: false
+  xy: 200, 2
+  size: 28, 28
+  orig: 28, 28
+  offset: 0, 0
+  index: -1
+checkbox_cross
+  rotate: false
+  xy: 230, 2
+  size: 28, 28
+  orig: 28, 28
+  offset: 0, 0
+  index: -1
+checkbox_unchecked
+  rotate: false
+  xy: 260, 2
+  size: 28, 28
+  orig: 28, 28
+  offset: 0, 0
+  index: -1
 dialog
   rotate: false
-  xy: 16, 29
+  xy: 204, 32
   size: 74, 64
   split: 35, 35, 13, 13
   pad: 14, 14, 14, 14
   orig: 74, 64
   offset: 0, 0
   index: -1
+flag_en
+  rotate: false
+  xy: 146, 19
+  size: 52, 37
+  orig: 52, 37
+  offset: 0, 0
+  index: -1
+flag_fr
+  rotate: false
+  xy: 725, 89
+  size: 52, 37
+  orig: 52, 37
+  offset: 0, 0
+  index: -1
 slider1
   rotate: false
-  xy: 0, 0
+  xy: 2, 116
   size: 203, 10
   orig: 203, 10
   offset: 0, 0
   index: -1
 slider2
   rotate: false
-  xy: 0, 29
+  xy: 812, 100
   size: 16, 26
   orig: 16, 26
   offset: 0, 0
   index: -1
 tab_active
   rotate: false
-  xy: 0, 11
+  xy: 2, 6
   size: 128, 18
   split: 6, 6, 6, 6
   orig: 128, 18
@@ -68,69 +146,27 @@ tab_active
   index: -1
 tab_inactive
   rotate: false
-  xy: 128, 11
+  xy: 351, 111
   size: 128, 15
   split: 6, 6, 6, 6
-  orig: 128, 18
-  offset: 0, 0
-  index: -1
-bag
-  rotate: false
-  xy: 124, 142
-  size: 56, 56
-  orig: 56, 56
-  offset: 0, 0
-  index: -1
-spell
-  rotate: false
-  xy: 224, 210
-  size: 26, 37
-  orig: 26, 37
-  offset: 0, 0
-  index: -1
-window1
-  rotate: false
-  xy: 186, 142
-  size: 64, 64
-  split: 6, 6, 6, 6
-  pad: 4, 4, 4, 4
-  orig: 64, 64
+  orig: 128, 15
   offset: 0, 0
   index: -1
 window
   rotate: false
-  xy: 0, 95
+  xy: 290, 4
   size: 34, 26
   split: 16, 16, 12, 12
   pad: 12, 12, 12, 12
   orig: 34, 26
   offset: 0, 0
   index: -1
-checkbox_checked
+window1
   rotate: false
-  xy: 227, 62
-  size: 28, 28
-  orig: 28, 28
-  offset: 0, 0
-  index: -1
-checkbox_unchecked
-  rotate: false
-  xy: 227, 91
-  size: 28, 28
-  orig: 28, 28
-  offset: 0, 0
-  index: -1
-flag_en
-  rotate: false
-  xy: 146, 212
-  size: 52, 37
-  orig: 52, 37
-  offset: 0, 0
-  index: -1
-flag_fr
-  rotate: false
-  xy: 201, 212
-  size: 52, 37
-  orig: 52, 37
+  xy: 280, 32
+  size: 64, 64
+  split: 6, 6, 6, 6
+  pad: 4, 4, 4, 4
+  orig: 64, 64
   offset: 0, 0
   index: -1

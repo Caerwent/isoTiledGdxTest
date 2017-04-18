@@ -18,11 +18,19 @@
     "outputEvents":[]
   },
   {
+    "id":"portal4",
+    "template":"portal_clickable.json",
+    "properties": {
+      "targetMapId":"home"
+    },
+    "eventsAction":[],
+    "outputEvents":[]
+  },
+  {
     "id":"defaultPortal",
     "template":"portal.json",
     "properties": {
       "isDefaultStart":"true",
-      "questId":"quest_start"
     },
     "eventsAction":[],
     "outputEvents":[]

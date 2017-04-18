@@ -8,6 +8,8 @@ import com.badlogic.gdx.math.Vector2;
 import com.vte.libgdx.ortho.test.MyGame;
 import com.vte.libgdx.ortho.test.audio.AudioManager;
 import com.vte.libgdx.ortho.test.box2d.PathHero;
+import com.vte.libgdx.ortho.test.box2d.PolygonShape;
+import com.vte.libgdx.ortho.test.box2d.Shape;
 import com.vte.libgdx.ortho.test.effects.Effect;
 import com.vte.libgdx.ortho.test.effects.EffectFactory;
 import com.vte.libgdx.ortho.test.entity.components.CollisionComponent;
@@ -25,6 +27,8 @@ public class InteractionHero extends Interaction {
 
     protected float stateTime; // elapsed time
     MapTownPortalInfo mPortalInfo;
+    protected Shape mShapeForMovCollision=new PolygonShape();
+    protected float[] mVerticesForMovCollision = new float[8];
 
     public InteractionHero(InteractionDef aDef, float x, float y, InteractionMapping aMapping, MapProperties aProperties, GameMap aMap) {
         super(aDef, x, y, aMapping, aProperties, aMap);
@@ -192,6 +196,34 @@ public class InteractionHero extends Interaction {
         Effect portalBackEffect = EffectFactory.getInstance().getEffect(Effect.Type.PORTAL);
         portalBackEffect.setPlayMode(Animation.PlayMode.REVERSED);
         launchEffect(portalBackEffect);
+    }
+
+    public Shape getShapeForMovementCollision() {
+        TransformComponent tfm = this.getComponent(TransformComponent.class);
+        mShapeForMovCollision.setX(tfm.position.x );
+        mShapeForMovCollision.setY(tfm.position.y);
+
+        if (isRendable()) {
+            float width = mCurrentFrame.getRegionWidth() * tfm.scale;
+            float height = mCurrentFrame.getRegionHeight() * tfm.scale / 8;
+
+
+            mVerticesForMovCollision[0] = tfm.originOffset.x;
+            mVerticesForMovCollision[1] = tfm.originOffset.y;
+            mVerticesForMovCollision[2] = tfm.originOffset.x;
+            mVerticesForMovCollision[3] = height + tfm.originOffset.y;
+            mVerticesForMovCollision[4] = width + tfm.originOffset.x;
+            mVerticesForMovCollision[5] = height + tfm.originOffset.y;
+            mVerticesForMovCollision[6] = width + tfm.originOffset.x;
+            mVerticesForMovCollision[7] = tfm.originOffset.y;
+
+
+            if (mShapeForMovCollision.getType() == Shape.Type.POLYGON) {
+                ((PolygonShape) mShapeForMovCollision).getShape().setVertices(mVerticesForMovCollision);
+            }
+
+        }
+        return mShapeForMovCollision;
     }
 
 

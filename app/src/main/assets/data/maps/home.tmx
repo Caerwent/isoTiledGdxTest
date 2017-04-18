@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.0" orientation="orthogonal" renderorder="right-up" width="12" height="10" tilewidth="32" tileheight="32" backgroundcolor="#000000" nextobjectid="28">
+ <tileset firstgid="1" name="dungeonex" tilewidth="32" tileheight="32" tilecount="100" columns="10">
+  <image source="dungeonex.png" width="320" height="320"/>
+ </tileset>
+ <tileset firstgid="101" name="house_inside_full" tilewidth="32" tileheight="32" tilecount="900" columns="30">
+  <image source="house_inside_full.png" width="960" height="960"/>
+ </tileset>
+ <tileset firstgid="1001" name="house_inside_full2" tilewidth="32" tileheight="32" tilecount="504" columns="24">
+  <image source="house_inside_full2.png" width="768" height="672"/>
+ </tileset>
+ <tileset firstgid="1505" name="terrain_atlas" tilewidth="32" tileheight="32" tilecount="1024" columns="32">
+  <image source="terrain_atlas.png" width="1024" height="1024"/>
+ </tileset>
+ <layer name="ground" width="12" height="10">
+  <data encoding="base64">
+   OAEAADoBAAA6AQAAOgEAADoBAAA6AQAAOgEAADoBAAA6AQAAOgEAADoBAAA3AQAAHQEAAOADAADgAwAA4AMAAOADAADgAwAA4AMAAOADAADgAwAA4AMAAOADAAAbAQAAHQEAAOADAADgAwAA4AMAAOADAADgAwAA4AMAAOADAADgAwAA4AMAAOADAAAbAQAAHQEAAOADAADgAwAA4AMAAOADAADgAwAA4AMAAOADAADgAwAA4AMAAOADAAAbAQAAHQEAAOADAADgAwAA4AMAAOADAADgAwAA4AMAAOADAADgAwAA4AMAAOADAAAbAQAAHQEAAOADAADgAwAA4AMAAOADAADgAwAA4AMAAOADAADgAwAA4AMAAOADAAAbAQAAHQEAAOADAADgAwAA4AMAAOADAADgAwAA4AMAAOADAADgAwAA4AMAAOADAAAbAQAAHQEAAOADAADgAwAA4AMAAOADAADgAwAA4AMAAOADAADgAwAA4AMAAOADAAAbAQAAHQEAAOADAADgAwAA4AMAAOADAADgAwAA4AMAAOADAADgAwAA4AMAAOADAAAbAQAAGgEAAP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP4AAAAZAQAA
+  </data>
+ </layer>
+ <layer name="terrain" width="12" height="10">
+  <data encoding="base64">
+   AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAIQCAACEAgAAhAIAAIQCAACEAgAAhAIAAIQCAACEAgAAhAIAAIQCAAAAAAAAAAAAAKECAACiAgAAsgAAAKICAACiAgAAogIAAKICAACiAgAAogIAAKMCAAAAAAAAAAAAAJMDAAAAAAAAAAAAAAAAAAAAAAAA2wMAANoDAAAAAAAAAAAAAJEDAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAKkBAACqAQAAAAAAAAAAAAAAAAAAAAAAAHcDAAAAAAAAAAAAAAAAAAAAAAAAAAAAAMcBAADIAQAAAAAAAAAAAAAAAAAAAAAAAJUDAAANAAAADgAAAA8AAAAAAAAA7QYAAO8GAAAAAAAAAAAAAGADAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADQcAAA8HAABBAAAAQgAAAEMAAAAAAAAAAAAAACQDAAAAAAAAAAAAAAAAAAC+AwAALQcAAC8HAABLAAAATAAAAE0AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+  </data>
+ </layer>
+ <layer name="terrain2" width="12" height="10">
+  <data encoding="base64">
+   AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAHUDAAAAAAAAAAAAAAAAAAAAAAAAvQMAALwDAADFAwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADjAwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAJYDAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+  </data>
+ </layer>
+ <layer name="terrain3" width="12" height="10">
+  <data encoding="base64">
+   AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAlAAAAAAAAAAAAAAAAAAAANsCAADcAgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAANsCAADcAgAAAAAAAHMDAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAANsCAADcAgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+  </data>
+ </layer>
+ <objectgroup name="zindex" visible="0">
+  <object id="18" x="72" y="192">
+   <polygon points="0,0 0,32 16,32 16,16 8,16"/>
+  </object>
+  <object id="19" x="104" y="192">
+   <polygon points="0,0 -8,8 0,24 0,32 24,32 24,24 24,8 16,0"/>
+  </object>
+  <object id="20" x="136" y="208">
+   <polygon points="0,0 0,16 16,16 24,-16 16,-16 16,-8 8,-8"/>
+  </object>
+  <object id="21" x="32" y="160">
+   <polygon points="0,0 32,0 32,64 0,64"/>
+  </object>
+  <object id="22" x="40" y="264">
+   <polygon points="0,0 8,-8 24,0 24,24 0,24"/>
+  </object>
+  <object id="23" x="160" y="272">
+   <polygon points="0,0 0,16 32,16 32,0"/>
+  </object>
+  <object id="24" x="32" y="288">
+   <polygon points="0,0 0,32 328,32 328,0"/>
+  </object>
+  <object id="25" x="280" y="232">
+   <polygon points="0,0 0,56 72,56 72,0"/>
+  </object>
+  <object id="26" x="320" y="192">
+   <polygon points="0,0 8,32 24,32 32,0"/>
+  </object>
+ </objectgroup>
+ <objectgroup name="collision">
+  <object id="4" x="-8" y="-8">
+   <polygon points="8,8 40,8 40,328 8,328"/>
+  </object>
+  <object id="5" x="0" y="0">
+   <polygon points="0,0 0,88 384,88 384,0"/>
+  </object>
+  <object id="6" x="352" y="0">
+   <polygon points="0,0 0,320 32,320 32,0"/>
+  </object>
+  <object id="7" x="0" y="304">
+   <polygon points="0,0 384,0 384,16 0,16"/>
+  </object>
+  <object id="8" x="32" y="184">
+   <polygon points="0,-8 32,-8 32,32 0,32"/>
+  </object>
+  <object id="9" x="72" y="208">
+   <polygon points="0,0 0,16 80,16 80,0 56,0 48,-8 32,-8 24,0"/>
+  </object>
+  <object id="10" x="32" y="272">
+   <polygon points="0,0 32,0 32,32 0,32"/>
+  </object>
+  <object id="11" x="288" y="240">
+   <polygon points="-8,0 -8,40 64,40 64,0"/>
+  </object>
+  <object id="12" x="264" y="64">
+   <polygon points="0,0 0,64 88,64 80,8"/>
+  </object>
+  <object id="13" x="248" y="32">
+   <polygon points="0,0 0,160 16,160 16,0"/>
+  </object>
+  <object id="14" x="192" y="72">
+   <polygon points="0,-8 0,56 56,56 56,-8"/>
+  </object>
+  <object id="15" x="32" y="80">
+   <polygon points="0,0 32,0 32,40 0,40"/>
+  </object>
+  <object id="16" x="224" y="208">
+   <polygon points="0,-8 -8,0 -24,16 -24,48 0,72 24,48 16,24 24,8 16,-8"/>
+  </object>
+  <object id="17" x="320" y="200">
+   <polygon points="0,0 8,24 24,24 32,0"/>
+  </object>
+ </objectgroup>
+ <objectgroup name="interactions" visible="0">
+  <object id="3" name="portal1" type="PORTAL" gid="2523" x="96" y="94" width="32" height="32"/>
+ </objectgroup>
+ <objectgroup name="items" visible="0"/>
+ <objectgroup name="path" visible="0">
+  <object id="27" name="hero" x="112" y="96">
+   <polyline points="0,0 80,96"/>
+  </object>
+ </objectgroup>
+</map>

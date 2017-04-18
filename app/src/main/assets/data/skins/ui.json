@@ -79,6 +79,10 @@
     "dialog-speaker": {
       "font": "default-font",
       "fontColor": "yellow"
+    },
+    "big-font": {
+      "font": "default-font",
+      "fontColor": "black"
     }
   },
   "com.badlogic.gdx.scenes.scene2d.ui.TextField$TextFieldStyle": {

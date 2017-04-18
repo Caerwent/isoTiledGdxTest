@@ -22,6 +22,7 @@ import com.vte.libgdx.ortho.test.AssetsUtility;
 import com.vte.libgdx.ortho.test.MyGame;
 import com.vte.libgdx.ortho.test.audio.AudioEvent;
 import com.vte.libgdx.ortho.test.audio.AudioManager;
+import com.vte.libgdx.ortho.test.box2d.PathHero;
 import com.vte.libgdx.ortho.test.box2d.PathMap;
 import com.vte.libgdx.ortho.test.box2d.PolygonShape;
 import com.vte.libgdx.ortho.test.box2d.Shape;
@@ -78,8 +79,10 @@ public class GameMap implements ICollisionHandler {
 
     public GameMap(String aMapName, String aFromMap, OrthographicCamera aCamera, MapTownPortalInfo aTownPortalInfo) {
         mMapName = aMapName;
+        boolean firstMapEntrance = false;
         MapProfile mapProfile = Profile.getInstance().getMapProfile(mMapName);
         if (mapProfile == null) {
+            firstMapEntrance = true;
             mapProfile = new MapProfile();
             Profile.getInstance().updateMapProfile(mMapName, mapProfile);
         }
@@ -93,11 +96,10 @@ public class GameMap implements ICollisionHandler {
         }
         mCamera = aCamera;
 
-        if(PersistenceProvider.getInstance().getSettings().musicActivated) {
+        if (PersistenceProvider.getInstance().getSettings().musicActivated) {
             MapProperties mapProperties = map.getProperties();
             mMusic = mapProperties.get("music", String.class);
-            if(mMusic!=null && !mMusic.isEmpty())
-            {
+            if (mMusic != null && !mMusic.isEmpty()) {
                 AudioManager.getInstance().onAudioEvent(new AudioEvent(AudioEvent.Type.MUSIC_LOAD, mMusic));
             }
         }
@@ -124,8 +126,7 @@ public class GameMap implements ICollisionHandler {
             tryToSetCameraAtPosition(aTownPortalInfo.x, aTownPortalInfo.y);
             mPlayer.getHero().launchTownPortalArrivalEffect(aTownPortalInfo);
         }
-        if(aTownPortalInfo == null)
-        {
+        if (aTownPortalInfo == null) {
             locationProfile.mFromMapId = aFromMap;
         }
         Profile.getInstance().setLocationProfile(locationProfile);
@@ -157,20 +158,14 @@ public class GameMap implements ICollisionHandler {
 
 
                 } else {
-                    if(aTownPortalInfo!=null)
-                    {
+                    if (aTownPortalInfo != null) {
                         // check hero is not on the portal
-                        if(ShapeUtils.overlaps(mPlayer.getHero().getShape(), portal.getShape()))
-                        {
+                        if (ShapeUtils.overlaps(mPlayer.getHero().getShape(), portal.getShape())) {
                             portal.setActivated(false);
-                        }
-                        else
-                        {
+                        } else {
                             portal.setActivated(true);
                         }
-                    }
-                    else
-                    {
+                    } else {
                         portal.setActivated(true);
                     }
                 }
@@ -180,6 +175,10 @@ public class GameMap implements ICollisionHandler {
         renderer = new MapAndSpritesRenderer2(this, MyGame.SCALE_FACTOR);
         mBodiesZindex = buildShapes(map, "zindex");
         mBodiesCollision = buildShapes(map, "collision");
+
+        if (mPaths.containsKey("hero") && firstMapEntrance) {
+            mPlayer.getHero().setPath(new PathHero(mPaths.get("hero")));
+        }
         mIsInitialized = true;
     }
 
@@ -218,10 +217,8 @@ public class GameMap implements ICollisionHandler {
         return mIsInitialized;
     }
 
-    public void playMusic(boolean aPlay)
-    {
-        if(mMusic!=null && !mMusic.isEmpty())
-        {
+    public void playMusic(boolean aPlay) {
+        if (mMusic != null && !mMusic.isEmpty()) {
             AudioManager.getInstance().onAudioEvent(new AudioEvent(aPlay ? AudioEvent.Type.MUSIC_PLAY_LOOP : AudioEvent.Type.MUSIC_STOP, mMusic));
         }
     }
@@ -229,7 +226,7 @@ public class GameMap implements ICollisionHandler {
     public void destroy() {
         ImmutableArray<Entity> entities = EntityEngine.getInstance().getEntitiesFor(Family.all(CollisionComponent.class).get());
         int size = entities.size();
-        for(int i=size-1;i>=0;i--) {
+        for (int i = size - 1; i >= 0; i--) {
             EntityEngine.getInstance().removeEntity(entities.get(i));
         }
         for (IInteraction it : mInteractions) {
@@ -311,9 +308,12 @@ public class GameMap implements ICollisionHandler {
 
     private Array<Shape> buildShapes(Map map, String layerName) {
         byte type = "zindex".compareTo(layerName) == 0 ? CollisionComponent.ZINDEX : CollisionComponent.OBSTACLE;
-        MapObjects objects = map.getLayers().get(layerName).getObjects();
 
         Array<Shape> bodies = new Array<Shape>();
+        if (map.getLayers().get(layerName) == null)
+            return bodies;
+
+        MapObjects objects = map.getLayers().get(layerName).getObjects();
 
         for (MapObject object : objects) {
 

@@ -10,10 +10,70 @@ public class Item {
 
 
     public enum ItemTypeID {
-        engrenage32x32,
-        potionBlue,
-        key,
-        tonneau;
+        Barrel,
+        BookDark,
+        Boots,
+        ChessClosed,
+        ChessOpen,
+        CrystalAnimBlue,
+        CrystalAnimGreen,
+        CrystalAnimGrey,
+        CrystalAnimPink,
+        CrystalAnimYellow,
+        CrystalsBlue,
+        CrystalsGreen,
+        CrystalsPurple,
+        Dagger,
+        DaggerBroken,
+        FoodAle,
+        FoodBiscuit,
+        FoodBread,
+        FoodBread2,
+        FoodShank,
+        Gear,
+        Gloves,
+        GlyphGreen,
+        GlyphRed,
+        GlyphYellow,
+        Hammer,
+        HammerSmall,
+        Jewels,
+        JewelsBlue,
+        JewelsRed,
+        KeyCrystal,
+        KeyDark,
+        KeyIron,
+        KeyMoon,
+        KeyRed,
+        KeyRoyal,
+        Lantern,
+        Lantern2,
+        NecklaceJewelBlue,
+        NecklaceJewelGreen,
+        NecklaceJewelOrange,
+        NecklaceJewelRed,
+        Pick,
+        PotionBlueSmall,
+        PotionGreenSmall,
+        PotionRedSmall,
+        PotionRounededBrown,
+        PotionSilver,
+        PotionTealBig,
+        PotionVioletLarge,
+        PotionYellowLarge,
+        PotionYellowSmall,
+        RobeBlue,
+        Scroll01,
+        Scroll02,
+        Scroll03,
+        Scroll04,
+        Shovel,
+        Shovel2,
+        Torch,
+        TorchFire,
+        VialBlue,
+        VialGreen,
+        VialRed
     }
 
     private ItemTypeID itemTypeID;
@@ -30,6 +90,11 @@ public class Item {
 
     public Item() {
         super();
+    }
+
+    public Item(ItemTypeID inventoryItemType) {
+        super();
+        this.itemTypeID = inventoryItemType;
     }
 
     public Item(Item inventoryItem) {

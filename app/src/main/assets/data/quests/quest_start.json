@@ -3,7 +3,8 @@
 	"id": "quest_start",
 	"title":"quest_start_title",
 	"desc":"quest_start_desc",
-	"itemsReward":["key"],
+	"itemsReward":["KeyIron"],
+	"startQuestDialogId":"dialog_intro",
 	"requiredCompletedQuest": [],
 	"tasks" : [
 		{

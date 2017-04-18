@@ -44,9 +44,12 @@ public class InventorySlotTarget extends Target {
         if(sourceItem!=null && targetItem!=null)
         {
             ItemCombinaison combinaison = ItemFactory.getInstance().getItemCombinaison(sourceItem.getItemTypeID(), targetItem.getItemTypeID());
-            if(combinaison!=null && combinaison.resultItem!=null)
+            if(combinaison!=null && combinaison.resultItems !=null)
             {
-                EventDispatcher.getInstance().onItemFound(ItemFactory.getInstance().getInventoryItem(combinaison.resultItem));
+                for(Item.ItemTypeID itemId : combinaison.resultItems )
+                {
+                    EventDispatcher.getInstance().onItemFound(ItemFactory.getInstance().getInventoryItem(itemId));
+                }
                 EventDispatcher.getInstance().onItemLost(sourceItem);
                 EventDispatcher.getInstance().onItemLost(targetItem);
 

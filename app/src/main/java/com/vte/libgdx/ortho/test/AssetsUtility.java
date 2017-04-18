@@ -31,12 +31,9 @@ public final class AssetsUtility {
 
     private final static String STRINGS_PATH = "strings/strings";
     public final static String UI_SKIN_PATH = "data/skins/ui.json";
-    private final static String ITEMS_TEXTURE_ATLAS_PATH = "data/items/sprite_atlas.txt";
-    private final static String ITEMS_SKIN_PATH = "data/items/items.json";
+    private final static String ITEMS_TEXTURE_ATLAS_PATH = "data/items/items.atlas";
 
-    //  public static TextureAtlas STATUSUI_TEXTUREATLAS = new TextureAtlas(STATUSUI_TEXTURE_ATLAS_PATH);
     public static TextureAtlas ITEMS_TEXTUREATLAS = new TextureAtlas(ITEMS_TEXTURE_ATLAS_PATH);
-    //  public static Skin STATUSUI_SKIN = new Skin(Gdx.files.internal(STATUSUI_SKIN_PATH), STATUSUI_TEXTUREATLAS);
 
     public static void unloadAsset(String assetFilenamePath) {
         // once the asset manager is done loading

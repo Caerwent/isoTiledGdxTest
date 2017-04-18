@@ -13,6 +13,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.badlogic.gdx.scenes.scene2d.utils.DragAndDrop;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Scaling;
@@ -20,10 +21,14 @@ import com.vte.libgdx.ortho.test.MyGame;
 import com.vte.libgdx.ortho.test.effects.Effect;
 import com.vte.libgdx.ortho.test.effects.EffectFactory;
 import com.vte.libgdx.ortho.test.events.EventDispatcher;
+import com.vte.libgdx.ortho.test.events.IQuestListener;
 import com.vte.libgdx.ortho.test.events.ISystemEventListener;
 import com.vte.libgdx.ortho.test.map.GameMap;
 import com.vte.libgdx.ortho.test.map.MapTownPortalInfo;
 import com.vte.libgdx.ortho.test.persistence.Profile;
+import com.vte.libgdx.ortho.test.quests.Quest;
+import com.vte.libgdx.ortho.test.quests.QuestManager;
+import com.vte.libgdx.ortho.test.quests.QuestTask;
 import com.vte.libgdx.ortho.test.screens.GameScreen;
 import com.vte.libgdx.ortho.test.screens.GenericUI;
 
@@ -35,10 +40,10 @@ import static com.vte.libgdx.ortho.test.Settings.TARGET_WIDTH;
  * Created by gwalarn on 16/11/16.
  */
 
-public class MainHUD extends Group implements ISystemEventListener {
+public class MainHUD extends Group implements ISystemEventListener, IQuestListener {
 
     private static final int DIALOG_W = TARGET_WIDTH / 4 * 3;
-    private static final int DIALOG_H = 100;
+    private static final int DIALOG_H = TARGET_HEIGHT/4;
 
     protected final HorizontalGroup mHud = new HorizontalGroup();
 
@@ -64,6 +69,7 @@ public class MainHUD extends Group implements ISystemEventListener {
         this.addActor(mHud);
 
         EventDispatcher.getInstance().addSystemEventListener(this);
+
         mInventoryButton = new Image();
         mInventoryButton.setScaling(Scaling.fit);
         mInventoryButton.setAlign(Align.center);
@@ -120,6 +126,17 @@ public class MainHUD extends Group implements ISystemEventListener {
         mContentPanel.setBackground(GenericUI.getInstance().getSkin().getDrawable("window"));
         stack.add(mInventorySlotTable);
         mInventorySlotTable.setPosition(0, 0);
+        if(QuestManager.getInstance().getQuestFromId(MyGame.QUEST_START_ID).isCompleted())
+        {
+            mInventoryButton.setVisible(true);
+            mSpellButton.setVisible(true);
+        }
+        else
+        {
+            EventDispatcher.getInstance().addQuestListener(this);
+            mInventoryButton.setVisible(false);
+            mSpellButton.setVisible(false);
+        }
         stack.add(mEffectsPanel);
         mEffectsPanel.setPosition(0, 0);
 
@@ -139,6 +156,7 @@ public class MainHUD extends Group implements ISystemEventListener {
         });
         mInventoryButton.setTouchable(Touchable.enabled);
 
+
         mSpellButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
@@ -147,7 +165,7 @@ public class MainHUD extends Group implements ISystemEventListener {
                 }
             }
         });
-        mInventoryButton.setTouchable(Touchable.enabled);
+        mSpellButton.setTouchable(Touchable.enabled);
 
         Effect.Type selectedEffect = Profile.getInstance().getSelectedEffect();
         if (selectedEffect != null) {
@@ -168,7 +186,6 @@ public class MainHUD extends Group implements ISystemEventListener {
 
     @Override
     public void onMapLoaded(GameMap aMap) {
-
     }
 
     @Override
@@ -184,5 +201,36 @@ public class MainHUD extends Group implements ISystemEventListener {
     @Override
     public void onEffectFound(Effect.Type aEffectType) {
         mEffectsPanel.update();
+    }
+
+    public DragAndDrop getItemDragAndDrop()
+    {
+        return mInventorySlotTable.getDragAndDrop();
+    }
+
+    public void destroy()
+    {
+        EventDispatcher.getInstance().removeQuestListener(this);
+        EventDispatcher.getInstance().removeSystemEventListener(this);
+    }
+
+    @Override
+    public void onQuestActivated(Quest aQuest) {
+
+    }
+
+    @Override
+    public void onQuestCompleted(Quest aQuest) {
+        if(aQuest.getId().compareTo(MyGame.QUEST_START_ID)==0)
+        {
+            mInventoryButton.setVisible(true);
+            mSpellButton.setVisible(true);
+            EventDispatcher.getInstance().removeQuestListener(this);
+        }
+    }
+
+    @Override
+    public void onQuestTaskCompleted(Quest aQuest, QuestTask aTask) {
+
     }
 }

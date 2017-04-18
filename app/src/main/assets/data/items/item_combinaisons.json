@@ -1,9 +1,14 @@
 [
 {
-	"item1":engrenage32x32,
-	"item2":potionBlue,
-	"resultItem":tonneau
-}
+	"item1":Lantern,
+	"item2":Torch,
+	"resultItems":["TorchFire", "Lantern"]
+},
+	{
+		"item1":Lantern2,
+		"item2":Torch,
+		"resultItems":["TorchFire", "Lantern2"]
+	}
 
 
 ]

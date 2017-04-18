@@ -10,18 +10,18 @@
     "outputEvents":[]
   },
   {
-    "id":"house2_chess1",
-    "template":"chess_type1.json",
+    "id":"house2_chest1",
+    "template":"chest_type1.json",
     "properties": {
-      "requiredItem":"key"
+      "requiredItem":"KeyIron"
     },
 
     "eventsAction":[],
     "outputEvents":[]
   },
   {
-    "id":"house2_chess2",
-    "template":"chess_invisible.json",
+    "id":"house2_chest2",
+    "template":"chest_invisible.json",
     "properties": {
     },
 

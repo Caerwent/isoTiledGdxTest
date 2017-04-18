@@ -16,12 +16,10 @@ import java.util.Hashtable;
 
 public class ItemFactory {
     private Json _json = new Json();
-    private final String INVENTORY_ITEM = "data/items/items.json";
     private final String ITEM_COMBINAISON_FILE = "data/items/item_combinaisons.json";
-    private final String CHESS_FILE = "data/items/chess.json";
+    private final String CHEST_FILE = "data/items/chest.json";
     private static ItemFactory _instance = null;
-    private Hashtable<Item.ItemTypeID, Item> mItemsList;
-    private Hashtable<String, Chess> mChessList;
+    private Hashtable<String, Chest> mChestList;
     private OrderedMap<ItemTypeID, OrderedMap<ItemTypeID, ItemCombinaison>> mCombinaisonList;
 
     public static ItemFactory getInstance() {
@@ -33,16 +31,6 @@ public class ItemFactory {
     }
 
     private ItemFactory() {
-        ArrayList<JsonValue> list = _json.fromJson(ArrayList.class, Gdx.files.internal(INVENTORY_ITEM));
-        mItemsList = new Hashtable<Item.ItemTypeID, Item>();
-
-        for (JsonValue jsonVal : list) {
-            Item item = _json.readValue(Item.class, jsonVal);
-            // convert string
-            item.setItemShortDescription(AssetsUtility.getString(item.getItemShortDescription()));
-            mItemsList.put(item.getItemTypeID(), item);
-        }
-
         ArrayList<JsonValue> combList = _json.fromJson(ArrayList.class, Gdx.files.internal(ITEM_COMBINAISON_FILE));
         mCombinaisonList = new OrderedMap<ItemTypeID, OrderedMap<ItemTypeID, ItemCombinaison>>();
         for (JsonValue jsonVal : combList) {
@@ -51,24 +39,25 @@ public class ItemFactory {
         }
 
 
-        ArrayList<JsonValue> chessList = _json.fromJson(ArrayList.class, Gdx.files.internal(CHESS_FILE));
-        mChessList = new Hashtable<String, Chess>();
+        ArrayList<JsonValue> chestList = _json.fromJson(ArrayList.class, Gdx.files.internal(CHEST_FILE));
+        mChestList = new Hashtable<String, Chest>();
 
-        for (JsonValue jsonVal : chessList) {
-            Chess chess = _json.readValue(Chess.class, jsonVal);
-            mChessList.put(chess.getId(), chess);
+        for (JsonValue jsonVal : chestList) {
+            Chest chest = _json.readValue(Chest.class, jsonVal);
+            mChestList.put(chest.getId(), chest);
         }
     }
 
     public Item getInventoryItem(Item.ItemTypeID inventoryItemType) {
-        Item item = new Item(mItemsList.get(inventoryItemType));
+        Item item = new Item(inventoryItemType);
+        item.setItemShortDescription(AssetsUtility.getString("itemDesc_"+item.getItemTypeID()));
         item.setTextureRegion(AssetsUtility.ITEMS_TEXTUREATLAS.findRegion(item.getItemTypeID().toString()));
         return item;
     }
 
-    public Chess getChess(String aChessId)
+    public Chest getChest(String aChestId)
     {
-        return mChessList.get(aChessId);
+        return mChestList.get(aChestId);
     }
 
     public void addItemCombinaison(ItemCombinaison aItemComb)

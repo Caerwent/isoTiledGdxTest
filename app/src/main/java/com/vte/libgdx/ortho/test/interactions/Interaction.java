@@ -94,9 +94,9 @@ public class Interaction extends Entity implements ICollisionHandler, IInteracti
         mQuestsActions = aMapping.questActions;
         mMap = aMap;
         mProperties = aProperties;
+
         EntityEngine.getInstance().addEntity(this);
 
-        add(new InteractionComponent(this));
 
         this.add(new TransformComponent());
 
@@ -117,14 +117,21 @@ public class Interaction extends Entity implements ICollisionHandler, IInteracti
         {
             EventDispatcher.getInstance().addQuestListener(this);
         }
+        add(new InteractionComponent(this));
+
 
     }
 
-    protected void restoreFromPersistence(GameSession aGameSession) {
+    public GameMap getMap()
+    {
+        return mMap;
+    }
+
+    public void restoreFromPersistence(GameSession aGameSession) {
 
     }
 
-    protected GameSession saveInPersistence(GameSession aGameSession) {
+    public GameSession saveInPersistence(GameSession aGameSession) {
         return aGameSession;
     }
 
@@ -140,7 +147,7 @@ public class Interaction extends Entity implements ICollisionHandler, IInteracti
         }
     }
 
-    protected void saveInPersistence() {
+    public void saveInPersistence() {
         if(getPersistence()==Persistence.GAME )
         {
             Profile.getInstance().updatePersistentGameSession(saveInPersistence(Profile.getInstance().getPersistentGameSession()));
@@ -244,7 +251,29 @@ public class Interaction extends Entity implements ICollisionHandler, IInteracti
         mCurrentState = getState(mDef.defaultState);
 
         if (mDef.isRendable) {
-            mAtlas = new TextureAtlas("data/interactions/" + mDef.atlas);
+
+            String[] files = ("data/interactions/" + mDef.atlas).split("/");
+            ArrayList<String> path = new ArrayList();
+            for(int i=0;i<files.length; i++)
+            {
+                if(files[i].compareTo("..")==0 && path.size()>0)
+                {
+                    path.remove(path.size()-1);
+                }
+                else
+                {
+                    path.add(files[i]);
+                }
+            }
+            String filename = "";
+            String sep="";
+            while(path.size()>0)
+            {
+                filename+=sep+path.remove(0);
+                sep="/";
+            }
+
+            mAtlas = new TextureAtlas(filename);
             for (InteractionState state : mDef.states) {
                 state.init(mAtlas);
             }
@@ -631,13 +660,20 @@ public class Interaction extends Entity implements ICollisionHandler, IInteracti
         }
     }
 
-    protected void doActionOnEvent(InteractionEventAction aAction) {
+    /**
+     * check if an action should be done
+     * @param aAction   the action to be checked
+     * @return  true if action has be done, false in other cases
+     */
+    protected boolean doActionOnEvent(InteractionEventAction aAction) {
         if (aAction != null && InteractionEventAction.ActionType.SET_STATE.name().equals(aAction.id)) {
             if(getState(aAction.value)!=null)
             {
                 setState(aAction.value);
+                return true;
             }
         }
+        return false;
     }
 
     public void launchEffect(Effect aEffect) {

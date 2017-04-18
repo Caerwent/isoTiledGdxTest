@@ -2,6 +2,9 @@
   {
     "id":"monster1",
     "template":"monster_type1.json",
+    "properties": {
+      "pathId":"path1"
+    },
     "eventsAction":[
       {
         "id":"WAKEUP",
@@ -84,10 +87,10 @@
   }
 ,
   {
-    "id":"chess1",
-    "template":"chess_type1.json",
+    "id":"chest1",
+    "template":"chest_type1.json",
     "properties": {
-      "requiredItem":"key"
+      "requiredItem":"KeyIron"
     },
 
     "eventsAction":[],

@@ -17,7 +17,7 @@ public interface IInteraction extends IMapRendable {
     public enum Type {
         ITEM,
         HERO,
-        CHESS,
+        CHEST,
         NPC,
         PORTAL,
         MONSTER,

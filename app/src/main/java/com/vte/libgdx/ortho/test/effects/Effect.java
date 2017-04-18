@@ -10,6 +10,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.utils.Array;
 import com.vte.libgdx.ortho.test.AssetsUtility;
 import com.vte.libgdx.ortho.test.MyGame;
+import com.vte.libgdx.ortho.test.screens.GenericUI;
 
 import java.util.ArrayList;
 
@@ -112,7 +113,7 @@ public class Effect {
     }
 
     public TextureRegion getIcon() {
-        return mAtlas.findRegion(icon);
+        return GenericUI.getInstance().getTextureAtlas().findRegion(icon);
     }
 
     public Animation getAnimation() {

@@ -1,7 +1,7 @@
 {
   "type":"CHALLENGE",
-  "atlas":"chess1.atlas",
-  "persistence":"NONE",
+  "atlas":"../challenges/the_machine.atlas",
+  "persistence":"GAME",
   "defaultState":"IDLE",
   "isClickable": "true",
   "isRendable": "true",
@@ -10,25 +10,17 @@
     {
       "name": "IDLE",
       "isLooping":"true",
-      "fps":"10",
+      "fps":"0",
       "frames": [
-        "closed", "open"
+        "theMachine_small"
       ]
     },
     {
-      "name": "CLOSED",
+      "name": "COMPLETED",
       "isLooping":"true",
       "fps":"0",
       "frames": [
-        "closed"
-      ]
-    },
-    {
-      "name": "OPEN",
-      "isLooping":"true",
-      "fps":"0",
-      "frames": [
-        "open"
+        "theMachine_small"
       ]
     }
 

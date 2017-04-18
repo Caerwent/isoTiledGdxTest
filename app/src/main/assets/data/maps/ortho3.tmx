@@ -93,6 +93,6 @@
   <object id="31" name="door2" gid="127" x="496" y="216" width="32" height="32"/>
  </objectgroup>
  <objectgroup name="items">
-  <object id="32" name="key" type="ITEM" gid="82" x="264" y="144" width="64" height="64"/>
+  <object id="32" name="KeyIron" type="ITEM" gid="82" x="264" y="144" width="64" height="64"/>
  </objectgroup>
 </map>

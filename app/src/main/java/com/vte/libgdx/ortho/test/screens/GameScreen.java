@@ -73,8 +73,6 @@ public class GameScreen implements Screen, InputProcessor {
 
     InputMultiplexer mInputMultiplexer = new InputMultiplexer();
 
-    private MainHUD mMainHUD;
-
 
     public GameScreen() {
         Gdx.app.setLogLevel(Application.LOG_DEBUG);
@@ -112,9 +110,8 @@ public class GameScreen implements Screen, InputProcessor {
 
 
         UIStage.createInstance(new ExtendViewport(TARGET_WIDTH, TARGET_HEIGHT, uiCamera));
-        mMainHUD = new MainHUD();
 
-        UIStage.getInstance().addActor(mMainHUD);
+        UIStage.getInstance().setHUD(new MainHUD());
 
 
         bobController = new ChararcterMoveController2(camera);
@@ -129,6 +126,9 @@ public class GameScreen implements Screen, InputProcessor {
 
     public void setSpotShape(Shape aSpot) {
         mSpot = aSpot;
+    }
+    public Shape getSpotShape() {
+        return mSpot;
     }
 
     public void loadMap(String aTargetMapId, String aFromMapId, MapTownPortalInfo aTownPortalInfo) {
@@ -189,7 +189,8 @@ public class GameScreen implements Screen, InputProcessor {
         //            (int) viewport.width, (int) viewport.height);
 
         // clear previous frame
-        Gdx.gl.glClearColor(100f / 255f, 100f / 255f, 250f / 255f, 1f);
+        //Gdx.gl.glClearColor(100f / 255f, 100f / 255f, 250f / 255f, 1f);
+        Gdx.gl.glClearColor(0f, 0f, 0f, 1f);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
         if (map != null)
@@ -263,7 +264,9 @@ public class GameScreen implements Screen, InputProcessor {
 
     @Override
     public void dispose() {
-        EventDispatcher.getInstance().removeSystemEventListener(mMainHUD);
+
+        UIStage.getInstance().removeHUD();
+
 
         if (map != null) {
             map.destroy();

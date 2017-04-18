@@ -13,6 +13,8 @@ import com.vte.libgdx.ortho.test.items.Item;
 import com.vte.libgdx.ortho.test.player.Player;
 import com.vte.libgdx.ortho.test.screens.GenericUI;
 
+import java.util.ArrayList;
+
 /**
  * Created by vincent on 09/12/2016.
  */
@@ -25,6 +27,8 @@ public class InventoryTable extends Table implements IPlayerListener {
     private ArrayMap<Item.ItemTypeID, InventorySlot> mSlots;
     private InventorySlot mSelectedItem;
     private InventoryDetails mDetails;
+    ArrayList<InventorySlotTarget> mSlotTargets = new ArrayList<>();
+    ArrayList<InventorySlotSource> mSlotSources = new ArrayList();
 
     private DragAndDrop _dragAndDrop;
 
@@ -60,6 +64,11 @@ public class InventoryTable extends Table implements IPlayerListener {
 
     }
 
+    public DragAndDrop getDragAndDrop()
+    {
+        return _dragAndDrop;
+    }
+
     public void destroy() {
         EventDispatcher.getInstance().removePlayerListener(this);
     }
@@ -67,14 +76,29 @@ public class InventoryTable extends Table implements IPlayerListener {
     public void update(Player aPlayer) {
         int nbItemInRow = 0;
         mInventoryTable.clear();
+        for(InventorySlotTarget slotTarget : mSlotTargets)
+        {
+            _dragAndDrop.removeTarget(slotTarget);
+        }
+        mSlotTargets.clear();
+        for(InventorySlotSource slotSource : mSlotSources)
+        {
+            _dragAndDrop.removeSource(slotSource);
+        }
+        mSlotSources.clear();
         mSlots.clear();
-        _dragAndDrop.clear();
+
         for (Item item : aPlayer.getInventory()) {
             InventorySlot inventorySlot = mSlots.get(item.getItemTypeID());
             if (inventorySlot == null) {
                 inventorySlot = new InventorySlot();
-                _dragAndDrop.addTarget(new InventorySlotTarget(inventorySlot));
-                _dragAndDrop.addSource(new InventorySlotSource(inventorySlot, _dragAndDrop));
+
+                InventorySlotTarget target = new InventorySlotTarget(inventorySlot);
+                mSlotTargets.add(target);
+                _dragAndDrop.addTarget(target);
+                InventorySlotSource source = new InventorySlotSource(inventorySlot, _dragAndDrop);
+                mSlotSources.add(source);
+                _dragAndDrop.addSource(source);
 
                 mSlots.put(item.getItemTypeID(), inventorySlot);
                 inventorySlot.setTouchable(Touchable.enabled);

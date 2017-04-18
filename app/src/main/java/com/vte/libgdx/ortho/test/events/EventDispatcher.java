@@ -36,162 +36,243 @@ public class EventDispatcher implements IDialogListener, IItemListener, IQuestLi
     }
 
 
-    public void onGameEvent(String aGameEvent)
-    {
-        for (IGameEventListener listener : mGameEventsListeners) {
-            listener.onGameEvent(aGameEvent);
+    public void onGameEvent(String aGameEvent) {
+        synchronized (mGameEventsListeners) {
+            IGameEventListener[] listeners = new IGameEventListener[mGameEventsListeners.size()];
+            listeners = mGameEventsListeners.toArray(listeners);
+            for (IGameEventListener listener : listeners) {
+                listener.onGameEvent(aGameEvent);
+            }
         }
     }
+
     public void addGameEventListener(IGameEventListener aListener) {
-        if (!mGameEventsListeners.contains(aListener)) {
-            mGameEventsListeners.add(aListener);
+        synchronized (mGameEventsListeners) {
+            if (!mGameEventsListeners.contains(aListener)) {
+                mGameEventsListeners.add(aListener);
+            }
         }
     }
 
     public void removeGameEventListener(IGameEventListener aListener) {
-        if (mGameEventsListeners.contains(aListener)) {
-            mGameEventsListeners.remove(aListener);
+        synchronized (mGameEventsListeners) {
+            if (mGameEventsListeners.contains(aListener)) {
+                mGameEventsListeners.remove(aListener);
+            }
         }
     }
+
     public void addDialogListener(IDialogListener aListener) {
-        if (!mDialogListeners.contains(aListener)) {
-            mDialogListeners.add(aListener);
+        synchronized (mDialogListeners) {
+            if (!mDialogListeners.contains(aListener)) {
+                mDialogListeners.add(aListener);
+            }
         }
     }
 
     public void removeDialogListener(IDialogListener aListener) {
-        if (mDialogListeners.contains(aListener)) {
-            mDialogListeners.remove(aListener);
+        synchronized (mDialogListeners) {
+            if (mDialogListeners.contains(aListener)) {
+                mDialogListeners.remove(aListener);
+            }
         }
     }
 
     @Override
     public void onStartDialog(GameDialog aDialog) {
-        for (IDialogListener listener : mDialogListeners) {
-            listener.onStartDialog(aDialog);
+        synchronized (mDialogListeners) {
+            IDialogListener[] listeners = new IDialogListener[mDialogListeners.size()];
+            listeners = mDialogListeners.toArray(listeners);
+            for (IDialogListener listener : listeners) {
+                listener.onStartDialog(aDialog);
+            }
         }
     }
 
     @Override
     public void onStopDialog(GameDialog aDialog) {
-        for (IDialogListener listener : mDialogListeners) {
-            listener.onStopDialog(aDialog);
+        synchronized (mDialogListeners) {
+            IDialogListener[] listeners = new IDialogListener[mDialogListeners.size()];
+            listeners = mDialogListeners.toArray(listeners);
+            for (IDialogListener listener : listeners) {
+                listener.onStopDialog(aDialog);
+            }
         }
     }
 
     public void addItemListener(IItemListener aListener) {
-        if (!mItemListeners.contains(aListener)) {
-            mItemListeners.add(aListener);
+        synchronized (mItemListeners) {
+            if (!mItemListeners.contains(aListener)) {
+                mItemListeners.add(aListener);
+            }
         }
     }
 
     public void removeItemListener(IItemListener aListener) {
-        if (mItemListeners.contains(aListener)) {
-            mItemListeners.remove(aListener);
+        synchronized (mItemListeners) {
+            if (mItemListeners.contains(aListener)) {
+                mItemListeners.remove(aListener);
+            }
         }
     }
 
     @Override
     public void onItemFound(Item aItem) {
-        for (IItemListener listener : mItemListeners) {
-            listener.onItemFound(aItem);
+        synchronized (mItemListeners) {
+            IItemListener[] listeners = new IItemListener[mItemListeners.size()];
+            listeners = mItemListeners.toArray(listeners);
+            for (IItemListener listener : listeners) {
+                listener.onItemFound(aItem);
+            }
         }
     }
+
     @Override
     public void onItemLost(Item aItem) {
-        for (IItemListener listener : mItemListeners) {
-            listener.onItemLost(aItem);
+        synchronized (mItemListeners) {
+            IItemListener[] listeners = new IItemListener[mItemListeners.size()];
+            listeners = mItemListeners.toArray(listeners);
+            for (IItemListener listener : listeners) {
+                listener.onItemLost(aItem);
+            }
         }
     }
 
 
     public void addQuestListener(IQuestListener aListener) {
-        if (!mQuestListeners.contains(aListener)) {
-            mQuestListeners.add(aListener);
+        synchronized (mQuestListeners) {
+            if (!mQuestListeners.contains(aListener)) {
+                mQuestListeners.add(aListener);
+            }
         }
     }
 
     public void removeQuestListener(IQuestListener aListener) {
-        if (mQuestListeners.contains(aListener)) {
-            mQuestListeners.remove(aListener);
+        synchronized (mQuestListeners) {
+            if (mQuestListeners.contains(aListener)) {
+                mQuestListeners.remove(aListener);
+            }
         }
     }
 
     @Override
     public void onQuestActivated(Quest aQuest) {
-        for (IQuestListener listener : mQuestListeners) {
-            listener.onQuestActivated(aQuest);
+        synchronized (mQuestListeners) {
+            IQuestListener[] listeners = new IQuestListener[mQuestListeners.size()];
+            listeners = mQuestListeners.toArray(listeners);
+
+            for (IQuestListener listener : listeners) {
+                listener.onQuestActivated(aQuest);
+            }
         }
     }
 
     @Override
     public void onQuestCompleted(Quest aQuest) {
-        for (IQuestListener listener : mQuestListeners) {
-            listener.onQuestCompleted(aQuest);
+        synchronized (mQuestListeners) {
+            IQuestListener[] listeners = new IQuestListener[mQuestListeners.size()];
+            listeners = mQuestListeners.toArray(listeners);
+            for (IQuestListener listener : listeners) {
+                listener.onQuestCompleted(aQuest);
+            }
         }
     }
 
     @Override
     public void onQuestTaskCompleted(Quest aQuest, QuestTask aTask) {
-        for (IQuestListener listener : mQuestListeners) {
-            listener.onQuestTaskCompleted(aQuest, aTask);
+        synchronized (mQuestListeners) {
+            IQuestListener[] listeners = new IQuestListener[mQuestListeners.size()];
+            listeners = mQuestListeners.toArray(listeners);
+            for (IQuestListener listener : listeners) {
+                listener.onQuestTaskCompleted(aQuest, aTask);
+            }
         }
     }
 
     public void addPlayerListener(IPlayerListener aListener) {
-        if (!mPlayerListeners.contains(aListener)) {
-            mPlayerListeners.add(aListener);
+        synchronized (mPlayerListeners) {
+            if (!mPlayerListeners.contains(aListener)) {
+                mPlayerListeners.add(aListener);
+            }
         }
     }
 
     public void removePlayerListener(IPlayerListener aListener) {
-        if (mPlayerListeners.contains(aListener)) {
-            mPlayerListeners.remove(aListener);
+        synchronized (mPlayerListeners) {
+            if (mPlayerListeners.contains(aListener)) {
+                mPlayerListeners.remove(aListener);
+            }
         }
     }
 
     @Override
     public void onInventoryChanged(Player aPlayer) {
-        for (IPlayerListener listener : mPlayerListeners) {
-            listener.onInventoryChanged(aPlayer);
+        synchronized (mPlayerListeners) {
+            IPlayerListener[] listeners = new IPlayerListener[mPlayerListeners.size()];
+            listeners = mPlayerListeners.toArray(listeners);
+            for (IPlayerListener listener : listeners) {
+                listener.onInventoryChanged(aPlayer);
+            }
         }
     }
+
     public void addSystemEventListener(ISystemEventListener aListener) {
-        if (!mSystemEventListeners.contains(aListener)) {
-            mSystemEventListeners.add(aListener);
+        synchronized (mSystemEventListeners) {
+            if (!mSystemEventListeners.contains(aListener)) {
+                mSystemEventListeners.add(aListener);
+            }
         }
     }
 
     public void removeSystemEventListener(ISystemEventListener aListener) {
-        if (mSystemEventListeners.contains(aListener)) {
-            mSystemEventListeners.remove(aListener);
+        synchronized (mSystemEventListeners) {
+            if (mSystemEventListeners.contains(aListener)) {
+                mSystemEventListeners.remove(aListener);
+            }
         }
     }
+
     @Override
     public void onNewMapRequested(String aMapId, MapTownPortalInfo aTownPortalInfo) {
-        for (ISystemEventListener listener : mSystemEventListeners) {
-            listener.onNewMapRequested(aMapId, aTownPortalInfo);
+        synchronized (mSystemEventListeners) {
+            ISystemEventListener[] listeners = new ISystemEventListener[mSystemEventListeners.size()];
+            listeners = mSystemEventListeners.toArray(listeners);
+            for (ISystemEventListener listener : listeners) {
+                listener.onNewMapRequested(aMapId, aTownPortalInfo);
+            }
         }
     }
 
     @Override
     public void onMapLoaded(GameMap aMap) {
-        for (ISystemEventListener listener : mSystemEventListeners) {
-            listener.onMapLoaded(aMap);
+        synchronized (mSystemEventListeners) {
+            ISystemEventListener[] listeners = new ISystemEventListener[mSystemEventListeners.size()];
+            listeners = mSystemEventListeners.toArray(listeners);
+            for (ISystemEventListener listener : listeners) {
+                listener.onMapLoaded(aMap);
+            }
         }
     }
 
     @Override
     public void onNewSelectedEffect(Effect.Type aEffectType) {
-        for (ISystemEventListener listener : mSystemEventListeners) {
-            listener.onNewSelectedEffect(aEffectType);
+        synchronized (mSystemEventListeners) {
+            ISystemEventListener[] listeners = new ISystemEventListener[mSystemEventListeners.size()];
+            listeners = mSystemEventListeners.toArray(listeners);
+            for (ISystemEventListener listener : listeners) {
+                listener.onNewSelectedEffect(aEffectType);
+            }
         }
     }
+
     @Override
-    public void onEffectFound(Effect.Type aEffectType)
-    {
-        for (ISystemEventListener listener : mSystemEventListeners) {
-            listener.onEffectFound(aEffectType);
+    public void onEffectFound(Effect.Type aEffectType) {
+        synchronized (mSystemEventListeners) {
+            ISystemEventListener[] listeners = new ISystemEventListener[mSystemEventListeners.size()];
+            listeners = mSystemEventListeners.toArray(listeners);
+            for (ISystemEventListener listener : listeners) {
+                listener.onEffectFound(aEffectType);
+            }
         }
     }
 
@@ -210,12 +291,14 @@ public class EventDispatcher implements IDialogListener, IItemListener, IQuestLi
             }
         }
     }
+
     @Override
     public void onInteractionEvent(InteractionEvent aEvent) {
         synchronized (mInteractionEventListeners) {
-            for (int i = 0; i < mInteractionEventListeners.size(); i++)
-            {
-                mInteractionEventListeners.get(i).onInteractionEvent(aEvent);
+            IInteractionEventListener[] listeners = new IInteractionEventListener[mInteractionEventListeners.size()];
+            listeners = mInteractionEventListeners.toArray(listeners);
+            for (IInteractionEventListener listener: listeners) {
+                listener.onInteractionEvent(aEvent);
 
             }
         }

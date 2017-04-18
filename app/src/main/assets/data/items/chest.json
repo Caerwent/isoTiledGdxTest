@@ -1,0 +1,24 @@
+[
+  {
+
+    "id":"chest1",
+    "items": ["Gear", "VialBlue"]
+  },
+  {
+
+    "id":"chest2",
+    "items": []
+  },
+  {
+
+    "id":"house2_chest2",
+    "items": ["Scroll04"]
+  },
+  {
+
+    "id":"house2_chest1",
+    "items": ["VialBlue","Lantern2"]
+  }
+
+
+]

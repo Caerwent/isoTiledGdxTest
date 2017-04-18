@@ -1,0 +1,111 @@
+
+the_machine.png
+size: 512,256
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+theMachine_bkg
+  rotate: false
+  xy: 2, 32
+  size: 300, 216
+  orig: 300, 216
+  offset: 0, 0
+  index: -1
+theMachine_bubble_on
+  rotate: false
+  xy: 398, 81
+  size: 18, 20
+  orig: 18, 20
+  offset: 0, 0
+  index: -1
+theMachine_liquid_activator_off
+  rotate: false
+  xy: 440, 183
+  size: 26, 24
+  orig: 26, 24
+  offset: 0, 0
+  index: -1
+theMachine_liquid_activator_on
+  rotate: false
+  xy: 36, 6
+  size: 26, 24
+  orig: 26, 24
+  offset: 0, 0
+  index: -1
+theMachine_liquid_blue
+  rotate: false
+  xy: 398, 103
+  size: 18, 47
+  orig: 18, 47
+  offset: 0, 0
+  index: -1
+theMachine_liquid_demi_blue_green
+  rotate: false
+  xy: 304, 166
+  size: 92, 39
+  orig: 92, 39
+  offset: 0, 0
+  index: -1
+theMachine_liquid_demi_blue_red
+  rotate: false
+  xy: 399, 209
+  size: 92, 39
+  orig: 92, 39
+  offset: 0, 0
+  index: -1
+theMachine_liquid_demi_green_red
+  rotate: false
+  xy: 304, 125
+  size: 92, 39
+  orig: 92, 39
+  offset: 0, 0
+  index: -1
+theMachine_liquid_few_blue
+  rotate: false
+  xy: 304, 84
+  size: 92, 39
+  orig: 92, 39
+  offset: 0, 0
+  index: -1
+theMachine_liquid_few_green
+  rotate: false
+  xy: 304, 43
+  size: 92, 39
+  orig: 92, 39
+  offset: 0, 0
+  index: -1
+theMachine_liquid_few_red
+  rotate: false
+  xy: 304, 2
+  size: 92, 39
+  orig: 92, 39
+  offset: 0, 0
+  index: -1
+theMachine_liquid_green
+  rotate: false
+  xy: 398, 152
+  size: 18, 53
+  orig: 18, 53
+  offset: 0, 0
+  index: -1
+theMachine_liquid_mixed_full
+  rotate: false
+  xy: 304, 207
+  size: 93, 41
+  orig: 93, 41
+  offset: 0, 0
+  index: -1
+theMachine_liquid_red
+  rotate: false
+  xy: 418, 168
+  size: 20, 39
+  orig: 20, 39
+  offset: 0, 0
+  index: -1
+theMachine_small
+  rotate: false
+  xy: 2, 7
+  size: 32, 23
+  orig: 32, 23
+  offset: 0, 0
+  index: -1

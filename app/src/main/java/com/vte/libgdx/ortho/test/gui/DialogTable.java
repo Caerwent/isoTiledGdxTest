@@ -26,7 +26,8 @@ public class DialogTable extends Table implements IDialogListener {
     private Label mLabel, mSpeakerLabel;
     private ScrollPane mScrollPane;
     private GameDialog mDialog;
-    private int mCurrentDialogIdx;
+    private int mCurrentDialogIdx, mCurrentDialogPhraseIdx;
+    private String mSpeaker;
 
 
     public DialogTable(int aWidth, int aHeight) {
@@ -34,12 +35,13 @@ public class DialogTable extends Table implements IDialogListener {
         mSpeakerLabel=new Label("", GenericUI.getInstance().getSkin(), "dialog-speaker");
         mSpeakerLabel.setAlignment(Align.topLeft);
         this.add(mSpeakerLabel).top().left();
+        this.row();
         mLabel = new Label("", GenericUI.getInstance().getSkin(), "dialog-detail");
         mLabel.setWrap(true);
         mLabel.setSize(aWidth, aHeight);
         mLabel.setAlignment(Align.topLeft);
         mScrollPane = new ScrollPane(mLabel, GenericUI.getInstance().getSkin(), "dialogPane");
-        this.add(mScrollPane).pad(14,14,14,14).expand().fill().top();
+        this.add(mScrollPane).pad(14,14,14,14).expandX().fill().top().left();
        /* mScrollPane.setForceScroll(false, true);
         mScrollPane.setFlickScroll(false);
         mScrollPane.setOverscroll(false, true);*/
@@ -70,20 +72,33 @@ public class DialogTable extends Table implements IDialogListener {
     {
         if(mDialog!=null)
         {
-            mCurrentDialogIdx++;
-            if(mDialog.getDialogs().size > mCurrentDialogIdx)
+            if(mCurrentDialogIdx < mDialog.getDialogs().size)
             {
                 GameDialogStep dialogStep = mDialog.getDialogs().get(mCurrentDialogIdx);
+
                 if(dialogStep.speaker!=null && !dialogStep.speaker.isEmpty())
                 {
-                    mSpeakerLabel.setVisible(true);
-                    mSpeakerLabel.setText(AssetsUtility.getString(dialogStep.speaker));
+                    mSpeaker = AssetsUtility.getString(dialogStep.speaker);
                 }
                 else
                 {
-                    mSpeakerLabel.setVisible(false);
+                    mSpeaker=null;
                 }
-                mLabel.setText(AssetsUtility.getString(dialogStep.step));
+                if(mCurrentDialogPhraseIdx <dialogStep.phrases.size())
+                {
+                    mLabel.setText(AssetsUtility.getString(dialogStep.phrases.get(mCurrentDialogPhraseIdx)));
+                    mSpeakerLabel.setVisible(mSpeaker!=null);
+                    mSpeakerLabel.setText(mSpeaker!=null ? mSpeaker:"");
+                    mCurrentDialogPhraseIdx++;
+                }
+                else
+                {
+                    mCurrentDialogIdx++;
+                    mCurrentDialogPhraseIdx=0;
+                    mSpeaker=null;
+                    displayNextDialog();
+                    return;
+                }
                 mScrollPane.layout();
             }
             else
@@ -98,7 +113,9 @@ public class DialogTable extends Table implements IDialogListener {
     @Override
     public void onStartDialog(GameDialog aDialog) {
         mDialog = aDialog;
-        mCurrentDialogIdx = -1;
+        mCurrentDialogIdx = 0;
+        mCurrentDialogPhraseIdx =0;
+        mSpeaker=null;
         setVisible(true);
         displayNextDialog();
     }
@@ -108,7 +125,9 @@ public class DialogTable extends Table implements IDialogListener {
         if(mDialog!=null && aDialog!=null && mDialog.getId().equals(aDialog.getId()))
         {
             mDialog=null;
-            mCurrentDialogIdx = -1;
+            mCurrentDialogIdx = 0;
+            mCurrentDialogPhraseIdx =0;
+            mSpeaker=null;
             setVisible(false);
         }
     }

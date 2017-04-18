@@ -66,6 +66,8 @@ public class QuestManager implements IItemListener, IQuestListener, IPlayerListe
     }
 
     public void restoreQuestsFromProfile() {
+        mLivingQuests.clear();
+        mCompletedQuests.clear();
         for (String entry : mQuests.keySet()) {
             QuestProfile questProfile = Profile.getInstance().getQuestProfile(entry);
             Quest theQuest = mQuests.get(entry);

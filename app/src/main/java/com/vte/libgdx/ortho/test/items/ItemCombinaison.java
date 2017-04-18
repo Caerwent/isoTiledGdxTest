@@ -1,5 +1,7 @@
 package com.vte.libgdx.ortho.test.items;
 
+import java.util.ArrayList;
+
 /**
  * Created by vincent on 24/02/2017.
  */
@@ -7,5 +9,5 @@ package com.vte.libgdx.ortho.test.items;
 public class ItemCombinaison {
     public Item.ItemTypeID item1;
     public Item.ItemTypeID item2;
-    public Item.ItemTypeID resultItem;
+    public ArrayList<Item.ItemTypeID> resultItems;
 }

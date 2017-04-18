@@ -1,0 +1,84 @@
+[
+  {
+    "id": "portal1",
+    "template": "portal.json",
+    "properties": {
+      "targetMapId":"ortho",
+      "isDefaultStart":"true"
+    },
+    "eventsAction": [],
+    "outputEvents": []
+  },
+  {
+    "id": "wood1",
+    "template": "obstacle_log_wood.json",
+    "properties": {
+    },
+    "eventsAction": [
+      {
+        "id": "REMOVED",
+        "value": "",
+        "inputEvents": [
+          {
+            "sourceId": "wood1",
+            "type": "END_STATE",
+            "value": "BURNING"
+          }
+        ]
+      },
+      {
+        "id": "SET_STATE",
+        "value": "BURNING",
+        "inputEvents": [
+          {
+            "sourceId": "wood1",
+            "type": "EFFECT_START",
+            "value": "BURN"
+          }
+        ]
+      }
+    ],
+    "outputEvents": [
+      {
+        "type": "END_STATE",
+        "value": "BURNING"
+      }
+    ]
+  },
+  {
+    "id": "wood2",
+    "template": "obstacle_log_wood.json",
+    "properties": {
+    },
+    "eventsAction": [
+      {
+        "id": "REMOVED",
+        "value": "",
+        "inputEvents": [
+          {
+            "sourceId": "wood2",
+            "type": "END_STATE",
+            "value": "BURNING"
+          }
+        ]
+      },
+      {
+        "id": "SET_STATE",
+        "value": "BURNING",
+        "inputEvents": [
+          {
+            "sourceId": "wood2",
+            "type": "EFFECT_START",
+            "value": "BURN"
+          }
+        ]
+      }
+    ],
+    "outputEvents": [
+      {
+        "type": "END_STATE",
+        "value": "BURNING"
+      }
+    ]
+  }
+]

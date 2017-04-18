@@ -26,6 +26,21 @@ public class PathHero extends PathMap {
         EntityEngine.getInstance().addEntity(entity);
     }
 
+    public PathHero(PathMap aPath)
+    {
+        super();
+        positions=aPath.positions;
+        mVelocity=aPath.mVelocity;
+        currentPointIndex=aPath.currentPointIndex;
+        nextPointIndex=aPath.nextPointIndex;
+        mIsCompleted=aPath.mIsCompleted;
+
+        isRevert=aPath.isRevert;
+        isLoop=aPath.isLoop;
+        lastTime=aPath.lastTime;
+
+    }
+
 
     public void destroy() {
         if (entity != null) {

@@ -27,9 +27,9 @@ public class InteractionPortal extends Interaction implements IQuestListener {
         mType = Type.PORTAL;
         if(aMapping.properties!=null)
         {
-            if(aMapping.properties.containsKey("questId"))
+            if(aMapping.properties.containsKey("activateQuestId"))
             {
-                mQuestId=(String) aMapping.properties.get("questId");
+                mQuestId=(String) aMapping.properties.get("activateQuestId");
             }
             if(aMapping.properties.containsKey("targetMapId"))
             {

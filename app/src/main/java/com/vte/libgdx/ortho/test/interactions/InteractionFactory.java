@@ -51,8 +51,8 @@ public class InteractionFactory {
             InteractionActivator interaction = new InteractionActivator(def, x, y, aMapping, aProperties, aMap);
             return interaction;
         }
-        else if (def.type.compareTo("CHESS") == 0) {
-            InteractionChess interaction = new InteractionChess(def, x, y, aMapping, aProperties, aMap);
+        else if (def.type.compareTo("CHEST") == 0) {
+            InteractionChest interaction = new InteractionChest(def, x, y, aMapping, aProperties, aMap);
             return interaction;
         }
         else if (def.type.compareTo("PORTAL") == 0) {

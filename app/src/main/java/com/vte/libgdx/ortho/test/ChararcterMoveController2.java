@@ -4,8 +4,10 @@ import com.badlogic.ashley.core.ComponentMapper;
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.Family;
 import com.badlogic.ashley.utils.ImmutableArray;
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.math.Polygon;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.vte.libgdx.ortho.test.box2d.PathHero;
@@ -46,9 +48,43 @@ public class ChararcterMoveController2 extends InputAdapter {
 
     public void setMap(GameMap aMap) {
         mMap = aMap;
-        mPathSpot = mMap.getPlayer().getHero().getShape().clone();
-    }
 
+        mPathSpot=mMap.getPlayer().getHero().getShapeForMovementCollision().clone();
+
+    }
+    /** Check whether the given line segment and {@link Polygon} intersect.
+     * @param p1 The first point of the segment
+     * @param p2 The second point of the segment
+     * @return Whether polygon and segment intersect */
+    public static boolean intersectSegmentPolygon (Vector2 p1, Vector2 p2, Polygon polygon) {
+        float[] vertices = polygon.getTransformedVertices();
+        float x1 = p1.x, y1 = p1.y, x2 = p2.x, y2 = p2.y;
+        int n = vertices.length;
+        float x3 = vertices[n - 2], y3 = vertices[n - 1];
+        for (int i = 0; i < n; i += 2) {
+            float x4 = vertices[i], y4 = vertices[i + 1];
+            if(y1==y2 && y2==y3 && y3==y4)
+            {
+                if((x3<=x1 && x2<=x4) || (x1<=x3 && x4<=x2))
+                    return true;
+            }
+            float d = (y4 - y3) * (x2 - x1) - (x4 - x3) * (y2 - y1);
+            if (d != 0) {
+                float yd = y1 - y3;
+                float xd = x1 - x3;
+                float ua = ((x4 - x3) * yd - (y4 - y3) * xd) / d;
+                if (ua >= 0 && ua <= 1) {
+                    float ub = ((x2 - x1) * yd - (y2 - y1) * xd) / d;
+                    if (ub >= 0 && ub <= 1) {
+                        return true;
+                    }
+                }
+            }
+            x3 = x4;
+            y3 = y4;
+        }
+        return false;
+    }
     @Override
     public boolean touchDragged(int x, int y, int pointer) {
         if (mPointer != pointer)
@@ -67,20 +103,26 @@ public class ChararcterMoveController2 extends InputAdapter {
                 return true;
             last.set(mCursorPoint);
 
-            mPathSpot.setX(mLastPoint.x + delta.x);
-            mPathSpot.setY(mLastPoint.y + delta.y);
+            mPathSpot.setX(mPathSpot.getX() + delta.x);
+            mPathSpot.setY(mPathSpot.getY() + delta.y);
             boolean hasCollision = false;
+
+            Vector2 V1 = new Vector2(mPathSpot.getBounds().getX(), mPathSpot.getBounds().getY());
+            Vector2 V2 = new Vector2(mPathSpot.getBounds().getX() + mPathSpot.getBounds().getWidth(), mPathSpot.getBounds().getY());
+            Vector2 V3 = new Vector2(mLastPoint.x, mLastPoint.y);
             //    Array<Shape> collisions = mMap.getBodiesCollision();
             //    if (collisions != null && collisions.size > 0) {
             if (entities != null && entities.size() > 0) {
                 for (Entity entity : entities) {
 
                     CollisionComponent collision = entity.getComponent(CollisionComponent.class);
+
                     //    Gdx.app.debug("DEBUG", "check entity " + entity+ " "+collision.mName);
                     if (((collision.mType & CollisionComponent.OBSTACLE) != 0 || ((collision.mType & CollisionComponent.OBSTACLE_MAPINTERACTION) != 0))
-                            && ShapeUtils.overlaps(mPathSpot, collision.mShape)) {
-                        //  Gdx.app.debug("DEBUG", "overlaps obstacle");
-                        float Ycollision = collision.mShape.getYAtX(mPathSpot.getX());
+                            && ShapeUtils.overlaps(mPathSpot, collision.mShape)
+                            ) {
+                        Gdx.app.debug("DEBUG", "overlaps obstacle");
+                     /*   float Ycollision = collision.mShape.getYAtX(mPathSpot.getX());
                         float Ytmp = collision.mShape.getYAtX(mPathSpot.getX() + mPathSpot.getBounds().getWidth());
                         if (Ycollision == -1 || (Ytmp!=-1 && Ytmp < Ycollision)) {
                             Ycollision = Ytmp;
@@ -104,6 +146,7 @@ public class ChararcterMoveController2 extends InputAdapter {
                         if (Yspot == -1) {
                             Yspot = mPathSpot.getBounds().getY();
                         }
+                        Gdx.app.debug("DEBUG", "Yspot="+Yspot+" Ycollision"+Ycollision);
                         if (((collision.mType & CollisionComponent.OBSTACLE_MAPINTERACTION) == 0 &&
                                 Yspot >= Ycollision) ||
 
@@ -112,11 +155,17 @@ public class ChararcterMoveController2 extends InputAdapter {
                                         ((Yspot - Ycollision) <= 0.5)
                                 )
                                 ) {
-                            //Gdx.app.debug("DEBUG", "collision");
+                            Gdx.app.debug("DEBUG", "collision");
                             hasCollision = true;
                             break;
 
-                        }
+                        }*/
+
+                        Gdx.app.debug("DEBUG", "collision");
+                        hasCollision = true;
+                        break;
+
+
                     }
                 }
 
@@ -125,15 +174,20 @@ public class ChararcterMoveController2 extends InputAdapter {
 
             if (!hasCollision) {
 
-                double dx = mPathSpot.getX() - mLastPoint.x;
-                double dy = mPathSpot.getY() - mLastPoint.y;
+              //  double dx = mPathSpot.getX() - mLastPoint.x;
+              //  double dy = mPathSpot.getY() - mLastPoint.y;
                 //    Gdx.app.debug("DEBUG", "D=" + (x * dx + dy * dy));
-                if ((dx * dx + dy * dy) >= PathHero.CHECK_RADIUS) {
-                    path.addPoint(mPathSpot.getX(), mPathSpot.getY());
-                    mLastPoint.set(mPathSpot.getX(), mPathSpot.getY());
-                }
+               // if ((dx * dx + dy * dy) >= PathHero.CHECK_RADIUS) {
+                    mLastPoint.set(mLastPoint.x + delta.x, mLastPoint.y + delta.y);
+                    path.addPoint(mLastPoint.x, mLastPoint.y);
+              //  }
 
 
+            }
+            else
+            {
+                mPathSpot.setX(mPathSpot.getX() - delta.x);
+                mPathSpot.setY(mPathSpot.getY() - delta.y);
             }
 
         }

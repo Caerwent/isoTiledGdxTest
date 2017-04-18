@@ -1,0 +1,37 @@
+{
+  "type":"OBSTACLE",
+  "atlas":"log.atlas",
+  "persistence":"SESSION",
+  "defaultState":"CLOSED",
+  "isClickable": "false",
+  "isRendable": "true",
+  "isMovable": "false",
+  "states": [
+    {
+      "name": "CLOSED",
+      "fps":"0",
+      "frames": [
+        "log"
+      ]
+    },
+    {
+      "name": "BURNING",
+      "fps":"10",
+      "isLooping":"false",
+      "frames": [
+        "log_burning1", "log_burning2", "log_burning3",
+        "log_burning4", "log_burning5", "log_burning6",
+        "log_burning7", "log_burning8", "log_burning9",
+        "log_burning10", "log_burning11", "log_burning12",
+        "log_burning13", "log_burning14"
+      ]
+    },
+    {
+      "name": "OPEN",
+      "fps":"0",
+      "frames": [ "log"]
+    }
+
+  ]
+
+}

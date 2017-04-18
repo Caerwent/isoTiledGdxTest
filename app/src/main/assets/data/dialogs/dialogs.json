@@ -1,142 +1,170 @@
-
 [
-
-	{
-
-		"id": "npc_lapin_jaune",
-		"dialogs" : [
-			{
-				"speaker":"npc_lapin_jaune_name",
-				"step":"lapin_jaune_phrase1"
-			}
-
-		]
-
-	},
-	{
-
-		"id": "quest_lapin_jaune",
-		"dialogs" : [
-			{
-				"speaker":"npc_lapin_jaune_name",
-				"step":"quest_start_phrase1"
-			},
-			{
-				"speaker":"npc_lapin_jaune_name",
-				"step":"quest_start_phrase2"
-			},
-			{
-				"speaker":"npc_lapin_jaune_name",
-				"step":"quest_start_phrase3"
-			}
-
-		]
-
-	},
-	{
-
-		"id": "needKey",
-		"dialogs" : [
-			{
-				"speaker":"",
-				"step":"dialog_need_key"
-			}
-
-		]
-
-	},
-	{
-
-		"id": "npc1",
-		"dialogs" : [
-			{
-				"speaker":"npc1_name",
-				"step":"npc1_phrase1"
-			},
-			{
-				"speaker":"npc1_name",
-				"step":"npc1_phrase2"
-			}
-		]
-
-	}
-,
-		{
-
-		"id": "quest_malo_activated",
-		"dialogs" : [
-
-	{
-		"speaker":"npc1_name",
-		"step":"quest_malo_phrase1"
-	},
-
-	{
-		"speaker":"hero_name",
-		"step":"quest_malo_hero_phrase1"
-	}
-	,
-	{
-		"speaker":"npc1_name",
-		"step":"quest_malo_phrase2"
-	}
-	,
-	{
-		"speaker":"hero_name",
-		"step":"quest_malo_hero_phrase2"
-	}
-
-		]
-
-	}
-,
-	{
-
-		"id": "quest_malo_notCompleted",
-		"dialogs" : [
-			{
-				"speaker":"npc1_name",
-				"step":"quest_malo_activated_phrase1"
-			},
-			{
-				"speaker":"hero_name",
-				"step":"quest_malo_activated_hero_phrase1"
-			}
-		]
-
-	}
-,
-	{
-
-		"id": "quest_malo_completed",
-		"dialogs" : [
-
-	{
-		"speaker":"npc1_name",
-		"step":"quest_malo_completed_phrase1"
-	}
-	,
-	{
-		"speaker":"npc1_name",
-		"step":"quest_malo_completed_phrase2"
-	}
-		]
-
-	},
-	{
-
-		"id": "quest_malo_finished",
-		"dialogs" : [
-
-			{
-				"speaker":"npc1_name",
-				"step":"quest_malo_finished"
-			}
-
-		]
-
-	}
-
-
+  {
+    "id": "dialog_intro",
+    "dialogs": [
+      {
+        "speaker": "hero_name",
+        "phrases": [
+          "dialog_intro_init_phrase1",
+          "dialog_intro_init_phrase2",
+          "dialog_intro_init_phrase3",
+          "dialog_intro_init_phrase4",
+          "dialog_intro_init_phrase5"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "npc_lapin_jaune",
+    "dialogs": [
+      {
+        "speaker": "npc_lapin_jaune_name",
+        "phrases": [
+          "lapin_jaune_phrase1"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "quest_lapin_jaune",
+    "dialogs": [
+      {
+        "speaker": "hero_name",
+        "phrases": [
+          "quest_start_phrase1"
+        ]
+      },
+      {
+        "speaker": "npc_lapin_jaune_name",
+        "phrases": [
+          "quest_start_phrase2",
+          "quest_start_phrase3",
+          "quest_start_phrase4",
+          "quest_start_phrase5",
+          "quest_start_phrase6"
+        ]
+      },
+      {
+        "speaker": "hero_name",
+        "phrases": [
+          "quest_start_phrase7"
+        ]
+      },
+      {
+        "speaker": "npc_lapin_jaune_name",
+        "phrases": [
+          "quest_start_phrase8",
+          "quest_start_phrase9",
+          "quest_start_phrase10",
+          "quest_start_phrase11",
+          "quest_start_phrase12"
+        ]
+      },
+      {
+        "speaker": "hero_name",
+        "phrases": [
+          "quest_start_phrase13"
+        ]
+      },
+      {
+        "speaker": "npc_lapin_jaune_name",
+        "phrases": [
+          "quest_start_phrase14"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "needKey",
+    "dialogs": [
+      {
+        "speaker": "",
+        "phrases": [
+          "dialog_need_key"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "npc1",
+    "dialogs": [
+      {
+        "speaker": "npc1_name",
+        "phrases": [
+          "npc1_phrase1",
+          "npc1_phrase2"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "quest_malo_activated",
+    "dialogs": [
+      {
+        "speaker": "npc1_name",
+        "phrases": [
+          "quest_malo_phrase1"
+        ]
+      },
+      {
+        "speaker": "hero_name",
+        "phrases": [
+          "quest_malo_hero_phrase1"
+        ]
+      },
+      {
+        "speaker": "npc1_name",
+        "phrases": [
+          "quest_malo_phrase2"
+        ]
+      },
+      {
+        "speaker": "hero_name",
+        "phrases": [
+          "quest_malo_hero_phrase2"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "quest_malo_notCompleted",
+    "dialogs": [
+      {
+        "speaker": "npc1_name",
+        "phrases": [
+          "quest_malo_activated_phrase1"
+        ]
+      },
+      {
+        "speaker": "hero_name",
+        "phrases": [
+          "quest_malo_activated_hero_phrase1"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "quest_malo_completed",
+    "dialogs": [
+      {
+        "speaker": "npc1_name",
+        "phrases": [
+          "quest_malo_completed_phrase1",
+          "quest_malo_completed_phrase2"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "quest_malo_finished",
+    "dialogs": [
+      {
+        "speaker": "npc1_name",
+        "phrases": [
+          "quest_malo_finished"
+        ]
+      }
+    ]
+  }
 ]
 

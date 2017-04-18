@@ -1,0 +1,124 @@
+gandalf.png
+size: 156, 216
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+idle
+  rotate: false
+  xy: 0, 0
+  size: 39, 54
+  orig: 39, 54
+  offset: 0, 0
+  index: -1
+move_down_1
+  rotate: false
+  xy: 0, 0
+  size: 39, 54
+  orig: 39, 54
+  offset: 0, 0
+  index: -1
+move_down_2
+  rotate: false
+  xy: 39, 0
+  size: 39, 54
+  orig: 39, 54
+  offset: 0, 0
+  index: -1
+move_down_3
+  rotate: false
+  xy: 78, 0
+  size: 39, 54
+  orig: 39, 54
+  offset: 0, 0
+  index: -1
+move_down_4
+  rotate: false
+  xy: 117, 0
+  size: 39, 54
+  orig: 39, 54
+  offset: 0, 0
+  index: -1
+move_left_1
+  rotate: false
+  xy: 0, 54
+  size: 39, 54
+  orig: 39, 54
+  offset: 0, 0
+  index: -1
+move_left_2
+  rotate: false
+  xy: 39, 54
+  size: 39, 54
+  orig: 39, 54
+  offset: 0, 0
+  index: -1
+move_left_3
+  rotate: false
+  xy: 78, 54
+  size: 39, 54
+  orig: 39, 54
+  offset: 0, 0
+  index: -1
+move_left_4
+  rotate: false
+  xy: 117, 54
+  size: 39, 54
+  orig: 39, 54
+  offset: 0, 0
+  index: -1
+move_right_1
+  rotate: false
+  xy: 0, 108
+  size: 39, 54
+  orig: 39, 54
+  offset: 0, 0
+  index: -1
+move_right_2
+  rotate: false
+  xy: 39, 108
+  size: 39, 54
+  orig: 39, 54
+  offset: 0, 0
+  index: -1
+move_right_3
+  rotate: false
+  xy: 78, 108
+  size: 39, 54
+  orig: 39, 54
+  offset: 0, 0
+  index: -1
+move_right_4
+  rotate: false
+  xy: 117, 108
+  size: 39, 54
+  orig: 39, 54
+  offset: 0, 0
+  index: -1
+move_up_1
+  rotate: false
+  xy: 0, 162
+  size: 39, 54
+  orig: 39, 54
+  offset: 0, 0
+  index: -1
+move_up_2
+  rotate: false
+  xy: 39, 162
+  size: 39, 54
+  orig: 39, 54
+  offset: 0, 0
+  index: -1
+move_up_3
+  rotate: false
+  xy: 54, 162
+  size: 39, 54
+  orig: 39, 54
+  offset: 0, 0
+  index: -1
+move_up_4
+  rotate: false
+  xy: 117, 162
+  size: 39, 54
+  orig: 39, 54
+  offset: 0, 0
+  index: -1

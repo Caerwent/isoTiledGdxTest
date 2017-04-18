@@ -11,7 +11,7 @@
 			"id": "quest_malo_task1",
 			"value":"2",
 			"type":"FIND_ITEM",
-			"targetId":"potionBlue",
+			"targetId":"VialBlue",
 			"requiredCompletedTask":[""]
 		},
 		{

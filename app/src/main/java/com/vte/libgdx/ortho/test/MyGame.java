@@ -30,6 +30,8 @@ import com.vte.libgdx.ortho.test.screens.SettingsScreen;
 public class MyGame extends Game implements ISystemEventListener {
     public static float SCALE_FACTOR = 1.0F / 32.0F;
     public static String DEFAULT_MAP_NAME = "village";
+    public static String INIT_MAP_START = "home";
+    public static String QUEST_START_ID = "quest_start";
 
     static private MyGame s_instance;
 
@@ -169,7 +171,7 @@ public class MyGame extends Game implements ISystemEventListener {
     private void loadDefaultMap() {
         LocationProfile location = Profile.getInstance().getLocationProfile();
         if (location == null || location.mMapId == null) {
-            mGameScreen.loadMap(DEFAULT_MAP_NAME, null, null);
+            mGameScreen.loadMap(INIT_MAP_START, null, null);
         } else {
             mGameScreen.loadMap(location.mMapId, location.mFromMapId, null);
         }

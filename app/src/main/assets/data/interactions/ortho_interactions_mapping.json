@@ -3,7 +3,7 @@
     "id":"test_challenge",
     "template":"challenge_test1.json",
     "properties": {
-      "type":"TEST"
+      "type":"MACHINE"
     },
     "eventsAction":[],
     "outputEvents":[]
@@ -22,7 +22,7 @@
     "id":"portal2",
     "template":"portal.json",
     "properties": {
-      "targetMapId":"ortho2",
+      "targetMapId":"forest1",
       "activatedByQuestId":"quest_malo"
     },
     "eventsAction":[],

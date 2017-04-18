@@ -9,15 +9,15 @@ import java.util.ArrayList;
  */
 
 public class PathMap {
-    ArrayList<Vector2> positions;
-    Vector2 mVelocity = new Vector2();
-    int currentPointIndex;
-    int nextPointIndex;
-    boolean mIsCompleted = false;
+    protected ArrayList<Vector2> positions;
+    protected Vector2 mVelocity = new Vector2();
+    protected int currentPointIndex;
+    protected int nextPointIndex;
+    protected boolean mIsCompleted = false;
 
-    boolean isRevert = false;
-    boolean isLoop = false;
-    float lastTime = 0;
+    protected boolean isRevert = false;
+    protected boolean isLoop = false;
+    protected float lastTime = 0;
     static public final float CHECK_RADIUS = 0.2f;
     public float mVelocityCte = 2;
 

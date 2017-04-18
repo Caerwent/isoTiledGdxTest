@@ -17,16 +17,19 @@ public class InteractionActivator extends Interaction{
         mType = Type.ACTIVATOR;
     }
 
-    public void restoreFromSessionPersistence() {
-        String state  = (String) GameSession.getInstance().getSessionDataForMapAndEntity(mMap.getMapName(), mId, KEY_STATE);
+    @Override
+    public void restoreFromPersistence(GameSession aGameSession) {
+        String state  = (String) aGameSession.getSessionDataForMapAndEntity(mMap.getMapName(), mId, KEY_STATE);
         if (state != null) {
             mCurrentState = getState(state);
         }
 
     }
 
-    public void saveInSessionPersistence() {
-        GameSession.getInstance().putSessionDataForMapAndEntity(mMap.getMapName(), mId, KEY_STATE, mCurrentState);
+    @Override
+    public GameSession saveInPersistence(GameSession aGameSession) {
+        aGameSession.putSessionDataForMapAndEntity(mMap.getMapName(), mId, KEY_STATE, mCurrentState);
+        return aGameSession;
     }
 
     @Override

@@ -1,0 +1,13 @@
+[
+  {
+    "id":"portal1",
+    "template":"portal_clickable.json",
+    "properties": {
+      "targetMapId":"village",
+      "isDefaultStart":"true",
+      "activateQuestId":"quest_start"
+    },
+    "eventsAction":[],
+    "outputEvents":[]
+  }
+]

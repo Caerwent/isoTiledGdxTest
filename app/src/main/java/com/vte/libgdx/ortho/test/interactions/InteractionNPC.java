@@ -5,7 +5,6 @@ import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.maps.MapProperties;
 import com.badlogic.gdx.math.Vector2;
-import com.vte.libgdx.ortho.test.AssetsUtility;
 import com.vte.libgdx.ortho.test.box2d.RectangleShape;
 import com.vte.libgdx.ortho.test.dialogs.DialogsManager;
 import com.vte.libgdx.ortho.test.entity.components.CollisionComponent;
@@ -14,6 +13,7 @@ import com.vte.libgdx.ortho.test.events.EventDispatcher;
 import com.vte.libgdx.ortho.test.map.GameMap;
 import com.vte.libgdx.ortho.test.persistence.GameSession;
 import com.vte.libgdx.ortho.test.quests.QuestManager;
+import com.vte.libgdx.ortho.test.screens.GenericUI;
 
 /**
  * Created by vincent on 14/02/2017.
@@ -33,7 +33,7 @@ public class InteractionNPC extends Interaction {
     public InteractionNPC(InteractionDef aDef, float x, float y, InteractionMapping aMapping, MapProperties aProperties, GameMap aMap) {
         super(aDef, x, y, aMapping, aProperties, aMap);
         mType = Type.NPC;
-        mInteractionTextureRegion = AssetsUtility.ITEMS_TEXTUREATLAS.findRegion("bulle");
+        mInteractionTextureRegion = GenericUI.getInstance().getTextureAtlas().findRegion("Mark");
 
         mMarkShape = new RectangleShape();
         updateInteractionMarkShape();
@@ -181,10 +181,12 @@ public class InteractionNPC extends Interaction {
     }
 
     @Override
-    protected void doActionOnEvent(InteractionEventAction aAction) {
-        if (aAction != null && "DIALOG".equals(aAction.id)) {
+    protected boolean doActionOnEvent(InteractionEventAction aAction) {
+        boolean res = super.doActionOnEvent(aAction);
+        if (!res && aAction != null && "DIALOG".equals(aAction.id)) {
             setDialogId(aAction.value);
         }
+        return res;
     }
 
     @Override

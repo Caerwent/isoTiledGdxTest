@@ -1,0 +1,27 @@
+{
+  "type":"CHEST",
+  "atlas":"",
+  "persistence":"GAME",
+  "defaultState":"CLOSED",
+  "isClickable": "true",
+  "isRendable": "false",
+  "isMovable": "false",
+  "states": [
+    {
+      "name": "CLOSED",
+      "isLooping":"true",
+      "fps":"0",
+      "frames": [
+      ]
+    },
+    {
+      "name": "OPEN",
+      "isLooping":"true",
+      "fps":"0",
+      "frames": [
+      ]
+    }
+
+  ]
+
+}
