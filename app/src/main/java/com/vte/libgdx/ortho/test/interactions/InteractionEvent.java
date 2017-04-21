@@ -5,6 +5,8 @@ package com.vte.libgdx.ortho.test.interactions;
  */
 
 public class InteractionEvent {
+    public static final String THIS="THIS";
+
     public static enum EventType {
         STATE,
         END_STATE,

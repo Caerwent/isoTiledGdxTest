@@ -17,4 +17,6 @@ public interface IMapRendable {
     public void render(Batch batch);
 
     public Shape getShape();
+
+    public int getZIndex();
 }

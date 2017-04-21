@@ -7,6 +7,7 @@ import java.util.ArrayList;
  */
 
 public class InteractionEventAction {
+
     public static enum ActionType {
         SET_STATE,
         WAKEUP,

@@ -125,6 +125,12 @@ public class MapAndSpritesRenderer2 extends OrthogonalTiledMapRenderer {
             public int compare(IMapRendable lhs, IMapRendable rhs) {
                 float lhsY = lhs.getShape().getBounds().getY();
                 float rhsY = rhs.getShape().getBounds().getY();
+                int lhsZIndex = lhs.getZIndex();
+                int rhsZIndex = rhs.getZIndex();
+                if(lhsZIndex!=rhsZIndex)
+                {
+                    return rhsZIndex<lhsZIndex ? 1:-1;
+                }
                 if (lhsY == rhsY) {
                     return 0;
                 } else {
@@ -168,7 +174,7 @@ public class MapAndSpritesRenderer2 extends OrthogonalTiledMapRenderer {
         }
 
 //        Gdx.app.debug("DEBUG", "************************************************************");
-        Array<Shape> zindexList = mMap.getBodiesZindex();
+
 
         for (int row = row2; row >= row1; row--) {
             float x = xStart;
@@ -184,6 +190,7 @@ public class MapAndSpritesRenderer2 extends OrthogonalTiledMapRenderer {
                 for (int i=startLayerIdx;i < map.getLayers().getCount(); i++) {
                     MapLayer layer = map.getLayers().get(i);
                     if (layer.isVisible()) {
+                        Array<Shape> zindexList = mMap.getBodiesZindex(layer.getName());
                         if (layer instanceof TiledMapTileLayer) {
 
 
@@ -383,7 +390,7 @@ public class MapAndSpritesRenderer2 extends OrthogonalTiledMapRenderer {
 //                                Rectangle rect = ((RectangleShape) currentZIndex).getShape();
 //                                shapeRenderer.rect(rect.getX(), rect.getY(), 0, 0, rect.getWidth(), rect.getHeight(), 1, 1, 0);
 //                            }
-                            renderShape = true;
+//                            renderShape = true;
                             float Yzindex = currentZIndex.getYAtX(x);
                             float Ytmp = currentZIndex.getYAtX(x + aTileShape.getBounds().getWidth());
                             if (Yzindex == -1 || (Ytmp != -1 && Ytmp < Yzindex)) {
@@ -438,7 +445,7 @@ public class MapAndSpritesRenderer2 extends OrthogonalTiledMapRenderer {
             //     Gdx.app.debug("DEBUG", "check entity "+entity.getClass().getSimpleName()+" "+ShapeUtils.logShape(rendable.getShape()));
             if (ShapeUtils.overlaps(rendable.getShape(), prevRendable.getShape())) {
                 //     Gdx.app.debug("DEBUG", "entity overlaps tile");
-                if (rendable.getShape().getBounds().getY() < prevRendable.getShape().getBounds().getY()) {
+                if (rendable.getShape().getBounds().getY() < prevRendable.getShape().getBounds().getY() || rendable.getZIndex()>prevRendable.getZIndex()) {
                     drawPreviousOverlapingEntity(prevRendable, idx - 1, sortedMapRendables);
                     prevRendable.render(getBatch());
                     prevRendable.setRended(true);
@@ -469,15 +476,20 @@ public class MapAndSpritesRenderer2 extends OrthogonalTiledMapRenderer {
     }
 
     private void renderShapes(IMapRendable[] sortedMapRendables) {
-        Array<Shape> bodies = mMap.getBodiesZindex();
+
         shapeRenderer.setProjectionMatrix(getBatch().getProjectionMatrix());
         shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
         shapeRenderer.setColor(Color.RED);
-        for (Shape body : bodies) {
-            if (body.getType() == Shape.Type.POLYGON) {
-                shapeRenderer.polygon(((PolygonShape) body).getShape().getTransformedVertices());
+
+        for (MapLayer layer: map.getLayers()) {
+            Array<Shape> bodies = mMap.getBodiesZindex(layer.getName());
+            for (Shape body : bodies) {
+                if (body.getType() == Shape.Type.POLYGON) {
+                    shapeRenderer.polygon(((PolygonShape) body).getShape().getTransformedVertices());
+                }
             }
         }
+
 
         for (IMapRendable rendable : sortedMapRendables) {
             if (rendable.isRendable() && rendable.isRended()) {
@@ -497,7 +509,7 @@ public class MapAndSpritesRenderer2 extends OrthogonalTiledMapRenderer {
         collisionRenderer.setProjectionMatrix(getBatch().getProjectionMatrix());
         collisionRenderer.begin(ShapeRenderer.ShapeType.Line);
 
-        Array<Shape> zindex = mMap.getBodiesZindex();
+      //  Array<Shape> zindex = mMap.getBodiesZindex();
         Array<Shape> mapCollision = mMap.getBodiesCollision();
 
 
@@ -508,8 +520,8 @@ public class MapAndSpritesRenderer2 extends OrthogonalTiledMapRenderer {
 
             if (mapCollision.contains(col.mShape, true)) {
                 collisionRenderer.setColor(Color.GREEN);
-            } else if (zindex.contains(col.mShape, true)) {
-                collisionRenderer.setColor(Color.YELLOW);
+          //  } else if (zindex.contains(col.mShape, true)) {
+          //      collisionRenderer.setColor(Color.YELLOW);
             } else {
                 collisionRenderer.setColor(Color.BLUE);
             }

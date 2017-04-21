@@ -242,6 +242,17 @@ public class EventDispatcher implements IDialogListener, IItemListener, IQuestLi
             }
         }
     }
+    @Override
+    public void onMapReloadRequested(String aMapId, String aFromMapId)
+    {
+        synchronized (mSystemEventListeners) {
+            ISystemEventListener[] listeners = new ISystemEventListener[mSystemEventListeners.size()];
+            listeners = mSystemEventListeners.toArray(listeners);
+            for (ISystemEventListener listener : listeners) {
+                listener.onMapReloadRequested(aMapId, aFromMapId);
+            }
+        }
+    }
 
     @Override
     public void onMapLoaded(GameMap aMap) {

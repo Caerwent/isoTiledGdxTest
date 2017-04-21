@@ -87,22 +87,26 @@ public class ItemInteraction extends Entity implements IItemInteraction, IMapRen
     public Item getItem() {
         return mItem;
     }
-
+    @Override
     public boolean isRendable()
     {
         return true;
     }
-
+    @Override
     public boolean isRended()
     {
         return mIsRended;
     }
-
+    @Override
     public void setRended(boolean aRended)
     {
         mIsRended = aRended;
     }
-
+    @Override
+    public int getZIndex()
+    {
+        return 1;
+    }
     @Override
     public boolean onCollisionStart(CollisionComponent aEntity) {
         if ((aEntity.mType & CollisionComponent.CHARACTER) !=0) {

@@ -224,10 +224,10 @@
   </object>
  </objectgroup>
  <objectgroup name="interactions">
-  <object id="20" name="portal1" type="PORTAL" gid="1063" x="1024" y="464" width="32" height="32"/>
+  <object id="20" name="portal1" type="PORTAL" gid="1063" x="1024" y="459" width="32" height="32"/>
   <object id="21" name="defaultPortal" type="PORTAL" gid="1063" x="480" y="512" width="32" height="32"/>
   <object id="51" name="portal3" type="PORTAL" gid="1063" x="768" y="415" width="32" height="32"/>
-  <object id="53" name="portal4" type="PORTAL" gid="1063" x="192" y="152" width="32" height="32"/>
+  <object id="53" name="portal4" type="PORTAL" gid="1063" x="192" y="154" width="32" height="32"/>
  </objectgroup>
  <objectgroup name="items"/>
 </map>

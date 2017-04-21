@@ -27,15 +27,15 @@ public class InteractionChest extends Interaction{
     public InteractionChest(InteractionDef aDef, float x, float y, InteractionMapping aMapping, MapProperties aProperties, GameMap aMap) {
         super(aDef, x, y, aMapping, aProperties, aMap);
         mType = Type.CHEST;
-        mChest = ItemFactory.getInstance().getChest(getId());
+        mChest = ItemFactory.getInstance().getChest(aMap.getMapName()+"_"+getId());
 
     }
 
     @Override
     public void initialize(float x, float y, InteractionMapping aMapping) {
         super.initialize(x, y, aMapping);
-        if (aMapping.properties != null) {
-            mRequiredItem = (String) aMapping.properties.get("requiredItem");
+        if (mProperties != null) {
+            mRequiredItem = (String) mProperties.get("requiredItem");
         }
 
     }

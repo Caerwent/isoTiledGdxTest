@@ -26,6 +26,7 @@ public class PolygonShape extends Shape<Polygon> {
     @Override
     public void setShape(Polygon aShape) {
         mPoly = aShape;
+        Rectangle rect = getBounds();
     }
 
     @Override
@@ -46,6 +47,17 @@ public class PolygonShape extends Shape<Polygon> {
     @Override
     public void setY(float y) {
         mPoly.setPosition(mPoly.getX(), y);
+    }
+
+    @Override
+    public float getWidth()
+    {
+        return getBounds().width;
+    }
+    @Override
+    public float getHeight()
+    {
+        return getBounds().height;
     }
 
     @Override

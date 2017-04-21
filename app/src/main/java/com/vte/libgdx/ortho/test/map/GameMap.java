@@ -6,6 +6,7 @@ import com.badlogic.ashley.utils.ImmutableArray;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.maps.Map;
+import com.badlogic.gdx.maps.MapLayer;
 import com.badlogic.gdx.maps.MapObject;
 import com.badlogic.gdx.maps.MapObjects;
 import com.badlogic.gdx.maps.MapProperties;
@@ -57,11 +58,12 @@ public class GameMap implements ICollisionHandler {
     public final static String TAG = GameMap.class.getSimpleName();
     private TiledMap map;
     private String mMapName;
+    private String mFromMapId;
     // private IsoTileMapRendererWithSprites renderer;
     private MapAndSpritesRenderer2 renderer;
     private OrthographicCamera mCamera;
 
-    private Array<Shape> mBodiesZindex = new Array<Shape>();
+    private HashMap<String, Array<Shape>> mBodiesZindex = new HashMap<String, Array<Shape>>();
     private Array<Shape> mBodiesCollision = new Array<Shape>();
 
 
@@ -79,6 +81,7 @@ public class GameMap implements ICollisionHandler {
 
     public GameMap(String aMapName, String aFromMap, OrthographicCamera aCamera, MapTownPortalInfo aTownPortalInfo) {
         mMapName = aMapName;
+        mFromMapId = aFromMap;
         boolean firstMapEntrance = false;
         MapProfile mapProfile = Profile.getInstance().getMapProfile(mMapName);
         if (mapProfile == null) {
@@ -173,7 +176,22 @@ public class GameMap implements ICollisionHandler {
         }
 
         renderer = new MapAndSpritesRenderer2(this, MyGame.SCALE_FACTOR);
-        mBodiesZindex = buildShapes(map, "zindex");
+       // mBodiesZindex = buildShapes(map, "zindex");
+        for(MapLayer layer : map.getLayers())
+        {
+            if(layer.getName().startsWith("zindex_"))
+            {
+                mBodiesZindex.put(layer.getName().substring("zindex_".length(), layer.getName().length()), buildShapes(map, layer.getName()));
+            }
+            else if(layer.getName().compareTo("zindex")==0)
+            {
+                mBodiesZindex.put("zindex", buildShapes(map, layer.getName()));
+            }
+        }
+        if(!mBodiesZindex.containsKey("zindex"))
+        {
+            mBodiesZindex.put("zindex", new Array());
+        }
         mBodiesCollision = buildShapes(map, "collision");
 
         if (mPaths.containsKey("hero") && firstMapEntrance) {
@@ -181,6 +199,7 @@ public class GameMap implements ICollisionHandler {
         }
         mIsInitialized = true;
     }
+
 
     protected void tryToSetCameraAtPosition(float x, float y) {
         mCamera.position.x = x;
@@ -207,6 +226,11 @@ public class GameMap implements ICollisionHandler {
 
     public String getMapName() {
         return mMapName;
+    }
+
+    public String getFromMapId()
+    {
+        return mFromMapId;
     }
 
     public Player getPlayer() {
@@ -270,8 +294,11 @@ public class GameMap implements ICollisionHandler {
         return map;
     }
 
-    public Array<Shape> getBodiesZindex() {
-        return mBodiesZindex;
+    public Array<Shape> getBodiesZindex(String aLayerName) {
+        if(mBodiesZindex.containsKey(aLayerName))
+            return mBodiesZindex.get(aLayerName);
+        else
+            return mBodiesZindex.get("zindex");
     }
 
     public Array<Shape> getBodiesCollision() {
@@ -307,7 +334,7 @@ public class GameMap implements ICollisionHandler {
     }
 
     private Array<Shape> buildShapes(Map map, String layerName) {
-        byte type = "zindex".compareTo(layerName) == 0 ? CollisionComponent.ZINDEX : CollisionComponent.OBSTACLE;
+        byte type = layerName.contains("zindex") ? CollisionComponent.ZINDEX : CollisionComponent.OBSTACLE;
 
         Array<Shape> bodies = new Array<Shape>();
         if (map.getLayers().get(layerName) == null)
@@ -405,15 +432,20 @@ public class GameMap implements ICollisionHandler {
     }
 
     private Array<IInteraction> buildMapInteractions(Map map, String layerName) {
-        MapObjects objects = map.getLayers().get(layerName).getObjects();
         Array<IInteraction> interactions = new Array<IInteraction>();
+        if(map.getLayers().get(layerName)==null)
+        {
+            return interactions;
+        }
+        MapObjects objects = map.getLayers().get(layerName).getObjects();
+
         MapProfile mapProfile = Profile.getInstance().getMapProfile(mMapName);
         for (MapObject object : objects) {
 
             if (object instanceof TextureMapObject) {
                 TextureMapObject textureObject = (TextureMapObject) object;
-                float x = (textureObject.getX() + textureObject.getTextureRegion().getRegionWidth() / 2) * MyGame.SCALE_FACTOR;
-                float y = (textureObject.getY() + textureObject.getTextureRegion().getRegionHeight() / 2) * MyGame.SCALE_FACTOR;
+                float x = textureObject.getX() * MyGame.SCALE_FACTOR;
+                float y = textureObject.getY() * MyGame.SCALE_FACTOR;
                 InteractionMapping mapping = mInteractionMappingManager.getInterationMapping(object.getName());
                 if (mapping == null) {
                     continue;
@@ -430,17 +462,22 @@ public class GameMap implements ICollisionHandler {
     }
 
     private Array<IItemInteraction> buildItems(Map map, String layerName) {
+        Array<IItemInteraction> interactions = new Array<IItemInteraction>();
+        if(map.getLayers().get(layerName)==null)
+        {
+            return interactions;
+        }
         MapObjects objects = map.getLayers().get(layerName).getObjects();
 
-        Array<IItemInteraction> interactions = new Array<IItemInteraction>();
+
 
         MapProfile mapProfile = Profile.getInstance().getMapProfile(mMapName);
         for (MapObject object : objects) {
 
             if (object instanceof TextureMapObject) {
                 TextureMapObject textureObject = (TextureMapObject) object;
-                float x = (textureObject.getX() + textureObject.getTextureRegion().getRegionWidth() / 2) * MyGame.SCALE_FACTOR;
-                float y = (textureObject.getY() + textureObject.getTextureRegion().getRegionHeight() / 2) * MyGame.SCALE_FACTOR;
+                float x = textureObject.getX() * MyGame.SCALE_FACTOR;
+                float y = textureObject.getY()  * MyGame.SCALE_FACTOR;
                 String type = textureObject.getProperties().get("type", String.class);
                 if (type == null) {
                     continue;

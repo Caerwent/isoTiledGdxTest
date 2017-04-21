@@ -25,20 +25,20 @@ public class InteractionPortal extends Interaction implements IQuestListener {
     public InteractionPortal(InteractionDef aDef, float x, float y, InteractionMapping aMapping, MapProperties aProperties, GameMap aMap) {
         super(aDef, x, y, aMapping, aProperties, aMap);
         mType = Type.PORTAL;
-        if(aMapping.properties!=null)
+        if(mProperties!=null)
         {
-            if(aMapping.properties.containsKey("activateQuestId"))
+            if(mProperties.containsKey("activateQuestId"))
             {
                 mQuestId=(String) aMapping.properties.get("activateQuestId");
             }
-            if(aMapping.properties.containsKey("targetMapId"))
+            if(mProperties.containsKey("targetMapId"))
             {
                 mTargetMapId=(String) aMapping.properties.get("targetMapId");
             }
-            if (aMapping.properties.containsKey("isDefaultStart")) {
+            if (mProperties.containsKey("isDefaultStart")) {
                 mIsDefaultStart = Boolean.parseBoolean((String)aMapping.properties.get("isDefaultStart"));
             }
-            if(aMapping.properties.containsKey("activatedByQuestId"))
+            if(mProperties.containsKey("activatedByQuestId"))
             {
                 mActivatedByQuestId = (String) aMapping.properties.get("activatedByQuestId");
             }

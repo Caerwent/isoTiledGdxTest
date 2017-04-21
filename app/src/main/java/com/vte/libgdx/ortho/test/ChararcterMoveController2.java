@@ -4,7 +4,6 @@ import com.badlogic.ashley.core.ComponentMapper;
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.Family;
 import com.badlogic.ashley.utils.ImmutableArray;
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.math.Polygon;
@@ -121,49 +120,44 @@ public class ChararcterMoveController2 extends InputAdapter {
                     if (((collision.mType & CollisionComponent.OBSTACLE) != 0 || ((collision.mType & CollisionComponent.OBSTACLE_MAPINTERACTION) != 0))
                             && ShapeUtils.overlaps(mPathSpot, collision.mShape)
                             ) {
-                        Gdx.app.debug("DEBUG", "overlaps obstacle");
-                     /*   float Ycollision = collision.mShape.getYAtX(mPathSpot.getX());
-                        float Ytmp = collision.mShape.getYAtX(mPathSpot.getX() + mPathSpot.getBounds().getWidth());
-                        if (Ycollision == -1 || (Ytmp!=-1 && Ytmp < Ycollision)) {
-                            Ycollision = Ytmp;
-                        }
-                        Ytmp = collision.mShape.getYAtX(mPathSpot.getX() + mPathSpot.getBounds().getWidth() / 2);
-                        if (Ycollision == -1 || (Ytmp!=-1 && Ytmp < Ycollision)) {
-                            Ycollision = Ytmp;
-                        }
-                        if (Ycollision == -1) {
-                            Ycollision = collision.mShape.getBounds().getY();
-                        }
-                        float Yspot = mPathSpot.getYAtX(mPathSpot.getX());
-                        Ytmp = mPathSpot.getYAtX(mPathSpot.getX() + mPathSpot.getBounds().getWidth());
-                        if (Yspot == -1 || (Ytmp!=-1 && Ytmp < Yspot)) {
-                            Yspot = Ytmp;
-                        }
-                        Ytmp = mPathSpot.getYAtX(mPathSpot.getX() + mPathSpot.getBounds().getWidth() / 2);
-                        if (Yspot == -1 || (Ytmp!=-1 && Ytmp<Yspot))  {
-                            Yspot = Ytmp;
-                        }
-                        if (Yspot == -1) {
-                            Yspot = mPathSpot.getBounds().getY();
-                        }
-                        Gdx.app.debug("DEBUG", "Yspot="+Yspot+" Ycollision"+Ycollision);
-                        if (((collision.mType & CollisionComponent.OBSTACLE_MAPINTERACTION) == 0 &&
-                                Yspot >= Ycollision) ||
+                       if((collision.mType & CollisionComponent.OBSTACLE_MAPINTERACTION) != 0)
+                       {
+                           float Ycollision = collision.mShape.getYAtX(mPathSpot.getX());
+                           float Ytmp = collision.mShape.getYAtX(mPathSpot.getX() + mPathSpot.getBounds().getWidth());
+                           if (Ycollision == -1 || (Ytmp!=-1 && Ytmp < Ycollision)) {
+                               Ycollision = Ytmp;
+                           }
+                           Ytmp = collision.mShape.getYAtX(mPathSpot.getX() + mPathSpot.getBounds().getWidth() / 2);
+                           if (Ycollision == -1 || (Ytmp!=-1 && Ytmp < Ycollision)) {
+                               Ycollision = Ytmp;
+                           }
+                           if (Ycollision == -1) {
+                               Ycollision = collision.mShape.getBounds().getY();
+                           }
+                           float Yspot = mPathSpot.getYAtX(mPathSpot.getX());
+                           Ytmp = mPathSpot.getYAtX(mPathSpot.getX() + mPathSpot.getBounds().getWidth());
+                           if (Yspot == -1 || (Ytmp!=-1 && Ytmp < Yspot)) {
+                               Yspot = Ytmp;
+                           }
+                           Ytmp = mPathSpot.getYAtX(mPathSpot.getX() + mPathSpot.getBounds().getWidth() / 2);
+                           if (Yspot == -1 || (Ytmp!=-1 && Ytmp<Yspot))  {
+                               Yspot = Ytmp;
+                           }
+                           if (Yspot == -1) {
+                               Yspot = mPathSpot.getBounds().getY();
+                           }
+                           //Gdx.app.debug("DEBUG", "Yspot="+Yspot+" Ycollision"+Ycollision);
+                           if (Yspot - Ycollision <= 0.5) {
+                            //   Gdx.app.debug("DEBUG", "collision");
+                               hasCollision = true;
+                               break;
 
-                                (Yspot >= Ycollision &&
-                                        (collision.mType & CollisionComponent.OBSTACLE_MAPINTERACTION) != 0 &&
-                                        ((Yspot - Ycollision) <= 0.5)
-                                )
-                                ) {
-                            Gdx.app.debug("DEBUG", "collision");
-                            hasCollision = true;
-                            break;
-
-                        }*/
-
-                        Gdx.app.debug("DEBUG", "collision");
-                        hasCollision = true;
-                        break;
+                           }
+                       }
+                       else {
+                           hasCollision = true;
+                           break;
+                       }
 
 
                     }
@@ -212,12 +206,13 @@ public class ChararcterMoveController2 extends InputAdapter {
             path = new PathHero();
             mMap.getPlayer().getHero().setVelocity(0, 0);
             Vector2 bobPos = mMap.getPlayer().getHero().getPosition();
-            path.addPoint(bobPos.x, bobPos.y);
+            float heroShapeHalfWidth = mMap.getPlayer().getHero().getShape().getWidth() / 2;
+            path.addPoint(bobPos.x+heroShapeHalfWidth, bobPos.y);
             mPathSpot.setX(bobPos.x);
             mPathSpot.setY(bobPos.y);
             ((GameScreen) MyGame.getInstance().getScreenType(MyGame.ScreenType.MainGame)).setSpotShape(mPathSpot);
             last.set(mCursorPoint);
-            mLastPoint.set(bobPos.x, bobPos.y);
+            mLastPoint.set(bobPos.x+heroShapeHalfWidth, bobPos.y);
             isActive = true;
         }
         return false;

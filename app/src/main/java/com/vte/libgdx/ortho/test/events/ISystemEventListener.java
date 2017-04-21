@@ -12,6 +12,8 @@ public interface ISystemEventListener {
 
     public void onNewMapRequested(String aMapId, MapTownPortalInfo aTownPortalInfo);
 
+    public void onMapReloadRequested(String aMapId, String aFromMapId);
+
     public void onMapLoaded(GameMap aMap);
 
     public void onNewSelectedEffect(Effect.Type aEffectType);

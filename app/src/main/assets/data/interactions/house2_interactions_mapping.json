@@ -10,7 +10,7 @@
     "outputEvents":[]
   },
   {
-    "id":"house2_chest1",
+    "id":"chest1",
     "template":"chest_type1.json",
     "properties": {
       "requiredItem":"KeyIron"
@@ -20,7 +20,7 @@
     "outputEvents":[]
   },
   {
-    "id":"house2_chest2",
+    "id":"chest2",
     "template":"chest_invisible.json",
     "properties": {
     },

@@ -17,11 +17,11 @@ public class InteractionFollowPath extends Interaction  {
     public InteractionFollowPath(InteractionDef aDef, float x, float y, InteractionMapping aMapping, MapProperties aProperties, GameMap aMap) {
         super(aDef, x, y, aMapping, aProperties, aMap);
 
-        if(aMapping.properties!=null)
+        if(mProperties!=null)
         {
-            if(aMapping.properties.containsKey("pathId"))
+            if(mProperties.containsKey("pathId"))
             {
-                mPath = aMap.getPaths().get((String) aMapping.properties.get("pathId"));
+                mPath = aMap.getPaths().get((String) mProperties.get("pathId"));
             }
 
         }

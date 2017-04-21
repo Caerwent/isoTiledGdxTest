@@ -43,8 +43,8 @@ public class InteractionNPC extends Interaction {
     @Override
     public void initialize(float x, float y, InteractionMapping aMapping) {
         super.initialize(x,y,aMapping);
-        if (aMapping.properties != null) {
-            mDialogId = (String) aMapping.properties.get("dialogId");
+        if (mProperties != null) {
+            mDialogId = (String) mProperties.get("dialogId");
         }
     }
 

@@ -183,7 +183,10 @@ public class MainHUD extends Group implements ISystemEventListener, IQuestListen
     public void onNewMapRequested(String aMapId, MapTownPortalInfo aTownPortalInfo) {
 
     }
+    @Override
+    public void onMapReloadRequested(String aMapId, String aFromMapId) {
 
+    }
     @Override
     public void onMapLoaded(GameMap aMap) {
     }

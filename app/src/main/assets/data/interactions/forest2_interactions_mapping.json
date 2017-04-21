@@ -1,0 +1,38 @@
+[
+  {
+    "id": "portal1",
+    "template": "portal.json",
+    "properties": {
+      "targetMapId":"forest1",
+      "isDefaultStart":"true"
+    },
+    "eventsAction": [],
+    "outputEvents": []
+  },
+  {
+    "id":"chest1",
+    "template":"chest_type1.json",
+    "properties": {
+      "requiredItem":"KeyIron"
+    },
+
+    "eventsAction":[],
+    "outputEvents":[]
+  },
+  {
+    "id": "ice1",
+    "template": "obstacle_water_iceable.json"
+  },
+  {
+    "id": "ice2",
+    "template": "obstacle_water_iceable.json"
+  },
+  {
+    "id": "ice3",
+    "template": "obstacle_water_iceable.json"
+  },
+  {
+    "id": "ice4",
+    "template": "obstacle_water_iceable.json"
+  }
+]

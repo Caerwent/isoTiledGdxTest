@@ -87,8 +87,8 @@ public class InteractionHero extends Interaction {
         if (mPath != null) {
             if (mPath.hasNextPoint()) {
                 TransformComponent transform = this.getComponent(TransformComponent.class);
-
-                Vector2 pos2D = new Vector2(transform.position.x, transform.position.y);
+                float heroShapeHalfWidth = mMap.getPlayer().getHero().getShape().getWidth()/2;
+                Vector2 pos2D = new Vector2(transform.position.x+heroShapeHalfWidth, transform.position.y);
                 Vector2 velocity = mPath.getVelocityForPosAndTime(pos2D, dt);
                 setVelocity(velocity);
 

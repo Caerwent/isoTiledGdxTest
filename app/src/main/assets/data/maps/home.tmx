@@ -32,7 +32,7 @@
    AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAlAAAAAAAAAAAAAAAAAAAANsCAADcAgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAANsCAADcAgAAAAAAAHMDAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAANsCAADcAgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
   </data>
  </layer>
- <objectgroup name="zindex" visible="0">
+ <objectgroup name="zindex">
   <object id="18" x="72" y="192">
    <polygon points="0,0 0,32 16,32 16,16 8,16"/>
   </object>
@@ -105,11 +105,11 @@
    <polygon points="0,0 8,24 24,24 32,0"/>
   </object>
  </objectgroup>
- <objectgroup name="interactions" visible="0">
-  <object id="3" name="portal1" type="PORTAL" gid="2523" x="96" y="94" width="32" height="32"/>
+ <objectgroup name="interactions">
+  <object id="3" name="portal1" type="PORTAL" gid="2523" x="96" y="102" width="32" height="32"/>
  </objectgroup>
- <objectgroup name="items" visible="0"/>
- <objectgroup name="path" visible="0">
+ <objectgroup name="items"/>
+ <objectgroup name="path">
   <object id="27" name="hero" x="112" y="96">
    <polyline points="0,0 80,96"/>
   </object>

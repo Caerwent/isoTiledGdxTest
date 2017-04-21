@@ -1,13 +1,13 @@
 [
   {
 
-    "id":"chest1",
+    "id":"ortho2_chest1",
     "items": ["Gear", "VialBlue"]
   },
   {
 
-    "id":"chest2",
-    "items": []
+    "id":"forest2_chest1",
+    "items": ["VialBlue", "VialGreen", "VialRed"]
   },
   {
 

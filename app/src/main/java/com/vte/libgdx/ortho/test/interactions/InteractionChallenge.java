@@ -27,7 +27,7 @@ public class InteractionChallenge extends Interaction {
     @Override
     public void initialize(float x, float y, InteractionMapping aMapping) {
         super.initialize(x, y, aMapping);
-        mChallengeType = (String) aMapping.properties.get("type");
+        mChallengeType = (String) mProperties.get("type");
         mChallengeUI = ChallengeUI.createInstance(ChallengeUI.ChallengeType.valueOf(mChallengeType));
         mChallengeUI.setInteractionChallenge(this);
 

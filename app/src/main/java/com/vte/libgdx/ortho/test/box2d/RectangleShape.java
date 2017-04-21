@@ -52,6 +52,16 @@ public class RectangleShape extends Shape<Rectangle> {
         return mRect;
     }
     @Override
+    public float getWidth()
+    {
+        return mRect.width;
+    }
+    @Override
+    public float getHeight()
+    {
+        return mRect.height;
+    }
+    @Override
     public Shape clone()
     {
         RectangleShape clone = new RectangleShape();

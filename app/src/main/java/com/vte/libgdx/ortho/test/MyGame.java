@@ -49,6 +49,15 @@ public class MyGame extends Game implements ISystemEventListener {
     }
 
     @Override
+    public void onMapReloadRequested(String aMapId, String aFromMapId) {
+        if (mGameScreen != null) {
+            mScreenRequested = mLoadingScreen;
+            mIsGameReadyToBeShown = false;
+            mGameScreen.loadMap(aMapId, aFromMapId,null);
+        }
+    }
+
+    @Override
     public void onMapLoaded(GameMap aMap) {
         mScreenRequested = mGameScreen;
     }

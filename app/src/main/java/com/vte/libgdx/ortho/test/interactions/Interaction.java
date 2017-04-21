@@ -37,6 +37,7 @@ import com.vte.libgdx.ortho.test.quests.QuestManager;
 import com.vte.libgdx.ortho.test.quests.QuestTask;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import static com.vte.libgdx.ortho.test.entity.components.CollisionComponent.OBSTACLE_MAPINTERACTION;
 
@@ -70,7 +71,8 @@ public class Interaction extends Entity implements ICollisionHandler, IInteracti
 
     public ArrayList<InteractionQuestAction> mQuestsActions;
 
-    protected MapProperties mProperties;
+    protected MapProperties mMapProperties;
+    protected HashMap mProperties;
     protected GameMap mMap;
 
     protected Effect mEffectLaunched;
@@ -89,11 +91,49 @@ public class Interaction extends Entity implements ICollisionHandler, IInteracti
     public Interaction(InteractionDef aDef, float x, float y, InteractionMapping aMapping, MapProperties aProperties, GameMap aMap) {
         mId = aMapping.id;
         mDef = aDef;
-        mEventsAction = aMapping.eventsAction;
-        mOutputEvents = aMapping.outputEvents;
+        mEventsAction = aDef.eventsAction;
+        if(mEventsAction==null)
+        {
+            mEventsAction = new ArrayList<>();
+        }
+        for (InteractionEventAction action : mEventsAction)
+        {
+            if(action.inputEvents!=null)
+            {
+                for(InteractionEvent event : action.inputEvents)
+                {
+                    if(event.sourceId!=null && event.sourceId.compareTo(InteractionEvent.THIS)==0)
+                    {
+                        event.sourceId = mId;
+                    }
+                }
+            }
+        }
+        mOutputEvents = aDef.outputEvents;
+        if(mOutputEvents==null)
+        {
+            mOutputEvents = new ArrayList<>();
+        }
+        mProperties = aDef.properties;
+        if(mProperties==null)
+        {
+            mProperties = new HashMap<>();
+        }
+        if(aMapping.properties!=null)
+        {
+            mProperties.putAll(aMapping.properties);
+        }
+        if(aMapping.eventsAction!=null)
+        {
+            mEventsAction.addAll(aMapping.eventsAction);
+        }
+        if(aMapping.outputEvents!=null)
+        {
+            mOutputEvents.addAll(aMapping.outputEvents);
+        }
         mQuestsActions = aMapping.questActions;
         mMap = aMap;
-        mProperties = aProperties;
+        mMapProperties = aProperties;
 
         EntityEngine.getInstance().addEntity(this);
 
@@ -219,10 +259,15 @@ public class Interaction extends Entity implements ICollisionHandler, IInteracti
     protected void setState(String aStateName) {
         InteractionState state = getState(aStateName);
         if (state != null && state!=mCurrentState) {
+            String oldState = mCurrentState.name;
             mCurrentState = state;
             mStateTime=0;
             if (mOutputEvents != null) {
                 for (InteractionEvent event : mOutputEvents) {
+                   /* if (InteractionEvent.EventType.END_STATE == InteractionEvent.EventType.valueOf(event.type) &&
+                            oldState.equals(event.value)) {
+                        EventDispatcher.getInstance().onInteractionEvent(event);
+                    }*/
                     if (InteractionEvent.EventType.STATE == InteractionEvent.EventType.valueOf(event.type) &&
                             mCurrentState.name.equals(event.value)) {
                         EventDispatcher.getInstance().onInteractionEvent(event);
@@ -282,7 +327,7 @@ public class Interaction extends Entity implements ICollisionHandler, IInteracti
                 TransformComponent transform = this.getComponent(TransformComponent.class);
                 transform.scale = MyGame.SCALE_FACTOR;
 
-                transform.setOriginOffset(-mCurrentFrame.getRegionWidth() * transform.scale / 2, -mCurrentFrame.getRegionHeight() * transform.scale / 2);
+                transform.setOriginOffset(0, 0);
                 this.add(new VisualComponent(mCurrentFrame, this));
             }
 
@@ -339,13 +384,19 @@ public class Interaction extends Entity implements ICollisionHandler, IInteracti
             velocity.y = v.y;
         }
     }
-
+    @Override
     public boolean isRendable() {
         return mDef.isRendable;
     }
 
+    @Override
     public boolean isRended() {
         return mIsRended;
+    }
+
+    @Override
+    public int getZIndex() {
+        return 1;
     }
 
     public void setRended(boolean aRended) {
@@ -464,8 +515,8 @@ public class Interaction extends Entity implements ICollisionHandler, IInteracti
 
     protected void updateLaunchedEffect(float dt) {
         if (mEffectLaunched != null) {
-            mZoneLaunchedEffect.setX(getX());
-            mZoneLaunchedEffect.setY(getY());
+            mZoneLaunchedEffect.setX(getX()+getShape().getBounds().width/2);
+            mZoneLaunchedEffect.setY(getY()+getShape().getBounds().height/2);
             mEffectLaunchedTime += dt;
             float timeAction = mEffectLaunched.duration;
             if(timeAction<0)
@@ -561,6 +612,7 @@ public class Interaction extends Entity implements ICollisionHandler, IInteracti
         Effect effect = (Effect) aEntity.mData;
         if (effect != null) {
             mEffectAction = effect;
+            Gdx.app.debug("DEBUG", "onStartEffectInteraction " + getId());
             EventDispatcher.getInstance().onInteractionEvent(new InteractionEvent(getId(), InteractionEvent.EventType.EFFECT_START.name(),effect.id.name()));
         }
         return false;
@@ -681,8 +733,8 @@ public class Interaction extends Entity implements ICollisionHandler, IInteracti
         mEffectLaunchedTime = 0;
         mZoneLaunchedEffect = new CircleShape();
         mZoneLaunchedEffect.setRadius(mEffectLaunched.distance);
-        mZoneLaunchedEffect.setX(getX());
-        mZoneLaunchedEffect.setY(getY());
+        mZoneLaunchedEffect.setX(getX()+getShape().getBounds().width/2);
+        mZoneLaunchedEffect.setY(getY()+getShape().getBounds().height/2);
         mEffectLaunchedEntity = new Entity();
         EntityEngine.getInstance().addEntity(mEffectLaunchedEntity);
         mEffectLaunchedEntity.add(new CollisionComponent(CollisionComponent.EFFECT, mZoneLaunchedEffect, mId, mEffectLaunched, null));
@@ -706,6 +758,7 @@ public class Interaction extends Entity implements ICollisionHandler, IInteracti
     }
 
     protected void stopEffectAction() {
+        Gdx.app.debug("DEBUG", "stopEffectAction " + getId());
         EventDispatcher.getInstance().onInteractionEvent(new InteractionEvent(getId(), InteractionEvent.EventType.EFFECT_STOP.name(),mEffectAction.id.name()));
         mEffectAction = null;
         mEffectActionTime = 0;

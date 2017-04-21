@@ -1,0 +1,123 @@
+{
+  "type":"OBSTACLE",
+  "atlas":"ice.atlas",
+  "persistence":"NONE",
+  "defaultState":"CLOSED",
+  "isClickable": "false",
+  "isRendable": "true",
+  "isMovable": "false",
+  "states": [
+    {
+      "name": "CLOSED",
+      "fps":"0",
+      "frames": [
+        "none"
+      ]
+    },
+    {
+      "name": "FREEZE",
+      "fps":"8",
+      "isLooping":"false",
+      "frames": [
+        "ice1", "ice2", "ice3",
+        "ice4"
+      ]
+    },
+    {
+      "name": "FROZEN",
+      "isLooping":"true",
+      "fps":"0",
+      "frames": [
+        "ice4"
+      ]
+    },
+    {
+      "name": "OPEN",
+      "fps":"0",
+      "frames": [ "ice4"]
+    }
+
+  ],
+  "properties": {
+    "fullObstacle":"true",
+    "killableWhenClosed":"true"
+  },
+  "eventsAction": [
+    {
+      "id": "SET_STATE",
+      "value": "FREEZE",
+      "inputEvents": [
+        {
+          "sourceId": "THIS",
+          "type": "EFFECT_START",
+          "value": "FREEZE"
+        }
+      ]
+    },
+    {
+      "id": "SET_STATE",
+      "value": "FROZEN",
+      "inputEvents": [
+        {
+          "sourceId": "THIS",
+          "type": "END_STATE",
+          "value": "FREEZE"
+        }
+      ]
+    },
+    {
+      "id": "SET_STATE",
+      "value": "CLOSED",
+      "inputEvents": [
+        {
+          "sourceId": "THIS",
+          "type": "EFFECT_STOP",
+          "value": "FREEZE"
+        }
+      ]
+    },
+    {
+      "id": "OPEN",
+      "value": "",
+      "inputEvents": [
+        {
+          "sourceId": "THIS",
+          "type": "STATE",
+          "value": "FREEZE"
+        }
+      ]
+    },
+    {
+      "id": "CLOSE",
+      "value": "",
+      "inputEvents": [
+        {
+          "sourceId": "THIS",
+          "type": "EFFECT_STOP",
+          "value": "FREEZE"
+        }
+      ]
+    }
+  ],
+  "outputEvents": [
+
+    {
+      "type": "STATE",
+      "value": "FROZEN"
+    },
+    {
+      "type": "END_STATE",
+      "value": "FROZEN"
+    },
+    {
+      "type": "STATE",
+      "value": "FREEZE"
+    },
+    {
+      "type": "END_STATE",
+      "value": "FREEZE"
+    }
+  ]
+
+
+}

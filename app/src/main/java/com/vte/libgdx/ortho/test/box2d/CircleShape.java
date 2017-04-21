@@ -63,6 +63,16 @@ public class CircleShape extends Shape<Circle> {
         return mBounds;
     }
     @Override
+    public float getWidth()
+    {
+        return mCircle.radius;
+    }
+    @Override
+    public float getHeight()
+    {
+        return mCircle.radius;
+    }
+    @Override
     public Shape clone()
     {
         CircleShape clone = new CircleShape();

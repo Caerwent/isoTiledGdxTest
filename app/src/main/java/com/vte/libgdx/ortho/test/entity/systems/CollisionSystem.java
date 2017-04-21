@@ -32,7 +32,8 @@ public class CollisionSystem extends IteratingSystem {
                 continue;
 
             otherCollisionComponent = otherEntity.getComponent(CollisionComponent.class);
-
+            if(otherCollisionComponent==null)
+                continue;
             if (ShapeUtils.overlaps(collisionComponent.mShape, otherCollisionComponent.mShape)) {
                 if (!collisionComponent.mHandler.getCollisions().contains(otherCollisionComponent, false)) {
                     collisionComponent.mHandler.onCollisionStart(otherCollisionComponent);

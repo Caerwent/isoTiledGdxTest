@@ -127,9 +127,9 @@
 </data>
  </layer>
  <objectgroup name="interactions">
-  <object id="1" name="wood1" gid="58" x="156" y="190.667" width="32" height="32"/>
+  <object id="1" name="wood1" gid="58" x="154" y="190.667" width="32" height="32"/>
   <object id="2" name="wood2" gid="58" x="546.667" y="93.3333" width="32" height="32"/>
-  <object id="57" name="portal1" gid="55" x="24" y="40" width="32" height="32"/>
+  <object id="57" name="portal1" gid="55" x="24" y="45" width="32" height="32"/>
   <object id="58" name="portal2" gid="54" x="602" y="61" width="32" height="32"/>
  </objectgroup>
  <objectgroup name="items">
