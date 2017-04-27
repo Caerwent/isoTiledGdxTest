@@ -3,7 +3,6 @@ package com.vte.libgdx.ortho.test.interactions;
 
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.utils.Array;
 
 import java.util.ArrayList;
@@ -26,7 +25,7 @@ public class InteractionState {
     public ArrayList<String> frames;
 
     private Animation mAnimation;
-    private TextureRegion mFixRegion;
+    private TextureAtlas.AtlasRegion mFixRegion;
 
     public void init(TextureAtlas aAtlas)
     {
@@ -37,9 +36,9 @@ public class InteractionState {
             mFixRegion=aAtlas.findRegion(frames.get(0));
         }
         else {
-            Array<TextureRegion> regions = new Array<TextureRegion>();
+            Array<TextureAtlas.AtlasRegion> regions = new Array<TextureAtlas.AtlasRegion>();
             for (String key : frames) {
-                TextureRegion reg = aAtlas.findRegion(key);
+                TextureAtlas.AtlasRegion reg = aAtlas.findRegion(key);
                 if (reg != null) {
                     regions.add(reg);
                 }
@@ -50,14 +49,14 @@ public class InteractionState {
         }
     }
 
-    public TextureRegion getTextureRegion(float aTime)
+    public TextureAtlas.AtlasRegion getTextureRegion(float aTime)
     {
         if(mFixRegion!=null)
         {
             return mFixRegion;
         }
         else if(mAnimation!=null) {
-            return mAnimation.getKeyFrame(aTime, true);
+            return (TextureAtlas.AtlasRegion) mAnimation.getKeyFrame(aTime, true);
         }
         return null;
     }

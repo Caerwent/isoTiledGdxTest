@@ -29,32 +29,31 @@ public class CircleShape extends Shape<Circle> {
     @Override
     public float getX()
     {
-        return mCircle.x;
+        return mBounds.x;
     }
     @Override
     public float getY()
     {
-        return mCircle.y;
+        return mBounds.y;
     }
     public void setRadius(float radius)
     {
         mCircle.setRadius(radius);
-        mBounds.setWidth(radius);
-        mBounds.setHeight(radius);
-        mBounds.setPosition(mCircle.x-mCircle.radius/2, mCircle.y-mCircle.radius/2);
+        mBounds.setWidth(radius*2);
+        mBounds.setHeight(radius*2);
     }
     @Override
     public void setX(float x)
     {
-        mCircle.x = x;
-        mBounds.setPosition(mCircle.x-mCircle.radius/2, mCircle.y-mCircle.radius/2);
+        mCircle.x = x+mCircle.radius;
+        mBounds.setPosition(getX(), getY());
     }
     @Override
     public void setY(float y)
     {
-        mCircle.y = y;
+        mCircle.y = y+mCircle.radius;
 
-        mBounds.setPosition(mCircle.x-mCircle.radius/2, mCircle.y-mCircle.radius/2);
+        mBounds.setPosition(getX(), getY());
     }
     @Override
     public Rectangle getBounds()
@@ -65,12 +64,12 @@ public class CircleShape extends Shape<Circle> {
     @Override
     public float getWidth()
     {
-        return mCircle.radius;
+        return mBounds.getWidth();
     }
     @Override
     public float getHeight()
     {
-        return mCircle.radius;
+        return mBounds.getHeight();
     }
     @Override
     public Shape clone()
@@ -87,7 +86,8 @@ public class CircleShape extends Shape<Circle> {
     {
         if(x>=mBounds.x && x<=(mBounds.x+mBounds.getWidth()))
         {
-            return (float) (getY()+Math.sqrt((mCircle.radius * mCircle.radius)-(x*x)));
+            float xCircle = mBounds.x+mCircle.radius - x;
+            return (float) (getY()+Math.sqrt((mCircle.radius * mCircle.radius)-(xCircle*xCircle)));
         }
         return -1;
     }

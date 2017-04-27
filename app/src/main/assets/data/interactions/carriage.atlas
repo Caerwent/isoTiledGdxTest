@@ -1,0 +1,62 @@
+
+carriage.png
+size: 752,47
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+carriage1
+  rotate: false
+  xy: 0,0
+  size: 94, 47
+  orig: 94, 47
+  offset: 0, 0
+  index: -1
+carriage2
+  rotate: false
+  xy: 94,0
+  size: 94, 47
+  orig: 94, 47
+  offset: 0, 0
+  index: -1
+carriage3
+  rotate: false
+  xy: 188,0
+  size: 94, 47
+  orig: 94, 47
+  offset: 0, 0
+  index: -1
+carriage4
+  rotate: false
+  xy: 282,0
+  size: 94, 47
+  orig: 94, 47
+  offset: 0, 0
+  index: -1
+carriage_broken1
+  rotate: false
+  xy: 376,0
+  size: 94, 47
+  orig: 94, 47
+  offset: 0, 0
+  index: -1
+carriage_broken2
+  rotate: false
+  xy: 470,0
+  size: 94, 47
+  orig: 94, 47
+  offset: 0, 0
+  index: -1
+carriage_broken3
+  rotate: false
+  xy: 564,0
+  size: 94, 47
+  orig: 94, 47
+  offset: 0, 0
+  index: -1
+carriage_broken4
+  rotate: false
+  xy: 658,0
+  size: 94, 47
+  orig: 94, 47
+  offset: 0, 0
+  index: -1

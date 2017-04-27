@@ -5,6 +5,7 @@ import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.assets.loaders.I18NBundleLoader;
 import com.badlogic.gdx.assets.loaders.MusicLoader;
 import com.badlogic.gdx.assets.loaders.SoundLoader;
+import com.badlogic.gdx.assets.loaders.TextureAtlasLoader;
 import com.badlogic.gdx.assets.loaders.TextureLoader;
 import com.badlogic.gdx.assets.loaders.resolvers.InternalFileHandleResolver;
 import com.badlogic.gdx.audio.Music;
@@ -225,6 +226,39 @@ public final class AssetsUtility {
     }
 
 
+    public static void loadTextureAtlasAsset(String atlasFilenamePath) {
+        if (atlasFilenamePath == null || atlasFilenamePath.isEmpty()) {
+            return;
+        }
+
+        if (_assetManager.isLoaded(atlasFilenamePath)) {
+            return;
+        }
+
+        //load asset
+        if (_filePathResolver.resolve(atlasFilenamePath).exists()) {
+            _assetManager.setLoader(TextureAtlas.class, new TextureAtlasLoader(_filePathResolver));
+            _assetManager.load(atlasFilenamePath, TextureAtlas.class);
+            //Until we add loading screen, just block until we load the map
+            _assetManager.finishLoadingAsset(atlasFilenamePath);
+        } else {
+            Gdx.app.debug(TAG, "Atlas doesn't exist!: " + atlasFilenamePath);
+        }
+    }
+
+    public static TextureAtlas getTextureAtlasAsset(String atlasFilenamePath) {
+        TextureAtlas atlas = null;
+
+        // once the asset manager is done loading
+        if (_assetManager.isLoaded(atlasFilenamePath)) {
+            atlas = _assetManager.get(atlasFilenamePath, TextureAtlas.class);
+        } else {
+            Gdx.app.debug(TAG, "Texture is not loaded: " + atlasFilenamePath);
+        }
+
+        return atlas;
+    }
+
     public static void loadTextureAsset(String textureFilenamePath) {
         if (textureFilenamePath == null || textureFilenamePath.isEmpty()) {
             return;
@@ -257,7 +291,6 @@ public final class AssetsUtility {
 
         return texture;
     }
-
 
 }
 

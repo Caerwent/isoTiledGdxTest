@@ -25,7 +25,8 @@ import com.vte.libgdx.ortho.test.box2d.RectangleShape;
 import com.vte.libgdx.ortho.test.box2d.Shape;
 import com.vte.libgdx.ortho.test.box2d.ShapeUtils;
 import com.vte.libgdx.ortho.test.entity.EntityEngine;
-import com.vte.libgdx.ortho.test.entity.components.CollisionComponent;
+import com.vte.libgdx.ortho.test.entity.components.CollisionInteractionComponent;
+import com.vte.libgdx.ortho.test.entity.components.CollisionObstacleComponent;
 import com.vte.libgdx.ortho.test.entity.components.VisualComponent;
 import com.vte.libgdx.ortho.test.screens.GameScreen;
 
@@ -65,9 +66,11 @@ public class MapAndSpritesRenderer2 extends OrthogonalTiledMapRenderer {
     ShapeRenderer shapeRenderer = new ShapeRenderer();
 
     ShapeRenderer collisionRenderer = new ShapeRenderer();
+
     GameMap mMap;
     private ComponentMapper<VisualComponent> vm = ComponentMapper.getFor(VisualComponent.class);
-    private ComponentMapper<CollisionComponent> cm = ComponentMapper.getFor(CollisionComponent.class);
+    private ComponentMapper<CollisionObstacleComponent> cm = ComponentMapper.getFor(CollisionObstacleComponent.class);
+    private ComponentMapper<CollisionInteractionComponent> im = ComponentMapper.getFor(CollisionInteractionComponent.class);
 
     private IMapRendable[] mMapRendables;
 
@@ -123,8 +126,8 @@ public class MapAndSpritesRenderer2 extends OrthogonalTiledMapRenderer {
         Arrays.sort(mMapRendables, new Comparator<IMapRendable>() {
             @Override
             public int compare(IMapRendable lhs, IMapRendable rhs) {
-                float lhsY = lhs.getShape().getBounds().getY();
-                float rhsY = rhs.getShape().getBounds().getY();
+                float lhsY = lhs.getShapeRendering().getBounds().getY();
+                float rhsY = rhs.getShapeRendering().getBounds().getY();
                 int lhsZIndex = lhs.getZIndex();
                 int rhsZIndex = rhs.getZIndex();
                 if(lhsZIndex!=rhsZIndex)
@@ -354,8 +357,9 @@ public class MapAndSpritesRenderer2 extends OrthogonalTiledMapRenderer {
 
         endRender();
         shapeRenderer.end();
-        //  renderShapes(mMapRendables);
-        //  renderCollisionShapes();
+  //      renderInteractionShapes();
+  //        renderShapes(mMapRendables);
+          renderCollisionShapes();
 
     }
 
@@ -364,23 +368,23 @@ public class MapAndSpritesRenderer2 extends OrthogonalTiledMapRenderer {
         for (int idx = 0; idx < mMapRendables.length; idx++) {
             IMapRendable rendable = mMapRendables[idx];
             if (rendable.isRendable() && !rendable.isRended()) {
-//                Gdx.app.debug("DEBUG", "check mapRendable " + ShapeUtils.logShape(rendable.getShape()));
-                if (ShapeUtils.overlaps(rendable.getShape(), aTileShape)) {
+//                Gdx.app.debug("DEBUG", "check mapRendable " + ShapeUtils.logShape(rendable.getShapeRendering()));
+                if (ShapeUtils.overlaps(rendable.getShapeRendering(), aTileShape)) {
 
                     for (int i = 0; i < aZindexList.size; i++) {
                         Shape currentZIndex = aZindexList.get(i);
 //                        Gdx.app.debug("DEBUG", "check zindex " + ShapeUtils.logShape(currentZIndex));
 
-                        if (ShapeUtils.overlaps(rendable.getShape(), currentZIndex) && ShapeUtils.overlaps(aTileShape, currentZIndex)) {
+                        if (ShapeUtils.overlaps(rendable.getShapeRendering(), currentZIndex) && ShapeUtils.overlaps(aTileShape, currentZIndex)) {
 //                            Gdx.app.debug("DEBUG", "rendable overlaps tile zindex=" +ShapeUtils.logShape(currentZIndex));
 
 //                            shapeRenderer.setColor(Color.GOLD);
 //                            shapeRenderer.polygon(aTileShape.getShape().getTransformedVertices());
 //                            shapeRenderer.setColor(Color.RED);
-//                            if (rendable.getShape() instanceof PolygonShape) {
-//                                shapeRenderer.polygon(((PolygonShape) rendable.getShape()).getShape().getTransformedVertices());
-//                            } else if (rendable.getShape() instanceof RectangleShape) {
-//                                Rectangle rect = ((RectangleShape) rendable.getShape()).getShape();
+//                            if (rendable.getShapeRendering() instanceof PolygonShape) {
+//                                shapeRenderer.polygon(((PolygonShape) rendable.getShapeRendering()).getShape().getTransformedVertices());
+//                            } else if (rendable.getShapeRendering() instanceof RectangleShape) {
+//                                Rectangle rect = ((RectangleShape) rendable.getShapeRendering()).getShape();
 //                                shapeRenderer.rect(rect.getX(), rect.getY(), 0, 0, rect.getWidth(), rect.getHeight(), 1, 1, 0);
 //                            }
 //                            shapeRenderer.setColor(Color.GREEN);
@@ -403,19 +407,19 @@ public class MapAndSpritesRenderer2 extends OrthogonalTiledMapRenderer {
                             if (Yzindex == -1) {
                                 Yzindex = currentZIndex.getBounds().getY();
                             }
-                            float Yrendable = rendable.getShape().getYAtX(x);
-                            Ytmp = rendable.getShape().getYAtX(x + aTileShape.getBounds().getWidth());
+                            float Yrendable = rendable.getShapeRendering().getYAtX(x);
+                            Ytmp = rendable.getShapeRendering().getYAtX(x + aTileShape.getBounds().getWidth());
                             if (Yrendable == -1 || (Ytmp != -1 && Ytmp < Yrendable)) {
                                 Yrendable = Ytmp;
                             }
-                            Ytmp = rendable.getShape().getYAtX(x + aTileShape.getBounds().getWidth() / 2);
+                            Ytmp = rendable.getShapeRendering().getYAtX(x + aTileShape.getBounds().getWidth() / 2);
                             if (Yrendable == -1 || (Ytmp != -1 && Ytmp < Yrendable)) {
                                 Yrendable = Ytmp;
                             }
                             if (Yrendable == -1) {
-                                Yrendable = rendable.getShape().getBounds().getY();
+                                Yrendable = rendable.getShapeRendering().getBounds().getY();
                             }
-//                            Gdx.app.debug("DEBUG", "mapRendable " + ShapeUtils.logShape(rendable.getShape()) + "\n" +
+//                            Gdx.app.debug("DEBUG", "mapRendable " + ShapeUtils.logShape(rendable.getShapeRendering()) + "\n" +
 //                                    " zindex " + ShapeUtils.logShape(currentZIndex) + "\n" +
 //                                    " tile " + ShapeUtils.logShape(aTileShape) + "\n" +
 //                                    "x=" + x + " zindexYatX=" + Yzindex + " entityYAtX=" + Yrendable);
@@ -443,15 +447,20 @@ public class MapAndSpritesRenderer2 extends OrthogonalTiledMapRenderer {
         IMapRendable prevRendable = sortedMapRendables[idx - 1];
         if (prevRendable.isRendable() && !prevRendable.isRended()) {
             //     Gdx.app.debug("DEBUG", "check entity "+entity.getClass().getSimpleName()+" "+ShapeUtils.logShape(rendable.getShape()));
-            if (ShapeUtils.overlaps(rendable.getShape(), prevRendable.getShape())) {
+            if (ShapeUtils.overlaps(rendable.getShapeRendering(), prevRendable.getShapeRendering())) {
                 //     Gdx.app.debug("DEBUG", "entity overlaps tile");
-                if (rendable.getShape().getBounds().getY() < prevRendable.getShape().getBounds().getY() || rendable.getZIndex()>prevRendable.getZIndex()) {
+                if (rendable.getShapeRendering().getBounds().getY() < prevRendable.getShapeRendering().getBounds().getY() || rendable.getZIndex()>prevRendable.getZIndex()) {
                     drawPreviousOverlapingEntity(prevRendable, idx - 1, sortedMapRendables);
                     prevRendable.render(getBatch());
                     prevRendable.setRended(true);
                 }
             }
         }
+        else
+        {
+            drawPreviousOverlapingEntity(rendable, idx - 1, sortedMapRendables);
+        }
+
 
     }
 
@@ -493,11 +502,15 @@ public class MapAndSpritesRenderer2 extends OrthogonalTiledMapRenderer {
 
         for (IMapRendable rendable : sortedMapRendables) {
             if (rendable.isRendable() && rendable.isRended()) {
-                if (rendable.getShape() instanceof PolygonShape) {
-                    shapeRenderer.polygon(((PolygonShape) rendable.getShape()).getShape().getTransformedVertices());
-                } else if (rendable.getShape() instanceof RectangleShape) {
-                    Rectangle rect = ((RectangleShape) rendable.getShape()).getShape();
+                if (rendable.getShapeRendering() instanceof PolygonShape) {
+                    shapeRenderer.polygon(((PolygonShape) rendable.getShapeRendering()).getShape().getTransformedVertices());
+                } else if (rendable.getShapeRendering() instanceof RectangleShape) {
+                    Rectangle rect = ((RectangleShape) rendable.getShapeRendering()).getShape();
                     shapeRenderer.rect(rect.getX(), rect.getY(), 0, 0, rect.getWidth(), rect.getHeight(), 1, 1, 0);
+                }
+                else if (rendable.getShapeRendering() instanceof CircleShape) {
+                    Circle circle = ((CircleShape) rendable.getShapeRendering()).getShape();
+                    shapeRenderer.circle(circle.x, circle.y, circle.radius, 16);
                 }
             }
         }
@@ -513,14 +526,14 @@ public class MapAndSpritesRenderer2 extends OrthogonalTiledMapRenderer {
         Array<Shape> mapCollision = mMap.getBodiesCollision();
 
 
-        ImmutableArray<Entity> entities = EntityEngine.getInstance().getEntitiesFor(Family.all(CollisionComponent.class).get());
+        ImmutableArray<Entity> entities = EntityEngine.getInstance().getEntitiesFor(Family.all(CollisionObstacleComponent.class).get());
         for (Entity entity : entities) {
 
-            CollisionComponent col = cm.get(entity);
+            CollisionObstacleComponent col = cm.get(entity);
 
             if (mapCollision.contains(col.mShape, true)) {
                 collisionRenderer.setColor(Color.GREEN);
-          //  } else if (zindex.contains(col.mShape, true)) {
+          //  } else if (zindex.contains(col.mShapeCollision, true)) {
           //      collisionRenderer.setColor(Color.YELLOW);
             } else {
                 collisionRenderer.setColor(Color.BLUE);
@@ -533,7 +546,7 @@ public class MapAndSpritesRenderer2 extends OrthogonalTiledMapRenderer {
                 collisionRenderer.rect(rect.getX(), rect.getY(), 0, 0, rect.getWidth(), rect.getHeight(), 1, 1, 0);
             } else if (col.mShape instanceof CircleShape) {
                 Circle circle = ((CircleShape) col.mShape).getShape();
-                collisionRenderer.circle(circle.x, circle.y, circle.radius);
+                collisionRenderer.circle(circle.x, circle.y, circle.radius, 16);
             }
         }
         Shape spot = ((GameScreen) MyGame.getInstance().getScreenType(MyGame.ScreenType.MainGame)).getSpotShape();
@@ -546,7 +559,7 @@ public class MapAndSpritesRenderer2 extends OrthogonalTiledMapRenderer {
                 collisionRenderer.rect(rect.getX(), rect.getY(), 0, 0, rect.getWidth(), rect.getHeight(), 1, 1, 0);
             } else if (spot instanceof CircleShape) {
                 Circle circle = ((CircleShape) spot).getShape();
-                collisionRenderer.circle(circle.x, circle.y, circle.radius);
+                collisionRenderer.circle(circle.x, circle.y, circle.radius, 16);
             }
         }
         /*
@@ -561,5 +574,29 @@ public class MapAndSpritesRenderer2 extends OrthogonalTiledMapRenderer {
 
         collisionRenderer.end();
     }
+    private void renderInteractionShapes() {
 
+        collisionRenderer.setProjectionMatrix(getBatch().getProjectionMatrix());
+        collisionRenderer.begin(ShapeRenderer.ShapeType.Line);
+        collisionRenderer.setColor(Color.CHARTREUSE);
+
+        ImmutableArray<Entity> entities = EntityEngine.getInstance().getEntitiesFor(Family.all(CollisionInteractionComponent.class).get());
+        for (Entity entity : entities) {
+
+            CollisionInteractionComponent col = im.get(entity);
+
+
+            if (col.mShape.getType() == Shape.Type.POLYGON) {
+                collisionRenderer.polygon(((PolygonShape) col.mShape).getShape().getTransformedVertices());
+            } else if (col.mShape instanceof RectangleShape) {
+                Rectangle rect = ((RectangleShape) col.mShape).getShape();
+                collisionRenderer.rect(rect.getX(), rect.getY(), 0, 0, rect.getWidth(), rect.getHeight(), 1, 1, 0);
+            } else if (col.mShape instanceof CircleShape) {
+                Circle circle = ((CircleShape) col.mShape).getShape();
+                collisionRenderer.circle(circle.x, circle.y, circle.radius, 16);
+            }
+        }
+
+        collisionRenderer.end();
+    }
 }

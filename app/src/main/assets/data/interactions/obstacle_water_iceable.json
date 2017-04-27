@@ -39,7 +39,8 @@
 
   ],
   "properties": {
-    "fullObstacle":"true",
+    "closedBoundsAsObstacle":"true",
+    "openZIndex":0,
     "killableWhenClosed":"true"
   },
   "eventsAction": [

@@ -13,7 +13,7 @@ import com.vte.libgdx.ortho.test.box2d.PathHero;
 import com.vte.libgdx.ortho.test.box2d.Shape;
 import com.vte.libgdx.ortho.test.box2d.ShapeUtils;
 import com.vte.libgdx.ortho.test.entity.EntityEngine;
-import com.vte.libgdx.ortho.test.entity.components.CollisionComponent;
+import com.vte.libgdx.ortho.test.entity.components.CollisionObstacleComponent;
 import com.vte.libgdx.ortho.test.map.GameMap;
 import com.vte.libgdx.ortho.test.screens.GameScreen;
 
@@ -35,7 +35,7 @@ public class ChararcterMoveController2 extends InputAdapter {
     public boolean isActive = false;
     private GameMap mMap;
 
-    private ComponentMapper<CollisionComponent> cm = ComponentMapper.getFor(CollisionComponent.class);
+    private ComponentMapper<CollisionObstacleComponent> cm = ComponentMapper.getFor(CollisionObstacleComponent.class);
 
     private ImmutableArray<Entity> entities;
 
@@ -47,8 +47,6 @@ public class ChararcterMoveController2 extends InputAdapter {
 
     public void setMap(GameMap aMap) {
         mMap = aMap;
-
-        mPathSpot=mMap.getPlayer().getHero().getShapeForMovementCollision().clone();
 
     }
     /** Check whether the given line segment and {@link Polygon} intersect.
@@ -114,54 +112,18 @@ public class ChararcterMoveController2 extends InputAdapter {
             if (entities != null && entities.size() > 0) {
                 for (Entity entity : entities) {
 
-                    CollisionComponent collision = entity.getComponent(CollisionComponent.class);
+                    CollisionObstacleComponent collision = entity.getComponent(CollisionObstacleComponent.class);
 
-                    //    Gdx.app.debug("DEBUG", "check entity " + entity+ " "+collision.mName);
-                    if (((collision.mType & CollisionComponent.OBSTACLE) != 0 || ((collision.mType & CollisionComponent.OBSTACLE_MAPINTERACTION) != 0))
+                     //   Gdx.app.debug("DEBUG", "check entity " + entity+ " "+collision.mName);
+                    if (((collision.mType & CollisionObstacleComponent.OBSTACLE) != 0 || ((collision.mType & CollisionObstacleComponent.MAPINTERACTION) != 0))
                             && ShapeUtils.overlaps(mPathSpot, collision.mShape)
                             ) {
-                       if((collision.mType & CollisionComponent.OBSTACLE_MAPINTERACTION) != 0)
-                       {
-                           float Ycollision = collision.mShape.getYAtX(mPathSpot.getX());
-                           float Ytmp = collision.mShape.getYAtX(mPathSpot.getX() + mPathSpot.getBounds().getWidth());
-                           if (Ycollision == -1 || (Ytmp!=-1 && Ytmp < Ycollision)) {
-                               Ycollision = Ytmp;
-                           }
-                           Ytmp = collision.mShape.getYAtX(mPathSpot.getX() + mPathSpot.getBounds().getWidth() / 2);
-                           if (Ycollision == -1 || (Ytmp!=-1 && Ytmp < Ycollision)) {
-                               Ycollision = Ytmp;
-                           }
-                           if (Ycollision == -1) {
-                               Ycollision = collision.mShape.getBounds().getY();
-                           }
-                           float Yspot = mPathSpot.getYAtX(mPathSpot.getX());
-                           Ytmp = mPathSpot.getYAtX(mPathSpot.getX() + mPathSpot.getBounds().getWidth());
-                           if (Yspot == -1 || (Ytmp!=-1 && Ytmp < Yspot)) {
-                               Yspot = Ytmp;
-                           }
-                           Ytmp = mPathSpot.getYAtX(mPathSpot.getX() + mPathSpot.getBounds().getWidth() / 2);
-                           if (Yspot == -1 || (Ytmp!=-1 && Ytmp<Yspot))  {
-                               Yspot = Ytmp;
-                           }
-                           if (Yspot == -1) {
-                               Yspot = mPathSpot.getBounds().getY();
-                           }
-                           //Gdx.app.debug("DEBUG", "Yspot="+Yspot+" Ycollision"+Ycollision);
-                           if (Yspot - Ycollision <= 0.5) {
-                            //   Gdx.app.debug("DEBUG", "collision");
-                               hasCollision = true;
-                               break;
-
-                           }
-                       }
-                       else {
                            hasCollision = true;
                            break;
                        }
 
 
                     }
-                }
 
             }
             //    Gdx.app.debug("DEBUG", "hasCollision=" + hasCollision);
@@ -196,18 +158,19 @@ public class ChararcterMoveController2 extends InputAdapter {
             return false;
         }
         mPointer = pointer;
-        entities = EntityEngine.getInstance().getEntitiesFor(Family.all(CollisionComponent.class).get());
+        entities = EntityEngine.getInstance().getEntitiesFor(Family.all(CollisionObstacleComponent.class).get());
 
         camera.unproject(mCursorPoint.set(x, y, 0));
 
-        if (mMap != null && mMap.getPlayer() != null && mMap.getPlayer().getHero() != null && mMap.getPlayer().getHero().getShape().getBounds().contains(mCursorPoint.x, mCursorPoint.y)) {
+        if (mMap != null && mMap.getPlayer() != null && mMap.getPlayer().getHero() != null && mMap.getPlayer().getHero().getShapeRendering().getBounds().contains(mCursorPoint.x, mCursorPoint.y)) {
             if (path != null)
                 path.destroy();
             path = new PathHero();
             mMap.getPlayer().getHero().setVelocity(0, 0);
             Vector2 bobPos = mMap.getPlayer().getHero().getPosition();
-            float heroShapeHalfWidth = mMap.getPlayer().getHero().getShape().getWidth() / 2;
+            float heroShapeHalfWidth = mMap.getPlayer().getHero().getShapeRendering().getWidth() / 2;
             path.addPoint(bobPos.x+heroShapeHalfWidth, bobPos.y);
+            mPathSpot=mMap.getPlayer().getHero().getShapeCollision().clone();
             mPathSpot.setX(bobPos.x);
             mPathSpot.setY(bobPos.y);
             ((GameScreen) MyGame.getInstance().getScreenType(MyGame.ScreenType.MainGame)).setSpotShape(mPathSpot);

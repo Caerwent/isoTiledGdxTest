@@ -6,9 +6,10 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.utils.Array;
 import com.vte.libgdx.ortho.test.MyGame;
 import com.vte.libgdx.ortho.test.box2d.RectangleShape;
+import com.vte.libgdx.ortho.test.box2d.Shape;
 import com.vte.libgdx.ortho.test.entity.EntityEngine;
-import com.vte.libgdx.ortho.test.entity.ICollisionHandler;
-import com.vte.libgdx.ortho.test.entity.components.CollisionComponent;
+import com.vte.libgdx.ortho.test.entity.components.ICollisionObstacleHandler;
+import com.vte.libgdx.ortho.test.entity.components.CollisionObstacleComponent;
 import com.vte.libgdx.ortho.test.entity.components.VisualComponent;
 import com.vte.libgdx.ortho.test.items.Item;
 import com.vte.libgdx.ortho.test.items.ItemFactory;
@@ -17,7 +18,7 @@ import com.vte.libgdx.ortho.test.items.ItemFactory;
  * Created by gwalarn on 27/11/16.
  */
 
-public class ItemInteraction extends Entity implements IItemInteraction, IMapRendable, ICollisionHandler {
+public class ItemInteraction extends Entity implements IItemInteraction, IMapRendable, ICollisionObstacleHandler {
 
     protected IItemInteraction.Type mType;
     protected float mX, mY;
@@ -28,7 +29,7 @@ public class ItemInteraction extends Entity implements IItemInteraction, IMapRen
     protected Item mItem;
     protected RectangleShape mShape;
     protected boolean mIsRended = false;
-    private Array<CollisionComponent> mCollisions = new Array<CollisionComponent>();
+    private Array<CollisionObstacleComponent> mCollisions = new Array<CollisionObstacleComponent>();
     private  GameMap mMap;
 
 
@@ -42,7 +43,7 @@ public class ItemInteraction extends Entity implements IItemInteraction, IMapRen
         EntityEngine.getInstance().addEntity(this);
         mShape = new RectangleShape();
         mShape.setShape(new Rectangle(getX(), getY(), mItem.getTextureRegion().getRegionWidth() * MyGame.SCALE_FACTOR, mItem.getTextureRegion().getRegionHeight() * MyGame.SCALE_FACTOR));
-        add(new CollisionComponent(CollisionComponent.ITEM, mShape, aId, this, this));
+        add(new CollisionObstacleComponent(CollisionObstacleComponent.ITEM, mShape, aId, this, this));
         add(new VisualComponent(mItem.getTextureRegion(), this));
     }
     @Override
@@ -84,6 +85,11 @@ public class ItemInteraction extends Entity implements IItemInteraction, IMapRen
                 0);
     }
 
+    @Override
+    public Shape getShapeRendering() {
+        return mShape;
+    }
+
     public Item getItem() {
         return mItem;
     }
@@ -108,8 +114,8 @@ public class ItemInteraction extends Entity implements IItemInteraction, IMapRen
         return 1;
     }
     @Override
-    public boolean onCollisionStart(CollisionComponent aEntity) {
-        if ((aEntity.mType & CollisionComponent.CHARACTER) !=0) {
+    public boolean onCollisionObstacleStart(CollisionObstacleComponent aEntity) {
+        if ((aEntity.mType & CollisionObstacleComponent.HERO) !=0) {
             mMap.removeItem(this);
             EntityEngine.getInstance().removeEntity(this);
             return true;
@@ -124,12 +130,12 @@ public class ItemInteraction extends Entity implements IItemInteraction, IMapRen
     }
 
     @Override
-    public boolean onCollisionStop(CollisionComponent aEntity) {
+    public boolean onCollisionObstacleStop(CollisionObstacleComponent aEntity) {
         return false;
     }
 
     @Override
-    public Array<CollisionComponent> getCollisions() {
+    public Array<CollisionObstacleComponent> getCollisionObstacle() {
         return mCollisions;
     }
 }

@@ -3,7 +3,9 @@ package com.vte.libgdx.ortho.test.interactions;
 import com.badlogic.gdx.maps.MapProperties;
 import com.vte.libgdx.ortho.test.box2d.CircleShape;
 import com.vte.libgdx.ortho.test.box2d.Shape;
-import com.vte.libgdx.ortho.test.entity.components.CollisionComponent;
+import com.vte.libgdx.ortho.test.entity.components.CollisionEffectComponent;
+import com.vte.libgdx.ortho.test.entity.components.CollisionInteractionComponent;
+import com.vte.libgdx.ortho.test.entity.components.CollisionObstacleComponent;
 import com.vte.libgdx.ortho.test.events.EventDispatcher;
 import com.vte.libgdx.ortho.test.events.IQuestListener;
 import com.vte.libgdx.ortho.test.map.GameMap;
@@ -25,6 +27,8 @@ public class InteractionPortal extends Interaction implements IQuestListener {
     public InteractionPortal(InteractionDef aDef, float x, float y, InteractionMapping aMapping, MapProperties aProperties, GameMap aMap) {
         super(aDef, x, y, aMapping, aProperties, aMap);
         mType = Type.PORTAL;
+        remove(CollisionObstacleComponent.class);
+        remove(CollisionEffectComponent.class);
         if(mProperties!=null)
         {
             if(mProperties.containsKey("activateQuestId"))
@@ -60,17 +64,16 @@ public class InteractionPortal extends Interaction implements IQuestListener {
 
     }
     @Override
-    public Shape createShape() {
-        mShape = new CircleShape();
-        mShape.setY(0);
-        mShape.setX(0);
+    public Shape createShapeInteraction() {
+        mShapeInteraction = new CircleShape();
+        mShapeInteraction.setY(getPosition().x);
+        mShapeInteraction.setX(getPosition().y);
         float radius = /*isClickable() ? 1F :*/ 0.5F;
-        ((CircleShape) mShape).setRadius(radius);
-        return mShape;
+        ((CircleShape) mShapeInteraction).setRadius(radius);
+        return mShapeInteraction;
     }
-    public boolean hasCollisionInteraction(CollisionComponent aEntity) {
-        return (aEntity.mType & CollisionComponent.CHARACTER) != 0 &&
-                mActivatedByQuestId == null;
+    public boolean hasCollisionInteraction(CollisionInteractionComponent aEntity) {
+        return mActivatedByQuestId == null;
     }
 
 
@@ -87,17 +90,17 @@ public class InteractionPortal extends Interaction implements IQuestListener {
     @Override
     protected boolean hasTouchInteraction(float x, float y) {
 
-        return mDef.isClickable;
+        return mDef.isClickable && mIsActivated;
     }
 
     @Override
-    public void onStartCollisionInteraction(CollisionComponent aEntity) {
+    public void onStartCollisionInteraction(CollisionInteractionComponent aEntity) {
         if(!mDef.isClickable) {
             teleport();
         }
     }
     @Override
-    public void onStopCollisionInteraction(CollisionComponent aEntity) {
+    public void onStopCollisionInteraction(CollisionInteractionComponent aEntity) {
         if(mActivatedByQuestId==null) {
             mIsActivated = true;
         }

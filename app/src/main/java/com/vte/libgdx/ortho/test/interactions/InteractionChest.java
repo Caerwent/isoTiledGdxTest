@@ -6,7 +6,7 @@ import com.vte.libgdx.ortho.test.audio.AudioManager;
 import com.vte.libgdx.ortho.test.box2d.CircleShape;
 import com.vte.libgdx.ortho.test.box2d.Shape;
 import com.vte.libgdx.ortho.test.dialogs.DialogsManager;
-import com.vte.libgdx.ortho.test.entity.components.CollisionComponent;
+import com.vte.libgdx.ortho.test.entity.components.CollisionInteractionComponent;
 import com.vte.libgdx.ortho.test.events.EventDispatcher;
 import com.vte.libgdx.ortho.test.items.Chest;
 import com.vte.libgdx.ortho.test.items.Item;
@@ -60,27 +60,27 @@ public class InteractionChest extends Interaction{
     }
 
     @Override
-    public Shape createShape() {
+    public Shape createShapeCollision() {
         if(isRendable())
         {
-            return super.createShape();
+            return super.createShapeCollision();
         }
         else {
-            mShape = new CircleShape();
-            mShape.setY(0);
-            mShape.setX(0);
+            mShapeCollision = new CircleShape();
+            mShapeCollision.setY(0);
+            mShapeCollision.setX(0);
             float radius = /*isClickable() ? 1F :*/ 0.5F;
-            ((CircleShape) mShape).setRadius(radius);
-            return mShape;
+            ((CircleShape) mShapeCollision).setRadius(radius);
+            return mShapeCollision;
         }
     }
-    public boolean hasCollisionInteraction(CollisionComponent aEntity) {
-        return (aEntity.mType&CollisionComponent.CHARACTER)!=0 && !mIsOpen;
+    public boolean hasCollisionInteraction(CollisionInteractionComponent aEntity) {
+        return !mIsOpen;
     }
     @Override
     protected boolean hasTouchInteraction(float x, float y) {
 
-        return getShape().getBounds().contains(x, y) && !mIsOpen;
+        return getShapeInteraction().getBounds().contains(x, y) && !mIsOpen;
     }
     @Override
     public void onTouchInteraction() {

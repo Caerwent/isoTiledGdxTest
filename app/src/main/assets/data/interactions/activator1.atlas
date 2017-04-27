@@ -5,15 +5,15 @@ filter: Nearest,Nearest
 repeat: none
 idle
   rotate: false
-  xy: 1, 1
-  size: 64, 64
-  orig: 64, 64
+  xy: 0, 0
+  size: 44, 55
+  orig: 44, 55
   offset: 0, 0
   index: -1
 activated
   rotate: false
-  xy: 64, 1
-  size: 64, 64
-  orig: 64, 64
-  offset: 0, 0
+  xy: 18, 55
+  size: 40, 55
+  orig: 40, 55
+  offset: 18, 0
   index: -1

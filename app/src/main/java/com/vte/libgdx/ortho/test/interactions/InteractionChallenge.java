@@ -1,7 +1,7 @@
 package com.vte.libgdx.ortho.test.interactions;
 
 import com.badlogic.gdx.maps.MapProperties;
-import com.vte.libgdx.ortho.test.entity.components.CollisionComponent;
+import com.vte.libgdx.ortho.test.entity.components.CollisionInteractionComponent;
 import com.vte.libgdx.ortho.test.gui.UIStage;
 import com.vte.libgdx.ortho.test.gui.challenge.ChallengeUI;
 import com.vte.libgdx.ortho.test.map.GameMap;
@@ -55,29 +55,28 @@ public class InteractionChallenge extends Interaction {
     }
 
     @Override
-    public boolean hasCollisionInteraction(CollisionComponent aEntity) {
-        return (aEntity.mType & CollisionComponent.CHARACTER) != 0;
+    public boolean hasCollisionInteraction(CollisionInteractionComponent aEntity) {
+        return true;
     }
 
     @Override
-    public void onStartCollisionInteraction(CollisionComponent aEntity) {
+    public void onStartCollisionInteraction(CollisionInteractionComponent aEntity) {
 
     }
 
     @Override
-    public void onStopCollisionInteraction(CollisionComponent aEntity) {
-        if ((aEntity.mType & CollisionComponent.CHARACTER) != 0) {
-            ChallengeUI currentChallengeUI = UIStage.getInstance().getChallengeUIOpened();
-            if (currentChallengeUI != null && currentChallengeUI == mChallengeUI) {
-                UIStage.getInstance().closeChallengeUI();
-            }
+    public void onStopCollisionInteraction(CollisionInteractionComponent aEntity) {
+
+        ChallengeUI currentChallengeUI = UIStage.getInstance().getChallengeUIOpened();
+        if (currentChallengeUI != null && currentChallengeUI == mChallengeUI) {
+            UIStage.getInstance().closeChallengeUI();
         }
     }
 
     @Override
     protected boolean hasTouchInteraction(float x, float y) {
 
-        return getShape().getBounds().contains(x, y);
+        return getShapeInteraction().getBounds().contains(x, y);
     }
 
     @Override

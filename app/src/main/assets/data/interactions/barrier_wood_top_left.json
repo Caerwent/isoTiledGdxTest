@@ -1,0 +1,31 @@
+{
+  "type":"OBSTACLE",
+  "atlas":"barrier_wood.atlas",
+  "persistence":"NONE",
+  "defaultState":"CLOSED",
+  "isClickable": "false",
+  "isRendable": "true",
+  "isMovable": "false",
+  "properties": {
+    "hasCollisionWhenOpen":"true",
+    "openBoundsAsObstacle":"true"
+  },
+  "states": [
+    {
+      "name": "CLOSED",
+      "fps":"0",
+      "frames": [
+        "barrier_face_top"
+      ]
+    },
+    {
+      "name": "OPEN",
+      "fps":"0",
+      "frames": [
+        "barrier_side_left"
+      ]
+    }
+
+  ]
+
+}

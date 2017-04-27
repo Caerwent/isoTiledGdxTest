@@ -3,7 +3,7 @@
     "id":"portal1",
     "template":"portal.json",
     "properties": {
-      "targetMapId":"ortho"
+      "targetMapId":"east_land1"
     },
     "eventsAction":[],
     "outputEvents":[]
@@ -31,6 +31,14 @@
     "template":"portal.json",
     "properties": {
       "isDefaultStart":"true",
+    },
+    "eventsAction":[],
+    "outputEvents":[]
+  },
+  {
+    "id":"carriage",
+    "template":"carriage_type1.json",
+    "properties": {
     },
     "eventsAction":[],
     "outputEvents":[]

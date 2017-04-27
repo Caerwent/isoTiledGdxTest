@@ -6,21 +6,26 @@ import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.maps.MapProperties;
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
+import com.vte.libgdx.ortho.test.AssetsUtility;
 import com.vte.libgdx.ortho.test.MyGame;
 import com.vte.libgdx.ortho.test.audio.AudioEvent;
 import com.vte.libgdx.ortho.test.audio.AudioManager;
 import com.vte.libgdx.ortho.test.box2d.CircleShape;
 import com.vte.libgdx.ortho.test.box2d.PolygonShape;
+import com.vte.libgdx.ortho.test.box2d.RectangleShape;
 import com.vte.libgdx.ortho.test.box2d.Shape;
 import com.vte.libgdx.ortho.test.effects.Effect;
 import com.vte.libgdx.ortho.test.entity.EntityEngine;
-import com.vte.libgdx.ortho.test.entity.ICollisionHandler;
-import com.vte.libgdx.ortho.test.entity.components.CollisionComponent;
+import com.vte.libgdx.ortho.test.entity.components.CollisionEffectComponent;
+import com.vte.libgdx.ortho.test.entity.components.CollisionInteractionComponent;
+import com.vte.libgdx.ortho.test.entity.components.CollisionObstacleComponent;
+import com.vte.libgdx.ortho.test.entity.components.ICollisionInteractionHandler;
+import com.vte.libgdx.ortho.test.entity.components.ICollisionObstacleHandler;
 import com.vte.libgdx.ortho.test.entity.components.InputComponent;
 import com.vte.libgdx.ortho.test.entity.components.InteractionComponent;
 import com.vte.libgdx.ortho.test.entity.components.TransformComponent;
@@ -39,13 +44,11 @@ import com.vte.libgdx.ortho.test.quests.QuestTask;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import static com.vte.libgdx.ortho.test.entity.components.CollisionComponent.OBSTACLE_MAPINTERACTION;
-
 /**
  * Created by vincent on 08/02/2017.
  */
 
-public class Interaction extends Entity implements ICollisionHandler, IInteraction, InputProcessor, IInteractionEventListener, IQuestListener {
+public class Interaction extends Entity implements ICollisionObstacleHandler, ICollisionInteractionHandler, IInteraction, InputProcessor, IInteractionEventListener, IQuestListener {
 
     protected String mId;
     protected Type mType;
@@ -54,13 +57,18 @@ public class Interaction extends Entity implements ICollisionHandler, IInteracti
 
     protected float mStateTime; // elapsed time
     protected boolean mIsRended = false;
-    protected TextureRegion mCurrentFrame; // current animation frame
-    protected TextureAtlas mAtlas;
+    protected TextureAtlas.AtlasRegion mCurrentFrame; // current animation frame
 
     protected InteractionState mCurrentState;
 
-    protected Array<CollisionComponent> mCollisions = new Array<CollisionComponent>();
-    protected Shape mShape;
+    protected Array<CollisionObstacleComponent> mCollisionsObstacle = new Array<CollisionObstacleComponent>();
+    protected Array<CollisionInteractionComponent> mCollisionsInteraction = new Array<CollisionInteractionComponent>();
+    protected Array<CollisionEffectComponent> mCollisionsEffect = new Array<CollisionEffectComponent>();
+
+    protected Shape mShapeCollision;
+    protected int mCollisionHeightFactor = 8;
+    protected Shape mShapeInteraction;
+    protected Shape mShapeRendering;
     protected float[] mVertices = new float[8];
 
 
@@ -78,7 +86,6 @@ public class Interaction extends Entity implements ICollisionHandler, IInteracti
     protected Effect mEffectLaunched;
     protected float mEffectLaunchedTime;
     protected CircleShape mZoneLaunchedEffect;
-    protected Entity mEffectLaunchedEntity;
 
     protected Effect mEffectAction;
     protected float mEffectActionTime;
@@ -92,43 +99,33 @@ public class Interaction extends Entity implements ICollisionHandler, IInteracti
         mId = aMapping.id;
         mDef = aDef;
         mEventsAction = aDef.eventsAction;
-        if(mEventsAction==null)
-        {
+        if (mEventsAction == null) {
             mEventsAction = new ArrayList<>();
         }
-        for (InteractionEventAction action : mEventsAction)
-        {
-            if(action.inputEvents!=null)
-            {
-                for(InteractionEvent event : action.inputEvents)
-                {
-                    if(event.sourceId!=null && event.sourceId.compareTo(InteractionEvent.THIS)==0)
-                    {
+        for (InteractionEventAction action : mEventsAction) {
+            if (action.inputEvents != null) {
+                for (InteractionEvent event : action.inputEvents) {
+                    if (event.sourceId != null && event.sourceId.compareTo(InteractionEvent.THIS) == 0) {
                         event.sourceId = mId;
                     }
                 }
             }
         }
         mOutputEvents = aDef.outputEvents;
-        if(mOutputEvents==null)
-        {
+        if (mOutputEvents == null) {
             mOutputEvents = new ArrayList<>();
         }
         mProperties = aDef.properties;
-        if(mProperties==null)
-        {
+        if (mProperties == null) {
             mProperties = new HashMap<>();
         }
-        if(aMapping.properties!=null)
-        {
+        if (aMapping.properties != null) {
             mProperties.putAll(aMapping.properties);
         }
-        if(aMapping.eventsAction!=null)
-        {
+        if (aMapping.eventsAction != null) {
             mEventsAction.addAll(aMapping.eventsAction);
         }
-        if(aMapping.outputEvents!=null)
-        {
+        if (aMapping.outputEvents != null) {
             mOutputEvents.addAll(aMapping.outputEvents);
         }
         mQuestsActions = aMapping.questActions;
@@ -146,15 +143,16 @@ public class Interaction extends Entity implements ICollisionHandler, IInteracti
                 event.sourceId = mId;
             }
         }
-        mShape = createShape();
+        mShapeCollision = createShapeCollision();
+        mShapeInteraction = createShapeInteraction();
+        mShapeRendering = createShapeRendering();
         initialize(x, y, aMapping);
-        restoreFromPersistence();
+
 
         if (mEventsAction != null) {
             EventDispatcher.getInstance().addInteractionEventListener(this);
         }
-        if(mQuestsActions !=null)
-        {
+        if (mQuestsActions != null) {
             EventDispatcher.getInstance().addQuestListener(this);
         }
         add(new InteractionComponent(this));
@@ -162,8 +160,7 @@ public class Interaction extends Entity implements ICollisionHandler, IInteracti
 
     }
 
-    public GameMap getMap()
-    {
+    public GameMap getMap() {
         return mMap;
     }
 
@@ -176,24 +173,18 @@ public class Interaction extends Entity implements ICollisionHandler, IInteracti
     }
 
     public void restoreFromPersistence() {
-        if(getPersistence()==Persistence.GAME )
-        {
+        if (getPersistence() == Persistence.GAME) {
             restoreFromPersistence(Profile.getInstance().getPersistentGameSession());
-        }
-        else if(getPersistence() == Persistence.SESSION)
-        {
+        } else if (getPersistence() == Persistence.SESSION) {
             restoreFromPersistence(GameSession.getInstance());
 
         }
     }
 
     public void saveInPersistence() {
-        if(getPersistence()==Persistence.GAME )
-        {
+        if (getPersistence() == Persistence.GAME) {
             Profile.getInstance().updatePersistentGameSession(saveInPersistence(Profile.getInstance().getPersistentGameSession()));
-        }
-        else if(getPersistence() == Persistence.SESSION)
-        {
+        } else if (getPersistence() == Persistence.SESSION) {
             saveInPersistence(GameSession.getInstance());
 
         }
@@ -246,7 +237,7 @@ public class Interaction extends Entity implements ICollisionHandler, IInteracti
 
 
     protected InteractionState getState(String aStateName) {
-        if(aStateName==null)
+        if (aStateName == null)
             return null;
         for (InteractionState state : mDef.states) {
             if (state.name.compareTo(aStateName) == 0) {
@@ -258,10 +249,10 @@ public class Interaction extends Entity implements ICollisionHandler, IInteracti
 
     protected void setState(String aStateName) {
         InteractionState state = getState(aStateName);
-        if (state != null && state!=mCurrentState) {
+        if (state != null && state != mCurrentState) {
             String oldState = mCurrentState.name;
             mCurrentState = state;
-            mStateTime=0;
+            mStateTime = 0;
             if (mOutputEvents != null) {
                 for (InteractionEvent event : mOutputEvents) {
                    /* if (InteractionEvent.EventType.END_STATE == InteractionEvent.EventType.valueOf(event.type) &&
@@ -274,8 +265,7 @@ public class Interaction extends Entity implements ICollisionHandler, IInteracti
                     }
                 }
             }
-            if(mCurrentState.name.compareTo(InteractionState.STATE_FROZEN)==0)
-            {
+            if (mCurrentState.name.compareTo(InteractionState.STATE_FROZEN) == 0) {
                 setMovable(false);
             }
         }
@@ -299,28 +289,24 @@ public class Interaction extends Entity implements ICollisionHandler, IInteracti
 
             String[] files = ("data/interactions/" + mDef.atlas).split("/");
             ArrayList<String> path = new ArrayList();
-            for(int i=0;i<files.length; i++)
-            {
-                if(files[i].compareTo("..")==0 && path.size()>0)
-                {
-                    path.remove(path.size()-1);
-                }
-                else
-                {
+            for (int i = 0; i < files.length; i++) {
+                if (files[i].compareTo("..") == 0 && path.size() > 0) {
+                    path.remove(path.size() - 1);
+                } else {
                     path.add(files[i]);
                 }
             }
             String filename = "";
-            String sep="";
-            while(path.size()>0)
-            {
-                filename+=sep+path.remove(0);
-                sep="/";
+            String sep = "";
+            while (path.size() > 0) {
+                filename += sep + path.remove(0);
+                sep = "/";
             }
 
-            mAtlas = new TextureAtlas(filename);
+            AssetsUtility.loadTextureAtlasAsset(filename);
+
             for (InteractionState state : mDef.states) {
-                state.init(mAtlas);
+                state.init(AssetsUtility.getTextureAtlasAsset(filename));
             }
             mCurrentFrame = mCurrentState.getTextureRegion(0F);
             if (mCurrentFrame != null) {
@@ -339,13 +325,15 @@ public class Interaction extends Entity implements ICollisionHandler, IInteracti
                 onQuestEvent(QuestManager.getInstance().getQuestFromId(action.questId));
             }
         }
+        restoreFromPersistence();
 
-        byte type_collision = CollisionComponent.MAPINTERACTION;
-        if(isRendable())
-        {
-            type_collision = (byte) (type_collision | OBSTACLE_MAPINTERACTION);
+        updateRendering(0);
+        updateCollision(0);
+        if (isRendable()) {
+            this.add(new CollisionObstacleComponent(CollisionObstacleComponent.MAPINTERACTION, getShapeCollision(), mId, this, this));
         }
-        this.add(new CollisionComponent(type_collision, getShape(), mId, this, this));
+        updateInteraction(0);
+        this.add(new CollisionInteractionComponent(getShapeInteraction(), this, this));
 
 
     }
@@ -384,6 +372,30 @@ public class Interaction extends Entity implements ICollisionHandler, IInteracti
             velocity.y = v.y;
         }
     }
+
+    @Override
+    public void update(float dt) {
+        mStateTime += dt;
+        if (mCurrentState.isCompleted(mStateTime)) {
+
+            if (mOutputEvents != null) {
+                for (InteractionEvent event : mOutputEvents) {
+                    if (InteractionEvent.EventType.END_STATE == InteractionEvent.EventType.valueOf(event.type) &&
+                            mCurrentState.name.equals(event.value)) {
+                        EventDispatcher.getInstance().onInteractionEvent(event);
+                    }
+                }
+            }
+        }
+        updateRendering(dt);
+        updateCollision(dt);
+        updateInteraction(dt);
+        updateEffects(dt);
+
+
+    }
+
+    /*************************************** RENDERING ************************************/
     @Override
     public boolean isRendable() {
         return mDef.isRendable;
@@ -399,8 +411,46 @@ public class Interaction extends Entity implements ICollisionHandler, IInteracti
         return 1;
     }
 
+    @Override
     public void setRended(boolean aRended) {
         mIsRended = aRended;
+    }
+
+    public Shape createShapeRendering() {
+        return new PolygonShape();
+    }
+
+    public void updateRendering(float dt) {
+        TransformComponent tfm = this.getComponent(TransformComponent.class);
+        if (isRendable()) {
+            float width = mCurrentFrame.getRegionWidth() * tfm.scale;
+            float height = mCurrentFrame.getRegionHeight() * tfm.scale;
+
+            tfm.setOriginOffset(mCurrentFrame.offsetX * tfm.scale, mCurrentFrame.offsetY * tfm.scale);
+
+            mVertices[0] = tfm.originOffset.x;
+            mVertices[1] = tfm.originOffset.y;
+            mVertices[2] = tfm.originOffset.x;
+            mVertices[3] = height + tfm.originOffset.y;
+            mVertices[4] = width + tfm.originOffset.x;
+            mVertices[5] = height + tfm.originOffset.y;
+            mVertices[6] = width + tfm.originOffset.x;
+            mVertices[7] = tfm.originOffset.y;
+
+
+            if (mShapeRendering.getType() == Shape.Type.POLYGON) {
+                ((PolygonShape) mShapeRendering).getShape().setVertices(mVertices);
+            }
+
+        }
+        mShapeRendering.setX(tfm.position.x);
+        mShapeRendering.setY(tfm.position.y);
+    }
+
+    @Override
+    public Shape getShapeRendering() {
+
+        return mShapeRendering;
     }
 
     @Override
@@ -456,114 +506,108 @@ public class Interaction extends Entity implements ICollisionHandler, IInteracti
         renderEffect(batch);
     }
 
-    public Shape createShape() {
-        return new PolygonShape();
-    }
 
-    @Override
-    public Shape getShape() {
+    /*************************************** PHYSICAL COLLISION ************************************/
+
+    public void updateCollision(float dt) {
         TransformComponent tfm = this.getComponent(TransformComponent.class);
-        mShape.setX(tfm.position.x );
-        mShape.setY(tfm.position.y);
-
+        mShapeCollision.setX(tfm.position.x);
+        mShapeCollision.setY(tfm.position.y);
         if (isRendable()) {
-            float width = mCurrentFrame.getRegionWidth() * tfm.scale;
-            float height = mCurrentFrame.getRegionHeight() * tfm.scale;
+            if (mShapeCollision instanceof RectangleShape) {
+                RectangleShape shape = (RectangleShape) mShapeCollision;
+                shape.getShape().setWidth(mShapeRendering.getWidth());
+                shape.getShape().setHeight(mShapeRendering.getHeight() / mCollisionHeightFactor);
 
-
-            mVertices[0] = tfm.originOffset.x;
-            mVertices[1] = tfm.originOffset.y;
-            mVertices[2] = tfm.originOffset.x;
-            mVertices[3] = height + tfm.originOffset.y;
-            mVertices[4] = width + tfm.originOffset.x;
-            mVertices[5] = height + tfm.originOffset.y;
-            mVertices[6] = width + tfm.originOffset.x;
-            mVertices[7] = tfm.originOffset.y;
-
-
-            if (mShape.getType() == Shape.Type.POLYGON) {
-                ((PolygonShape) mShape).getShape().setVertices(mVertices);
+            } else if (mShapeCollision instanceof CircleShape) {
+                CircleShape shape = (CircleShape) mShapeCollision;
+                shape.getShape().setRadius(mShapeRendering.getHeight() / mCollisionHeightFactor);
             }
-
         }
-        return mShape;
     }
 
+    public Shape createShapeCollision() {
+        RectangleShape shape = new RectangleShape();
+        shape.setShape(new Rectangle(0, 0, 1, 1));
+        return shape;
+    }
+
+    public Shape getShapeCollision() {
+
+        return mShapeCollision;
+    }
 
     @Override
-    public void update(float dt) {
-        CollisionComponent collision = this.getComponent(CollisionComponent.class);
-        if(collision!=null) {
-            collision.mShape = getShape();
+    public boolean onCollisionObstacleStart(CollisionObstacleComponent aEntity) {
+
+        if (!mCollisionsObstacle.contains(aEntity, false)) {
+            mCollisionsObstacle.add(aEntity);
+            return true;
         }
-        updateLaunchedEffect(dt);
-        updateEffectAction(dt);
-        mStateTime += dt;
-        if(mCurrentState.isCompleted(mStateTime))
+        return false;
+    }
+
+    @Override
+    public boolean onCollisionObstacleStop(CollisionObstacleComponent aEntity) {
+        if (mCollisionsObstacle.contains(aEntity, false)) {
+            mCollisionsObstacle.removeValue(aEntity, false);
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public Array<CollisionObstacleComponent> getCollisionObstacle() {
+        return mCollisionsObstacle;
+    }
+
+    /*************************************** INTERACTIONS  ************************************/
+
+    public void updateInteraction(float dt) {
+        TransformComponent tfm = this.getComponent(TransformComponent.class);
+        if (isRendable()) {
+            RectangleShape interactionArea = (RectangleShape) mShapeInteraction;
+            interactionArea.getShape().set(mShapeRendering.getX() - 0.1F, mShapeRendering.getY() - 0.1F, mShapeRendering.getWidth() + 0.2f, mShapeRendering.getHeight() + 0.2f);
+
+        } else if(getComponent(CollisionObstacleComponent.class)!=null){
+            mShapeInteraction = mShapeCollision;
+        }
+        else
         {
-
-            if (mOutputEvents != null) {
-                for (InteractionEvent event : mOutputEvents) {
-                    if (InteractionEvent.EventType.END_STATE == InteractionEvent.EventType.valueOf(event.type) &&
-                            mCurrentState.name.equals(event.value)) {
-                        EventDispatcher.getInstance().onInteractionEvent(event);
-                    }
-                }
-            }
+            mShapeInteraction.setX(tfm.position.x);
+            mShapeInteraction.setY(tfm.position.y);
         }
+
     }
 
-    protected void updateLaunchedEffect(float dt) {
-        if (mEffectLaunched != null) {
-            mZoneLaunchedEffect.setX(getX()+getShape().getBounds().width/2);
-            mZoneLaunchedEffect.setY(getY()+getShape().getBounds().height/2);
-            mEffectLaunchedTime += dt;
-            float timeAction = mEffectLaunched.duration;
-            if(timeAction<0)
-            {
-                timeAction =  mEffectLaunched.frames.size()/mEffectLaunched.fps;
-            }
-            if (mEffectLaunchedTime > timeAction) {
-                stopLaunchedEffect();
-            }
-        }
+    public Shape createShapeInteraction() {
+        return new RectangleShape();
     }
 
-    protected void updateEffectAction(float dt) {
-        if (mEffectAction != null && mEffectAction.targetDuration != 0) {
-            mEffectActionTime += dt;
-            float timeAction = mEffectAction.targetDuration;
-            boolean isTerminated=false;
-            if(timeAction<0)
-            {
-                //timeAction =  mEffectAction.frames.size()/mEffectAction.fps;
-                isTerminated = mCurrentState.isCompleted(mStateTime);
-            }
-            else if (mEffectActionTime > timeAction) {
-                isTerminated=true;
-
-            }
-            if(isTerminated)
-            {
-                stopEffectAction();
-            }
-        }
-    }
-
-    /*****************
-     * COLLISION
-     *******************************/
     @Override
-    public boolean onCollisionStart(CollisionComponent aEntity) {
+    public Shape getShapeInteraction() {
+        return mShapeInteraction;
+    }
 
-        if (!mCollisions.contains(aEntity, false)) {
-            if ((aEntity.mType & CollisionComponent.EFFECT) != 0 && aEntity.mHandler != this) {
-                mCollisions.add(aEntity);
-                return onStartEffectInteraction(aEntity);
-            }
+    public boolean hasCollisionInteraction(CollisionInteractionComponent aEntity) {
+        return false;
+    }
+
+    public void onStartCollisionInteraction(CollisionInteractionComponent aEntity) {
+
+    }
+
+    public void onStopCollisionInteraction(CollisionInteractionComponent aEntity) {
+
+    }
+
+    @Override
+    public boolean onCollisionInteractionStart(CollisionInteractionComponent aEntity) {
+        if (!mCollisionsInteraction.contains(aEntity, false)) {
+
             boolean ret = hasCollisionInteraction(aEntity);
             if (ret) {
-                mCollisions.add(aEntity);
+                mCollisionsInteraction.add(aEntity);
                 if (isClickable()) {
                     add(new InputComponent(this));
                 }
@@ -573,15 +617,14 @@ public class Interaction extends Entity implements ICollisionHandler, IInteracti
             return ret;
         }
         return false;
+
     }
 
     @Override
-    public boolean onCollisionStop(CollisionComponent aEntity) {
-        if (mCollisions.contains(aEntity, false)) {
-            mCollisions.removeValue(aEntity, false);
-            if ((aEntity.mType & CollisionComponent.EFFECT) != 0) {
-                return onStopEffectInteraction(aEntity);
-            }
+    public boolean onCollisionInteractionStop(CollisionInteractionComponent aEntity) {
+        if (mCollisionsInteraction.contains(aEntity, false)) {
+            mCollisionsInteraction.removeValue(aEntity, false);
+
             if (isClickable()) {
                 remove(InputComponent.class);
             }
@@ -592,96 +635,11 @@ public class Interaction extends Entity implements ICollisionHandler, IInteracti
     }
 
     @Override
-    public Array<CollisionComponent> getCollisions() {
-        return mCollisions;
+    public Array<CollisionInteractionComponent> getCollisionInteraction() {
+        return mCollisionsInteraction;
     }
 
-    public boolean hasCollisionInteraction(CollisionComponent aEntity) {
-        return false;
-    }
-
-    public void onStartCollisionInteraction(CollisionComponent aEntity) {
-
-    }
-
-    public void onStopCollisionInteraction(CollisionComponent aEntity) {
-
-    }
-
-    public boolean onStartEffectInteraction(CollisionComponent aEntity) {
-        Effect effect = (Effect) aEntity.mData;
-        if (effect != null) {
-            mEffectAction = effect;
-            Gdx.app.debug("DEBUG", "onStartEffectInteraction " + getId());
-            EventDispatcher.getInstance().onInteractionEvent(new InteractionEvent(getId(), InteractionEvent.EventType.EFFECT_START.name(),effect.id.name()));
-        }
-        return false;
-    }
-
-    public boolean onStopEffectInteraction(CollisionComponent aEntity) {
-        if (mEffectAction != null && mEffectAction.duration == 0) {
-            stopEffectAction();
-            return true;
-        }
-
-        return false;
-    }
-
-    /*****************
-     * TOUCH
-     *******************************/
-
-    public boolean keyDown(int keycode) {
-        return false;
-    }
-
-    public boolean keyUp(int keycode) {
-        return false;
-    }
-
-    public boolean keyTyped(char character) {
-        return false;
-    }
-
-    public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-        Vector3 cursorPoint = new Vector3();
-
-        mCamera.unproject(cursorPoint.set(screenX, screenY, 0));
-
-        if (hasTouchInteraction(cursorPoint.x, cursorPoint.y)) {
-            onTouchInteraction();
-        }
-        return false;
-    }
-
-    public boolean touchUp(int screenX, int screenY, int pointer, int button) {
-
-        return false;
-    }
-
-    public boolean touchDragged(int screenX, int screenY, int pointer) {
-        return false;
-    }
-
-    @Override
-    public boolean mouseMoved(int screenX, int screenY) {
-        return false;
-    }
-
-    @Override
-    public boolean scrolled(int amount) {
-        return false;
-    }
-
-    protected boolean hasTouchInteraction(float x, float y) {
-        return true;
-    }
-
-    public void onTouchInteraction() {
-
-    }
-
-
+    /*************************************** EVENTS ************************************/
     @Override
     public void onInteractionEvent(InteractionEvent aEvent) {
         if (mEventsAction != null && aEvent != null) {
@@ -714,13 +672,13 @@ public class Interaction extends Entity implements ICollisionHandler, IInteracti
 
     /**
      * check if an action should be done
-     * @param aAction   the action to be checked
-     * @return  true if action has be done, false in other cases
+     *
+     * @param aAction the action to be checked
+     * @return true if action has be done, false in other cases
      */
     protected boolean doActionOnEvent(InteractionEventAction aAction) {
         if (aAction != null && InteractionEventAction.ActionType.SET_STATE.name().equals(aAction.id)) {
-            if(getState(aAction.value)!=null)
-            {
+            if (getState(aAction.value) != null) {
                 setState(aAction.value);
                 return true;
             }
@@ -728,38 +686,178 @@ public class Interaction extends Entity implements ICollisionHandler, IInteracti
         return false;
     }
 
+    protected void doQuestAction(InteractionQuestAction aAction) {
+    }
+
+    protected void onQuestEvent(Quest aQuest) {
+        if (mQuestsActions != null && aQuest != null) {
+            Gdx.app.debug("DEBUG", "onQuestEvent questID=" + aQuest.getId() + " isActivated=" + aQuest.isActivated() + " isCompleted=" + aQuest.isCompleted());
+            for (InteractionQuestAction action : mQuestsActions) {
+                if ((aQuest.getId() != null && action.questId != null && aQuest.getId().equals(action.questId))) {
+                    boolean doAction = false;
+                    if (action.questState == InteractionQuestAction.QuestState.FINISHED && aQuest.isCompleted() && QuestManager.getInstance().getLivingQuestFromId(aQuest.getId()) == null) {
+                        doAction = true;
+                    } else if (action.questState == InteractionQuestAction.QuestState.COMPLETED && aQuest.isCompleted() && QuestManager.getInstance().getLivingQuestFromId(aQuest.getId()) != null) {
+                        doQuestAction(action);
+                        return;
+                    } else if (action.questState == InteractionQuestAction.QuestState.NOT_COMPLETED &&
+                            QuestManager.getInstance().getLivingQuestFromId(aQuest.getId()) != null &&
+                            aQuest.isActivated() &&
+                            !aQuest.isCompleted()) {
+                        doQuestAction(action);
+                        return;
+                    } else if (action.questState == InteractionQuestAction.QuestState.NOT_ACTIVATED &&
+                            QuestManager.getInstance().getLivingQuestFromId(aQuest.getId()) != null &&
+                            !aQuest.isActivated()) {
+                        doQuestAction(action);
+                        return;
+                    }
+
+                    if (doAction) {
+                        doQuestAction(action);
+                        return;
+                    }
+
+
+                }
+            }
+        }
+    }
+
+    ;
+
+    @Override
+    public void onQuestActivated(Quest aQuest) {
+        onQuestEvent(aQuest);
+    }
+
+    @Override
+    public void onQuestCompleted(Quest aQuest) {
+        onQuestEvent(aQuest);
+    }
+
+    @Override
+    public void onQuestTaskCompleted(Quest aQuest, QuestTask aTask) {
+    }
+
+    /*************************************** EFFECTS ************************************/
+
+    protected void updateEffects(float dt) {
+        if (mEffectLaunched != null) {
+            updateLaunchedEffect(dt);
+        }
+        if (mEffectAction != null) {
+            updateEffectAction(dt);
+        }
+    }
+
+
+    protected void updateLaunchedEffect(float dt) {
+        mZoneLaunchedEffect.setX(getShapeInteraction().getX() + getShapeInteraction().getBounds().width / 2);
+        mZoneLaunchedEffect.setY(getShapeInteraction().getY() + getShapeInteraction().getBounds().height / 2);
+        mEffectLaunchedTime += dt;
+        float timeAction = mEffectLaunched.duration;
+        if (timeAction < 0) {
+            timeAction = mEffectLaunched.frames.size() / mEffectLaunched.fps;
+        }
+        if (mEffectLaunchedTime > timeAction) {
+            stopLaunchedEffect();
+        }
+    }
+
+    protected void updateEffectAction(float dt) {
+        if (mEffectAction != null && mEffectAction.targetDuration != 0) {
+            mEffectActionTime += dt;
+            float timeAction = mEffectAction.targetDuration;
+            boolean isTerminated = false;
+            if (timeAction < 0) {
+                //timeAction =  mEffectAction.frames.size()/mEffectAction.fps;
+                isTerminated = mCurrentState.isCompleted(mStateTime);
+            } else if (mEffectActionTime > timeAction) {
+                isTerminated = true;
+
+            }
+            if (isTerminated) {
+                stopEffectAction();
+            }
+        }
+    }
+
+
+    public boolean onStartEffectInteraction(CollisionEffectComponent aEntity) {
+        Effect effect = (Effect) aEntity.mEffect;
+        if (effect != null) {
+            mEffectAction = effect;
+            Gdx.app.debug("DEBUG", "onStartEffectInteraction " + getId());
+            EventDispatcher.getInstance().onInteractionEvent(new InteractionEvent(getId(), InteractionEvent.EventType.EFFECT_START.name(), effect.id.name()));
+        }
+        return false;
+    }
+
+    public boolean onStopEffectInteraction(CollisionEffectComponent aEntity) {
+        if (mEffectAction != null && mEffectAction.duration == 0) {
+            stopEffectAction();
+            return true;
+        }
+
+        return false;
+    }
+
+    @Override
+    public boolean onCollisionEffectStart(CollisionEffectComponent aEntity) {
+        if (!mCollisionsEffect.contains(aEntity, false)) {
+            mCollisionsEffect.add(aEntity);
+            onStartEffectInteraction(aEntity);
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public boolean onCollisionEffectStop(CollisionEffectComponent aEntity) {
+        if (mCollisionsEffect.contains(aEntity, false)) {
+            mCollisionsEffect.removeValue(aEntity, false);
+            onStopEffectInteraction(aEntity);
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public Array<CollisionEffectComponent> getCollisionEffect() {
+        return mCollisionsEffect;
+    }
+
     public void launchEffect(Effect aEffect) {
         mEffectLaunched = aEffect;
         mEffectLaunchedTime = 0;
         mZoneLaunchedEffect = new CircleShape();
         mZoneLaunchedEffect.setRadius(mEffectLaunched.distance);
-        mZoneLaunchedEffect.setX(getX()+getShape().getBounds().width/2);
-        mZoneLaunchedEffect.setY(getY()+getShape().getBounds().height/2);
-        mEffectLaunchedEntity = new Entity();
-        EntityEngine.getInstance().addEntity(mEffectLaunchedEntity);
-        mEffectLaunchedEntity.add(new CollisionComponent(CollisionComponent.EFFECT, mZoneLaunchedEffect, mId, mEffectLaunched, null));
+        mZoneLaunchedEffect.setX(getShapeInteraction().getX() + getShapeInteraction().getBounds().width / 2);
+        mZoneLaunchedEffect.setY(getShapeInteraction().getY() + getShapeInteraction().getBounds().height / 2);
+        add(new CollisionEffectComponent(mEffectLaunched, mZoneLaunchedEffect, mId));
 
-        if(mEffectLaunched.sound!=null && !mEffectLaunched.sound.isEmpty()) {
+        if (mEffectLaunched.sound != null && !mEffectLaunched.sound.isEmpty()) {
             AudioManager.getInstance().onAudioEvent(new AudioEvent(AudioEvent.Type.SOUND_PLAY_ONCE, mEffectLaunched.sound));
         }
     }
 
     protected void stopLaunchedEffect() {
+        remove(CollisionEffectComponent.class);
         if (mEffectLaunched == null)
             return;
 
-        if(mEffectLaunched.sound!=null && !mEffectLaunched.sound.isEmpty()) {
+        if (mEffectLaunched.sound != null && !mEffectLaunched.sound.isEmpty()) {
             AudioManager.getInstance().onAudioEvent(new AudioEvent(AudioEvent.Type.SOUND_STOP, mEffectLaunched.sound));
         }
-        EntityEngine.getInstance().removeEntity(mEffectLaunchedEntity);
+
         mEffectLaunched = null;
         mEffectLaunchedTime = 0;
-        mEffectLaunchedEntity = null;
     }
 
     protected void stopEffectAction() {
         Gdx.app.debug("DEBUG", "stopEffectAction " + getId());
-        EventDispatcher.getInstance().onInteractionEvent(new InteractionEvent(getId(), InteractionEvent.EventType.EFFECT_STOP.name(),mEffectAction.id.name()));
+        EventDispatcher.getInstance().onInteractionEvent(new InteractionEvent(getId(), InteractionEvent.EventType.EFFECT_STOP.name(), mEffectAction.id.name()));
         mEffectAction = null;
         mEffectActionTime = 0;
     }
@@ -780,63 +878,58 @@ public class Interaction extends Entity implements ICollisionHandler, IInteracti
         }
     }
 
+    /*************************************** TOUCH ************************************/
 
-    protected void doQuestAction(InteractionQuestAction aAction) {
+    public boolean keyDown(int keycode) {
+        return false;
     }
-    protected void onQuestEvent(Quest aQuest) {
-        if (mQuestsActions != null && aQuest != null) {
-            Gdx.app.debug("DEBUG", "onQuestEvent questID=" + aQuest.getId() + " isActivated=" + aQuest.isActivated() + " isCompleted=" + aQuest.isCompleted());
-            for (InteractionQuestAction action : mQuestsActions) {
-                if ((aQuest.getId() != null && action.questId!=null && aQuest.getId().equals(action.questId))) {
-                    boolean doAction = false;
-                    if(action.questState==InteractionQuestAction.QuestState.FINISHED && aQuest.isCompleted() && QuestManager.getInstance().getLivingQuestFromId(aQuest.getId())==null)
-                    {
-                        doAction=true;
-                    }
-                    else if(action.questState==InteractionQuestAction.QuestState.COMPLETED && aQuest.isCompleted()&& QuestManager.getInstance().getLivingQuestFromId(aQuest.getId())!=null)
-                    {
-                        doQuestAction(action);
-                        return;
-                    }
-                    else if(action.questState==InteractionQuestAction.QuestState.NOT_COMPLETED &&
-                            QuestManager.getInstance().getLivingQuestFromId(aQuest.getId())!=null &&
-                            aQuest.isActivated()  &&
-                            !aQuest.isCompleted())
-                    {
-                        doQuestAction(action);
-                        return;
-                    }
-                    else if(action.questState==InteractionQuestAction.QuestState.NOT_ACTIVATED &&
-                            QuestManager.getInstance().getLivingQuestFromId(aQuest.getId())!=null &&
-                            !aQuest.isActivated())
-                    {
-                        doQuestAction(action);
-                        return;
-                    }
 
-                    if(doAction)
-                    {
-                        doQuestAction(action);
-                        return;
-                    }
+    public boolean keyUp(int keycode) {
+        return false;
+    }
 
+    public boolean keyTyped(char character) {
+        return false;
+    }
 
-                }
-            }
+    public boolean touchDown(int screenX, int screenY, int pointer, int button) {
+        Vector3 cursorPoint = new Vector3();
+
+        mCamera.unproject(cursorPoint.set(screenX, screenY, 0));
+
+        if (hasTouchInteraction(cursorPoint.x, cursorPoint.y)) {
+            onTouchInteraction();
+            return true;
         }
-    };
+        return false;
+    }
 
-    @Override
-    public void onQuestActivated(Quest aQuest) {
-        onQuestEvent(aQuest);
+    public boolean touchUp(int screenX, int screenY, int pointer, int button) {
+
+        return false;
+    }
+
+    public boolean touchDragged(int screenX, int screenY, int pointer) {
+        return false;
     }
 
     @Override
-    public void onQuestCompleted(Quest aQuest) {
-        onQuestEvent(aQuest);
+    public boolean mouseMoved(int screenX, int screenY) {
+        return false;
     }
 
     @Override
-    public void onQuestTaskCompleted(Quest aQuest, QuestTask aTask) {
+    public boolean scrolled(int amount) {
+        return false;
     }
+
+    protected boolean hasTouchInteraction(float x, float y) {
+        return isClickable();
+    }
+
+    public void onTouchInteraction() {
+
+    }
+
+
 }

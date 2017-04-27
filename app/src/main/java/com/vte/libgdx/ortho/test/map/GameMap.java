@@ -29,8 +29,15 @@ import com.vte.libgdx.ortho.test.box2d.PolygonShape;
 import com.vte.libgdx.ortho.test.box2d.Shape;
 import com.vte.libgdx.ortho.test.box2d.ShapeUtils;
 import com.vte.libgdx.ortho.test.entity.EntityEngine;
-import com.vte.libgdx.ortho.test.entity.ICollisionHandler;
-import com.vte.libgdx.ortho.test.entity.components.CollisionComponent;
+import com.vte.libgdx.ortho.test.entity.components.CollisionEffectComponent;
+import com.vte.libgdx.ortho.test.entity.components.CollisionInteractionComponent;
+import com.vte.libgdx.ortho.test.entity.components.ICollisionObstacleHandler;
+import com.vte.libgdx.ortho.test.entity.components.CollisionObstacleComponent;
+import com.vte.libgdx.ortho.test.entity.components.InteractionComponent;
+import com.vte.libgdx.ortho.test.entity.components.PathComponent;
+import com.vte.libgdx.ortho.test.entity.components.TransformComponent;
+import com.vte.libgdx.ortho.test.entity.components.VelocityComponent;
+import com.vte.libgdx.ortho.test.entity.components.VisualComponent;
 import com.vte.libgdx.ortho.test.events.EventDispatcher;
 import com.vte.libgdx.ortho.test.interactions.IInteraction;
 import com.vte.libgdx.ortho.test.interactions.InteractionFactory;
@@ -54,7 +61,7 @@ import java.util.HashMap;
  * Created by vincent on 20/01/2017.
  */
 
-public class GameMap implements ICollisionHandler {
+public class GameMap implements ICollisionObstacleHandler {
     public final static String TAG = GameMap.class.getSimpleName();
     private TiledMap map;
     private String mMapName;
@@ -67,7 +74,7 @@ public class GameMap implements ICollisionHandler {
     private Array<Shape> mBodiesCollision = new Array<Shape>();
 
 
-    private Array<CollisionComponent> mCollisions = new Array<CollisionComponent>();
+    private Array<CollisionObstacleComponent> mCollisions = new Array<CollisionObstacleComponent>();
     private Array<IItemInteraction> mItems = new Array<IItemInteraction>();
     private Array<IInteraction> mInteractions = new Array<IInteraction>();
     private HashMap<String, PathMap> mPaths = new HashMap<String, PathMap>();
@@ -163,7 +170,7 @@ public class GameMap implements ICollisionHandler {
                 } else {
                     if (aTownPortalInfo != null) {
                         // check hero is not on the portal
-                        if (ShapeUtils.overlaps(mPlayer.getHero().getShape(), portal.getShape())) {
+                        if (ShapeUtils.overlaps(mPlayer.getHero().getShapeInteraction(), portal.getShapeInteraction())) {
                             portal.setActivated(false);
                         } else {
                             portal.setActivated(true);
@@ -248,7 +255,7 @@ public class GameMap implements ICollisionHandler {
     }
 
     public void destroy() {
-        ImmutableArray<Entity> entities = EntityEngine.getInstance().getEntitiesFor(Family.all(CollisionComponent.class).get());
+        ImmutableArray<Entity> entities = EntityEngine.getInstance().getEntitiesFor(Family.one(CollisionObstacleComponent.class, CollisionInteractionComponent.class, CollisionEffectComponent.class, InteractionComponent.class, PathComponent.class, TransformComponent.class, VelocityComponent.class, VisualComponent.class).get());
         int size = entities.size();
         for (int i = size - 1; i >= 0; i--) {
             EntityEngine.getInstance().removeEntity(entities.get(i));
@@ -319,22 +326,22 @@ public class GameMap implements ICollisionHandler {
     }
 
     @Override
-    public boolean onCollisionStart(CollisionComponent aEntity) {
+    public boolean onCollisionObstacleStart(CollisionObstacleComponent aEntity) {
         return false;
     }
 
     @Override
-    public boolean onCollisionStop(CollisionComponent aEntity) {
+    public boolean onCollisionObstacleStop(CollisionObstacleComponent aEntity) {
         return false;
     }
 
     @Override
-    public Array<CollisionComponent> getCollisions() {
+    public Array<CollisionObstacleComponent> getCollisionObstacle() {
         return mCollisions;
     }
 
     private Array<Shape> buildShapes(Map map, String layerName) {
-        byte type = layerName.contains("zindex") ? CollisionComponent.ZINDEX : CollisionComponent.OBSTACLE;
+        boolean isCollision = layerName.contains("zindex") ? false : true;
 
         Array<Shape> bodies = new Array<Shape>();
         if (map.getLayers().get(layerName) == null)
@@ -368,14 +375,13 @@ public class GameMap implements ICollisionHandler {
             }*/ else {
                 continue;
             }
-
-            if (polygon != null) {
+            PolygonShape shape = new PolygonShape();
+            shape.setShape(polygon);
+            bodies.add(shape);
+            if (isCollision && polygon != null) {
 
                 Entity entity = new Entity();
-                PolygonShape shape = new PolygonShape();
-                shape.setShape(polygon);
-                bodies.add(shape);
-                entity.add(new CollisionComponent(type, shape, object.getName(), this, this));
+                entity.add(new CollisionObstacleComponent(CollisionObstacleComponent.OBSTACLE, shape, object.getName(), this, this));
                 EntityEngine.getInstance().addEntity(entity);
             }
 

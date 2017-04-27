@@ -7,7 +7,7 @@ import com.badlogic.gdx.maps.MapProperties;
 import com.badlogic.gdx.math.Vector2;
 import com.vte.libgdx.ortho.test.box2d.RectangleShape;
 import com.vte.libgdx.ortho.test.dialogs.DialogsManager;
-import com.vte.libgdx.ortho.test.entity.components.CollisionComponent;
+import com.vte.libgdx.ortho.test.entity.components.CollisionInteractionComponent;
 import com.vte.libgdx.ortho.test.entity.components.TransformComponent;
 import com.vte.libgdx.ortho.test.events.EventDispatcher;
 import com.vte.libgdx.ortho.test.map.GameMap;
@@ -97,6 +97,22 @@ public class InteractionNPC extends Interaction {
         updateInteractionMarkShape();
     }
 
+    public String getDialogId() {
+        return mDialogId;
+    }
+
+    public void setDialogId(String aDialogId) {
+        mDialogId = aDialogId;
+        if(getPersistence()!=Persistence.NONE)
+        {
+            saveInPersistence();
+        }
+
+
+
+    }
+
+    /************************ RENDERING *********************************/
     @Override
     public void render(Batch batch) {
         super.render(batch);
@@ -122,18 +138,21 @@ public class InteractionNPC extends Interaction {
         }
     }
 
+    /************************ INTERACTION *********************************/
     @Override
-    public boolean hasCollisionInteraction(CollisionComponent aEntity) {
-        return (aEntity.mType & CollisionComponent.CHARACTER) != 0;
+    public boolean hasCollisionInteraction(CollisionInteractionComponent aEntity) {
+        return true;
     }
 
     @Override
-    public void onStartCollisionInteraction(CollisionComponent aEntity) {
-        mIsInteractionShown = true;
+    public void onStartCollisionInteraction(CollisionInteractionComponent aEntity) {
+        if(isClickable()) {
+            mIsInteractionShown = true;
+        }
     }
 
     @Override
-    public void onStopCollisionInteraction(CollisionComponent aEntity) {
+    public void onStopCollisionInteraction(CollisionInteractionComponent aEntity) {
         mIsInteractionShown = false;
         if (getDialogId() != null) {
             EventDispatcher.getInstance().onStopDialog(DialogsManager.getInstance().getDialog(getDialogId()));
@@ -143,7 +162,7 @@ public class InteractionNPC extends Interaction {
     @Override
     protected boolean hasTouchInteraction(float x, float y) {
 
-        return mIsInteractionShown && (mMarkShape.getBounds().contains(x, y) || getShape().getBounds().contains(x, y));
+        return mIsInteractionShown && (mMarkShape.getBounds().contains(x, y) || getShapeInteraction().getBounds().contains(x, y));
     }
 
     @Override
@@ -157,21 +176,8 @@ public class InteractionNPC extends Interaction {
     }
 
 
-    public String getDialogId() {
-        return mDialogId;
-    }
 
-    public void setDialogId(String aDialogId) {
-        mDialogId = aDialogId;
-        if(getPersistence()!=Persistence.NONE)
-        {
-            saveInPersistence();
-        }
-
-
-
-    }
-
+    /************************ EVENTS*********************************/
     public String getQuestId() {
         return mQuestId;
     }

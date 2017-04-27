@@ -1,7 +1,5 @@
 package com.vte.libgdx.ortho.test.box2d;
 
-import android.graphics.Rect;
-
 import com.badlogic.gdx.math.Circle;
 import com.badlogic.gdx.math.Intersector;
 import com.badlogic.gdx.math.Polygon;
@@ -195,7 +193,6 @@ public class ShapeUtils {
      *
      * @param p1 The polygon that is being clipped
      * @param p2 The clip polygon
-     * @param overlap The intersection of the two polygons (optional)
      * @return Whether the two polygons intersect.
      */
     public static boolean intersectPolygons (Polygon p1, Polygon p2) {
@@ -216,6 +213,7 @@ public class ShapeUtils {
                 return true;
             }
         }
+
         return false;
 
     }

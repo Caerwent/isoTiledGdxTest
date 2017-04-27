@@ -1,0 +1,39 @@
+{
+  "type":"NPC",
+  "atlas":"carriage.atlas",
+  "persistence":"GAME",
+  "defaultState":"BROKEN",
+  "isClickable": "false",
+  "isRendable": "true",
+  "isMovable": "true",
+  "states": [
+    {
+      "name": "IDLE",
+      "fps":"0",
+      "isLooping":"true",
+      "frames": [
+        "carriage1"
+      ]
+    },
+    {
+      "name": "MOVE_LEFT",
+      "isLooping":"true",
+      "fps":"10",
+      "frames": [
+        "carriage1",
+        "carriage2",
+        "carriage3",
+        "carriage4"
+      ]
+    },
+    {
+      "name": "BROKEN",
+      "isLooping":"true",
+      "fps":"10",
+      "frames": [
+        "carriage_broken1"
+      ]
+    }
+  ]
+
+}

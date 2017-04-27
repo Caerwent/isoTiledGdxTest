@@ -28,10 +28,10 @@ import com.vte.libgdx.ortho.test.Settings;
 import com.vte.libgdx.ortho.test.box2d.Shape;
 import com.vte.libgdx.ortho.test.entity.EntityEngine;
 import com.vte.libgdx.ortho.test.entity.components.InputComponent;
-import com.vte.libgdx.ortho.test.entity.systems.CollisionSystem;
+import com.vte.libgdx.ortho.test.entity.systems.CollisionInteractionSystem;
+import com.vte.libgdx.ortho.test.entity.systems.CollisionObstacleSystem;
 import com.vte.libgdx.ortho.test.entity.systems.InteractionSystem;
 import com.vte.libgdx.ortho.test.entity.systems.MovementSystem;
-import com.vte.libgdx.ortho.test.entity.systems.PathRenderSystem;
 import com.vte.libgdx.ortho.test.events.EventDispatcher;
 import com.vte.libgdx.ortho.test.gui.MainHUD;
 import com.vte.libgdx.ortho.test.gui.UIStage;
@@ -157,9 +157,10 @@ public class GameScreen implements Screen, InputProcessor {
         }
         Gdx.input.setInputProcessor(mInputMultiplexer);
         EntityEngine.getInstance().addSystem(new MovementSystem());
-        EntityEngine.getInstance().addSystem(new CollisionSystem());
+        EntityEngine.getInstance().addSystem(new CollisionObstacleSystem());
         EntityEngine.getInstance().addSystem(new InteractionSystem());
-        EntityEngine.getInstance().addSystem(new PathRenderSystem(pathRenderer));
+        EntityEngine.getInstance().addSystem(new CollisionInteractionSystem());
+      //  EntityEngine.getInstance().addSystem(new PathRenderSystem(pathRenderer));
     }
 
     @Override
@@ -170,9 +171,10 @@ public class GameScreen implements Screen, InputProcessor {
         }
         Gdx.input.setInputProcessor(null);
         EntityEngine.getInstance().removeSystem(EntityEngine.getInstance().getSystem(MovementSystem.class));
-        EntityEngine.getInstance().removeSystem(EntityEngine.getInstance().getSystem(CollisionSystem.class));
+        EntityEngine.getInstance().removeSystem(EntityEngine.getInstance().getSystem(CollisionObstacleSystem.class));
+        EntityEngine.getInstance().removeSystem(EntityEngine.getInstance().getSystem(CollisionInteractionSystem.class));
         EntityEngine.getInstance().removeSystem(EntityEngine.getInstance().getSystem(InteractionSystem.class));
-        EntityEngine.getInstance().removeSystem(EntityEngine.getInstance().getSystem(PathRenderSystem.class));
+     //   EntityEngine.getInstance().removeSystem(EntityEngine.getInstance().getSystem(PathRenderSystem.class));
 
     }
 
@@ -193,10 +195,17 @@ public class GameScreen implements Screen, InputProcessor {
         Gdx.gl.glClearColor(0f, 0f, 0f, 1f);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
+        EntityEngine.getInstance().
+                update(delta/*Time*/);
+
         if (map != null)
             map.render();
         pathRenderer.setProjectionMatrix(camera.combined);
-
+        if(map.getPlayer().getHero().getPath()!=null) {
+            pathRenderer.begin();
+            map.getPlayer().getHero().getPath().render(pathRenderer);
+            pathRenderer.end();
+        }
         batch.begin();
         //font.draw(batch, "FPS: " + Gdx.graphics.getFramesPerSecond(), 10, 20);
         if (mSpot != null) {
@@ -208,13 +217,14 @@ public class GameScreen implements Screen, InputProcessor {
         }
 
         batch.end();
+
+
         UIStage.getInstance().
 
                 draw();
 
 
-        EntityEngine.getInstance().
-                update(delta/*Time*/);
+
     }
 
     @Override

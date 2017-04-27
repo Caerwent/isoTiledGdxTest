@@ -1,7 +1,7 @@
 package com.vte.libgdx.ortho.test.interactions;
 
 import com.badlogic.gdx.maps.MapProperties;
-import com.vte.libgdx.ortho.test.entity.components.CollisionComponent;
+import com.vte.libgdx.ortho.test.entity.components.CollisionInteractionComponent;
 import com.vte.libgdx.ortho.test.map.GameMap;
 import com.vte.libgdx.ortho.test.persistence.GameSession;
 
@@ -33,19 +33,19 @@ public class InteractionActivator extends Interaction{
     }
 
     @Override
-    public boolean hasCollisionInteraction(CollisionComponent aEntity) {
-        return (aEntity.mType&CollisionComponent.CHARACTER)!=0;
+    public boolean hasCollisionInteraction(CollisionInteractionComponent aEntity) {
+        return true;
     }
     @Override
-    public void onStartCollisionInteraction(CollisionComponent aEntity) {
-        if((aEntity.mType&CollisionComponent.CHARACTER)!=0 && !isClickable())
+    public void onStartCollisionInteraction(CollisionInteractionComponent aEntity) {
+        if(!isClickable())
         {
             toggleActivation();
         }
     }
     @Override
-    public void onStopCollisionInteraction(CollisionComponent aEntity) {
-        if((aEntity.mType&CollisionComponent.CHARACTER)!=0  && !isClickable())
+    public void onStopCollisionInteraction(CollisionInteractionComponent aEntity) {
+        if(!isClickable())
         {
             toggleActivation();
         }
@@ -53,7 +53,7 @@ public class InteractionActivator extends Interaction{
     @Override
     protected boolean hasTouchInteraction(float x, float y) {
 
-        return getShape().getBounds().contains(x, y);
+        return getShapeInteraction().getBounds().contains(x, y);
     }
     @Override
     public void onTouchInteraction() {

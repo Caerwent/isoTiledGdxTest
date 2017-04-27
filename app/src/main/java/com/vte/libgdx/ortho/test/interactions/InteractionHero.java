@@ -8,11 +8,10 @@ import com.badlogic.gdx.math.Vector2;
 import com.vte.libgdx.ortho.test.MyGame;
 import com.vte.libgdx.ortho.test.audio.AudioManager;
 import com.vte.libgdx.ortho.test.box2d.PathHero;
-import com.vte.libgdx.ortho.test.box2d.PolygonShape;
-import com.vte.libgdx.ortho.test.box2d.Shape;
 import com.vte.libgdx.ortho.test.effects.Effect;
 import com.vte.libgdx.ortho.test.effects.EffectFactory;
-import com.vte.libgdx.ortho.test.entity.components.CollisionComponent;
+import com.vte.libgdx.ortho.test.entity.components.CollisionInteractionComponent;
+import com.vte.libgdx.ortho.test.entity.components.CollisionObstacleComponent;
 import com.vte.libgdx.ortho.test.entity.components.TransformComponent;
 import com.vte.libgdx.ortho.test.events.EventDispatcher;
 import com.vte.libgdx.ortho.test.map.GameMap;
@@ -27,25 +26,32 @@ public class InteractionHero extends Interaction {
 
     protected float stateTime; // elapsed time
     MapTownPortalInfo mPortalInfo;
-    protected Shape mShapeForMovCollision=new PolygonShape();
-    protected float[] mVerticesForMovCollision = new float[8];
 
     public InteractionHero(InteractionDef aDef, float x, float y, InteractionMapping aMapping, MapProperties aProperties, GameMap aMap) {
         super(aDef, x, y, aMapping, aProperties, aMap);
         mType = Type.HERO;
-        CollisionComponent collisionComponent = this.getComponent(CollisionComponent.class);
-        collisionComponent.mType = CollisionComponent.CHARACTER;
+        CollisionObstacleComponent collisionObstacleComponent = this.getComponent(CollisionObstacleComponent.class);
+        collisionObstacleComponent.mType = CollisionObstacleComponent.HERO;
 
     }
 
     PathHero mPath;
+
+    @Override
+    protected boolean hasTouchInteraction(float x, float y) {
+        return isClickable();
+    }
     @Override
     public void setMovable(boolean isMovable) {
         super.setMovable(isMovable);
-        if(mPath!=null && !isMovable())
-        {
+        if (mPath != null && !isMovable()) {
             setPath(null);
         }
+    }
+
+    public PathHero getPath()
+    {
+        return mPath;
     }
     public void setPath(PathHero p) {
         mPath = p;
@@ -87,8 +93,8 @@ public class InteractionHero extends Interaction {
         if (mPath != null) {
             if (mPath.hasNextPoint()) {
                 TransformComponent transform = this.getComponent(TransformComponent.class);
-                float heroShapeHalfWidth = mMap.getPlayer().getHero().getShape().getWidth()/2;
-                Vector2 pos2D = new Vector2(transform.position.x+heroShapeHalfWidth, transform.position.y);
+                float heroShapeHalfWidth = mMap.getPlayer().getHero().getShapeRendering().getWidth() / 2;
+                Vector2 pos2D = new Vector2(transform.position.x + heroShapeHalfWidth, transform.position.y);
                 Vector2 velocity = mPath.getVelocityForPosAndTime(pos2D, dt);
                 setVelocity(velocity);
 
@@ -108,75 +114,67 @@ public class InteractionHero extends Interaction {
 
     }
 
+    /************************ PHYSICAL COLLISION *********************************/
+
     @Override
-    public boolean hasCollisionInteraction(CollisionComponent aEntity) {
-        if ((aEntity.mType & CollisionComponent.ITEM) != 0) {
-            AudioManager.getInstance().onAudioEvent(AudioManager.ITEM_FOUND_SOUND);
+    public boolean onCollisionObstacleStart(CollisionObstacleComponent aEntity) {
 
-            EventDispatcher.getInstance().onItemFound((((ItemInteraction) aEntity.mData).getItem()));
-            return false;
-        }
-        if ( ( aEntity.mType & CollisionComponent.OBSTACLE) != 0 || ( (aEntity.mType & CollisionComponent.OBSTACLE_MAPINTERACTION) != 0)) {
+        boolean ret = super.onCollisionObstacleStart(aEntity);
+        if (ret) {
 
-            if ( ( (aEntity.mType & CollisionComponent.OBSTACLE_MAPINTERACTION) == 0 &&
-                    getShape().getBounds().getY() >= aEntity.mShape.getBounds().getY()) ||
+            if ((aEntity.mType & CollisionObstacleComponent.ITEM) != 0) {
+                AudioManager.getInstance().onAudioEvent(AudioManager.ITEM_FOUND_SOUND);
 
-                    (getShape().getBounds().getY() >= aEntity.mShape.getBounds().getY() &&
-                            (aEntity.mType & CollisionComponent.OBSTACLE_MAPINTERACTION) != 0 &&
-                            (getShape().getBounds().getY() - aEntity.mShape.getBounds().getY() <= 0.5))
-                    )
-            {
-
-                return true;
+                EventDispatcher.getInstance().onItemFound((((ItemInteraction) aEntity.mData).getItem()));
+                return false;
+            } else {
+                    if (mPath != null) {
+                        mPath.destroy();
+                        mPath = null;
+                        setVelocity(0, 0);
+                    }
+                    return true;
 
 
             }
         }
+        return ret;
+    }
+
+    @Override
+    public boolean hasCollisionInteraction(CollisionInteractionComponent aEntity) {
         return false;
     }
 
     @Override
-    public void onStartCollisionInteraction(CollisionComponent aEntity) {
-        if ( (((aEntity.mType & CollisionComponent.OBSTACLE) != 0) || ((aEntity.mType & CollisionComponent.OBSTACLE_MAPINTERACTION) != 0) )
-            && mPath != null) {
-            mPath.destroy();
-            mPath = null;
-            setVelocity(0, 0);
+    public void onStartCollisionInteraction(CollisionInteractionComponent aEntity) {
 
-        }
     }
-
+    /************************ EFFECT *********************************/
     @Override
     protected void stopLaunchedEffect() {
         Effect stoppedEffect = mEffectLaunched;
         super.stopLaunchedEffect();
 
-        if(stoppedEffect!=null && stoppedEffect.id== Effect.Type.PORTAL)
-        {
+        if (stoppedEffect != null && stoppedEffect.id == Effect.Type.PORTAL) {
             // check if it is :
             // - an arrival into the default map
             // - a come back to the invoking map
             // - an invocation into a map
             // - an invocation into the default map
-            if(mPortalInfo!=null)
-            {
-                if(mPortalInfo.originMap.compareTo(mMap.getMapName())==0)
-                {
+            if (mPortalInfo != null) {
+                if (mPortalInfo.originMap.compareTo(mMap.getMapName()) == 0) {
                     // it's a come back to the invoking map
                     mPortalInfo = null;
                     stoppedEffect.setPlayMode(Animation.PlayMode.NORMAL);
-                }
-                else if(stoppedEffect.getPlayMode()== Animation.PlayMode.REVERSED) {
+                } else if (stoppedEffect.getPlayMode() == Animation.PlayMode.REVERSED) {
                     // it's an arrival into the default map
                     stoppedEffect.setPlayMode(Animation.PlayMode.NORMAL);
-                }
-                else
-                {
+                } else {
                     // it's an invocation into the default map
                     EventDispatcher.getInstance().onNewMapRequested(mPortalInfo.originMap, mPortalInfo);
                 }
-            }
-            else {
+            } else {
                 // it's an invocation into a map
                 mPortalInfo = new MapTownPortalInfo();
                 mPortalInfo.originMap = mMap.getMapName();
@@ -189,8 +187,7 @@ public class InteractionHero extends Interaction {
 
     }
 
-    public void launchTownPortalArrivalEffect(MapTownPortalInfo aPortalInfo)
-    {
+    public void launchTownPortalArrivalEffect(MapTownPortalInfo aPortalInfo) {
         mPortalInfo = aPortalInfo;
 
         Effect portalBackEffect = EffectFactory.getInstance().getEffect(Effect.Type.PORTAL);
@@ -198,33 +195,6 @@ public class InteractionHero extends Interaction {
         launchEffect(portalBackEffect);
     }
 
-    public Shape getShapeForMovementCollision() {
-        TransformComponent tfm = this.getComponent(TransformComponent.class);
-        mShapeForMovCollision.setX(tfm.position.x );
-        mShapeForMovCollision.setY(tfm.position.y);
-
-        if (isRendable()) {
-            float width = mCurrentFrame.getRegionWidth() * tfm.scale;
-            float height = mCurrentFrame.getRegionHeight() * tfm.scale / 8;
-
-
-            mVerticesForMovCollision[0] = tfm.originOffset.x;
-            mVerticesForMovCollision[1] = tfm.originOffset.y;
-            mVerticesForMovCollision[2] = tfm.originOffset.x;
-            mVerticesForMovCollision[3] = height + tfm.originOffset.y;
-            mVerticesForMovCollision[4] = width + tfm.originOffset.x;
-            mVerticesForMovCollision[5] = height + tfm.originOffset.y;
-            mVerticesForMovCollision[6] = width + tfm.originOffset.x;
-            mVerticesForMovCollision[7] = tfm.originOffset.y;
-
-
-            if (mShapeForMovCollision.getType() == Shape.Type.POLYGON) {
-                ((PolygonShape) mShapeForMovCollision).getShape().setVertices(mVerticesForMovCollision);
-            }
-
-        }
-        return mShapeForMovCollision;
-    }
 
 
 }

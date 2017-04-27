@@ -15,7 +15,7 @@ public class PolygonShape extends Shape<Polygon> {
 
     public PolygonShape() {
         mType = Type.POLYGON;
-        mPoly = new Polygon();
+        mPoly = new Polygon(new float[]{0, 0, 0, 1, 1, 1, 1, 0});
     }
 
     @Override

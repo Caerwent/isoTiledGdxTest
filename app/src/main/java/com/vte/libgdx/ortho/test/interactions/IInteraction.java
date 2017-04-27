@@ -1,6 +1,7 @@
 package com.vte.libgdx.ortho.test.interactions;
 
 import com.badlogic.gdx.graphics.Camera;
+import com.vte.libgdx.ortho.test.box2d.Shape;
 import com.vte.libgdx.ortho.test.map.IMapRendable;
 
 /**
@@ -15,7 +16,6 @@ public interface IInteraction extends IMapRendable {
     }
 
     public enum Type {
-        ITEM,
         HERO,
         CHEST,
         NPC,
@@ -23,7 +23,6 @@ public interface IInteraction extends IMapRendable {
         MONSTER,
         ACTIVATOR,
         OBSTACLE,
-        PATH,
         CHALLENGE
     }
 
@@ -45,4 +44,6 @@ public interface IInteraction extends IMapRendable {
     public void destroy();
 
     public void update(float dt);
+
+    public Shape getShapeInteraction();
 }
